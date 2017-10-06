@@ -20,24 +20,27 @@ class Page_Css
   GREEN = "#4ab1a8"
 
   macro col
-    width percent(25)
+    width 25.percent
     float "left"
   end
 
   def render
 
-    nest("div") { |x|
-      __(x) { background BLUE }
-      __("#{x} span") { padding px(10) }
+    # s_alias (means: selector alias)
+    # s       (means: selector)
+
+    s_alias("div") { |x|
+      s(x) { background BLUE }
+      s("#{x} span") { padding 10.px }
     }
 
-    __("body") {
+    s("body") {
       background GREY
     }
 
-    __("#number") { col }
-    __("#words") { col; background PINK }
-    __("#quotation") { col; background GREEN }
+    s("#number") { col }
+    s("#words") { col; background PINK }
+    s("#quotation") { col; background GREEN }
 
     to_css
   end

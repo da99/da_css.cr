@@ -1,10 +1,39 @@
 
+struct Int32
+
+  def percent
+    Style::Percent.new(self)
+  end
+
+  def px
+    Style::PX.new(self)
+  end # === def px
+
+  def em
+    Style::EM.new(self)
+  end
+
+end # === class Int32
+
 module Style
 
   alias Size = Percent | PX
 
+  struct EM
+    def initialize(num : Int32)
+      if num < 0 || num > 10
+        raise Exception.new("Value out of range for .em: #{num.inspect}")
+      end
+      @val = num
+    end # === def initialize
+
+    def value
+      "#{@val}em"
+    end # === def value
+  end # === class PX
+
   struct Percent
-    def initialize(num : Int32 | Int64)
+    def initialize(num : Int32)
       @val = num
     end # === def initialize
 
@@ -15,7 +44,7 @@ module Style
 
   struct PX
 
-    def initialize(num : Int32 | Int64)
+    def initialize(num : Int32)
       @val = num
     end # === def initialize
 
@@ -48,74 +77,82 @@ module Style
     end
   end
 
+  macro included
+    extend Style::Class_Methods
+  end
 
-    macro included
-      extend Style::Class_Methods
+  macro p(name, *args)
+    {{name.gsub(/-/, "_").id}}({{args.map { |x| x.id }.join(", ").id}})
+  end
+
+  @in_nest = false
+
+  def initialize
+    @content = IO::Memory.new
+  end # === def initialize
+
+  def to_css
+    @content.to_s
+  end
+
+  def render
+    with self yield(self)
+  end # === def render
+
+  def s(name : String)
+    @content << "\n" << name << " {"
+    with self yield
+    @content << " }"
+
+    return self
+  end
+
+  def s_alias(name : String)
+    raise Exception.new("Nesting of :rename not allowed.") if @in_nest
+    @in_nest = true
+    with self yield(name)
+    @in_nest = false
+    return self
+  end
+
+  def percent(num : Int32)
+    Percent.new(num)
+  end # === def percent
+
+  def width(quantity : Size)
+    @content << " width: #{quantity.value}; "
+  end # === def width
+
+  def float(dir : String)
+    case
+    when "left", "right", "none", "inline-start", "inline-end", "inherit", "initial", "unset"
+      @content << " float: #{dir}; "
+    else
+      raise Exception.new("Invalid float value: #{dir.inspect}")
     end
+  end # === def float
 
-    def initialize
-      @content = IO::Memory.new
-    end # === def initialize
-
-    def to_css
-      @content.to_s
+  def background(color : Color | String)
+    case color
+    when String
+      color = Color.new(color)
     end
+    @content << " background: " << color.value << ";"
 
-    def render
-      with self yield(self)
-    end # === def render
+    return self
+  end
 
-    def __(name : String)
-      @content << "\n" << name << " {"
-      with self yield
-      @content << " }"
+  def padding(px : PX)
+    @content << " padding: " << px.value << ";"
+  end # === def padding
 
-      return self
-    end
+  def px(num : Int32)
+    PX.new(num)
+  end
 
-    def nest(name : String)
-      with self yield(name)
-      return self
-    end
-
-    def percent(num : Int32)
-      Percent.new(num)
-    end # === def percent
-
-    def width(quantity : Size)
-      @content << " width: #{quantity.value}; "
-    end # === def width
-
-    def float(dir : String)
-      case
-      when "left", "right", "none", "inline-start", "inline-end", "inherit", "initial", "unset"
-        @content << " float: #{dir}; "
-      else
-        raise Exception.new("Invalid float value: #{dir.inspect}")
-      end
-    end # === def float
-
-    def background(color : Color | String)
-      case color
-      when String
-        color = Color.new(color)
-      end
-      @content << " background: " << color.value << ";"
-
-      return self
-    end
-
-    def padding(px : PX)
-      @content << " padding: " << px.value << ";"
-    end # === def padding
-
-    def px(num : Int32)
-      PX.new(num)
-    end
-
-    def css
-      @content.to_s
-    end
+  def css
+    @content.to_s
+  end
 
 end # === module Style
 
@@ -128,24 +165,24 @@ class Page_Css
   GREEN = "#4ab1a8"
 
   macro col
-    width percent(25)
+    width 25.percent
     float "left"
   end
 
   def render
 
-    nest("div") { |x|
-      __(x) { background BLUE }
-      __("#{x} span") { padding px(10) }
+    s_alias("div") { |x|
+      s(x) { background BLUE }
+      s("#{x} span") { padding 10.px }
     }
 
-    __("body") {
+    s("body") {
       background GREY
     }
 
-    __("#number") { col }
-    __("#words") { col; background PINK }
-    __("#quotation") { col; background GREEN }
+    s("#number") { col }
+    s("#words") { col; background PINK }
+    s("#quotation") { col; background GREEN }
 
     to_css
   end
