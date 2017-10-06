@@ -26,7 +26,7 @@ class Page_Css
 
   def render
 
-    var("div") { |x|
+    selector("div") { |x|
       __(x) { background BLUE }
       __("#{x} span") { padding px(10) }
     }
