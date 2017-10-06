@@ -1,0 +1,37 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}}
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+if [[ -z "$@" ]]; then
+  local +x ACTION="watch"
+else
+  local +x ACTION=$1; shift
+fi
+
+case "$ACTION" in
+
+  watch)
+    local +x CMD="style.cr specs run $@"
+    ${=CMD} || :
+    process watch "-r src -r specs -r bin -r sh" "$CMD"
+    ;;
+
+  run)
+    mkdir -p tmp/out
+    sh_color ORANGE "=== {{Compiling}}..."
+    my_crystal __ build specs/specs.cr -o tmp/out/specs
+    sh_color ORANGE "=== {{Running}}..."
+    tmp/out/specs
+    sh_color GREEN "=== {{DONE}} ==="
+    ;;
+
+  *)
+    echo "!!! Unknown arguments: $ORIGINAL_ARGS" >&2
+    exit 1
+    ;;
+
+esac
+
