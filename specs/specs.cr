@@ -73,7 +73,7 @@ module Style
       return self
     end
 
-    def selector(name : String)
+    def nest(name : String)
       with self yield(name)
       return self
     end
@@ -134,7 +134,7 @@ class Page_Css
 
   def render
 
-    selector("div") { |x|
+    nest("div") { |x|
       __(x) { background BLUE }
       __("#{x} span") { padding px(10) }
     }
