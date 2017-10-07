@@ -25,20 +25,30 @@ module Style
     create_keyword "Contain"
     create_keyword "Auto"
 
+    create_keyword "Scroll"
+    create_keyword "Fixed"
+    create_keyword "Local"
+
+    create_keyword "Border_Box"
+    create_keyword "Padding_Box"
+    create_keyword "Content_Box"
+    create_keyword "Text"
+    create_keyword "None"
+
     @io : IO::Memory
 
     def initialize(@io)
     end # === def initialize
 
+    def url(raw : String)
+      URL_Image.new(raw)
+    end
+
     module Property_Methods
 
-      def clip(val : String)
-        case val
-        when "border-box", "padding-box", "content-box", "text", "inherit", "initial"
-          @io << " background-clip: " << val << ";"
-        else
-          raise Exception.new("Invalid value for background-clip: #{val.inspect}")
-        end
+      def clip(keyword : Border_Box | Padding_Box | Content_Box | Text | Inherit | Initial)
+        @io << " background-clip: " << keyword.value << ";"
+        return self
       end
 
       def color(keyword : Currentcolor | Transparent | Inherit | Initial | Unset)
@@ -59,38 +69,23 @@ module Style
         return self
       end
 
-      def image(raw : String)
-        case raw
-        when "none", "inherit", "initial", "unset"
-          @io << " background-image: " << raw << ";"
-        else
-          raise Exception.new("Invalid value for background-image: #{raw.inspect}")
-        end
+      def image(keyword : None | Inherit | Initial | Unset)
+        @io << " background-image: " << keyword.value << ";"
+        return self
       end # === def image
-
-      def url(raw : String)
-        URL_Image.new(raw)
-      end
 
       def image(url : URL_Image)
         @io << " background-image: " << url.value << ";"
         return self
       end
 
-      def origin(raw : String)
-        case raw
-        when "border-box", "padding-box", "content-box", "inherit", "initial", "unset"
-          @io << " background-origin: " << raw << ";"
-        else
-          raise Exception.new("Invalid value for background-origin: #{raw}")
-        end
-
+      def origin(keyword : Border_Box | Padding_Box | Content_Box | Inherit | Initial | Unset)
+        @io << " background-origin: " << keyword.value << ";"
         return self
       end
 
       def position(raw : Top | Bottom | Left | Right | Center | Inherit | Initial | Unset)
         @io << " background-position: " << raw.value << ";"
-
         return self
       end
 
@@ -159,9 +154,10 @@ module Style
         return self
       end # === def size
 
-      def attachment
-        raise Exception.new("not ready")
-      end
+      def attachment(keyword : Scroll | Fixed | Local | Inherit | Initial | Unset)
+        @io << " background-attachment: " << keyword.value << ";"
+        return self
+      end # === def attachment
 
     end # === module Property_Methods
 
