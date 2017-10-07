@@ -1,20 +1,14 @@
 
+require "./rgb_level"
+require "./alpha"
+
+require "./hex_color"
+require "./rgb_color"
+require "./rgba_color"
+require "./hsla_color"
+
 module Style
 
-  struct Color
-
-    def initialize(val : String)
-      if !val.match(/^#[a-zA-Z0-9]+$/)
-        raise Exception.new("Invalid color: #{val}")
-      end
-
-      @val = val
-    end # === def initialize
-
-    def value
-      @val
-    end # === def value
-
-  end # === class Color
+  alias Color = Hex_Color | RGB_Color | RGBA_Color | HSLA_Color
 
 end # === module Style
