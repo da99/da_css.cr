@@ -11,6 +11,7 @@ require "./type/int32"
 require "./type/float64"
 
 require "./property/background"
+require "./property/border"
 require "./property/width"
 require "./property/float"
 require "./property/padding"

@@ -35,6 +35,14 @@ class Page_Css
     s("#words") { col; background_color PINK }
     s("#quotation") { col; background_color GREEN }
 
+    s("div") {
+      border 10.px, dotted, Hex_Color.new("white")
+      border 10.em
+      border_style dotted
+      border_color Hex_Color.new("black")
+      border_width thick
+    }
+
     to_css
   end
 
