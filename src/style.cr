@@ -32,8 +32,45 @@ module Style
   end
 
   macro p(name, *args)
-    {{name.gsub(/-/, "_").id}}({{args.map { |x| x.id }.join(", ").id}})
+    {{name.gsub(/-/, "_").id}}({{ *args }})
   end
+
+  struct Writer_Property
+
+    def initialize(@io : IO::Memory, @key : String)
+      @io << " " << @key << ":"
+      yield self
+      @io << ";\n"
+    end # === def initialize
+
+    def raw
+      yield(@io)
+    end # === def raw
+
+    def <<(*values)
+      values.each { |x|
+        case x
+        when Char
+          @io << " " << x
+        else
+          @io << " " << x.to_css
+        end
+      }
+    end
+
+  end # === struct Writer_Property
+
+  module Class_Methods
+
+    def write_property(io : IO::Memory, key : String)
+     Writer_Property.new(io, key) { |x|
+        yield x
+      }
+    end
+
+  end # === module Class_Methods
+
+  extend Class_Methods
 
   @in_nest = false
 

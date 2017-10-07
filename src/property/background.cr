@@ -172,7 +172,7 @@ module Style
 
   {% for meth in Background::Property_Methods.methods %}
     macro background_{{meth.name}}(*args)
-      background { {{meth.name}}(\{{args.map { |x| x.id }.join(", ").id}}) }
+      background { {{meth.name}}(\{{ *args }}) }
     end
   {% end %}
 

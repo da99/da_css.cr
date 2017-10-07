@@ -44,13 +44,16 @@ class Page_Css
 
       border_top_width thick
       border_bottom { style dotted }
-      border_bottom_left { radius 5.px }
+      border_bottom_left_radius inherit
       border_top_right_radius 5.px
       border_radius 5.px, 5.percent
-      border_image {
-        outset 30.px, 2, 1.5
-        repeat round, stretch
-      }
+      border_radius 10.px, 5.percent, '/', 20.px
+      border_radius 10.px, 5.percent, '/', 20.px, 30.px
+      border_radius 10.px, 5.percent, '/', 20.px, 30.px, 30.percent, 10.em
+      # border_image {
+      #   outset 30.px, 2, 1.5
+      #   repeat round, stretch
+      # }
     }
 
     to_css

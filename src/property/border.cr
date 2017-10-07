@@ -1,5 +1,6 @@
 
 require "./border_radius"
+require "./border_radius_corner"
 
 module Style
 
@@ -60,22 +61,22 @@ module Style
 
   macro border(arg)
     border_scoped() {
-      width {{arg.id}}
+      width {{arg}}
     }
   end
 
   macro border(arg1, arg2, arg3)
     border_scoped {
-      width {{arg1.id}}
-      style {{arg2.id}}
-      color {{arg3.id}}
+      width {{arg1}}
+      style {{arg2}}
+      color {{arg3}}
     }
   end
 
   {% for meth in ["width", "style", "color"] %}
     macro border_{{meth.id}}(*args)
       border_scoped {
-        {{meth.id}}(\{{args.map { |x| x.id }.join(", ").id}})
+        {{meth.id}}(\{{*args}})
       }
     end
   {% end %}
@@ -91,7 +92,7 @@ module Style
     macro border_{{dir.id}}(arg)
       border_scoped {
         dir {{dir.id}}
-        width \{{arg.id}}
+        width \{{arg}}
       }
     end # === macro border
 
@@ -108,7 +109,7 @@ module Style
       macro border_{{dir.id}}_{{meth.id}}(*args)
         border_scoped {
           dir {{dir.id}}
-          {{meth.id}}(\{{args.map { |x| x.id }.join(", ").id}})
+          {{meth.id}}( \{{*args}} )
         }
       end
     {% end %}
