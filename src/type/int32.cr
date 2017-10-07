@@ -13,4 +13,9 @@ struct Int32
     Style::Em.new(self)
   end
 
+  def to_css
+    return "0" if self == 0
+    raise Exception.new("Invalid value for length: #{self.inspect}")
+  end # === def to_css
+
 end # === class Int32

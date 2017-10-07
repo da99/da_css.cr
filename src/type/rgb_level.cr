@@ -16,8 +16,8 @@ module Style
       @val
     end # === def raw
 
-    def value
-      @val
+    def to_css
+      @val.to_s
     end
 
   end # === struct RGB_Level

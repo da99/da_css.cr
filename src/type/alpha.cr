@@ -12,8 +12,8 @@ module Style
       @value = raw
     end # === def initialize
 
-    def value
-      @value
+    def to_css
+      @value.to_s
     end # === def value
 
   end # === struct Alpha

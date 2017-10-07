@@ -16,8 +16,8 @@ module Style
       @third  = RGB_Level.new(third)
     end # === def initialize
 
-    def value
-      "rgb(#{@first.value}, #{@second.value}, #{@third.value})"
+    def to_css
+      "rgb(#{@first.to_css}, #{@second.to_css}, #{@third.to_css})"
     end
 
   end # === struct RGB_Color

@@ -17,9 +17,9 @@ module Style
       @value
     end # === def raw
 
-    def value
-      @value
-    end # === def value
+    def to_css
+      @value.to_s
+    end
 
   end # === struct Hue
 

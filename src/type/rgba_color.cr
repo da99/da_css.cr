@@ -18,8 +18,8 @@ module Style
       @alpha  = Alpha.new(alpha)
     end # === def initialize
 
-    def value
-      "rgba(#{@first.value}, #{@second.value}, #{@third.value}, #{@alpha.value})"
+    def to_css
+      "rgba(#{@first.to_css}, #{@second.to_css}, #{@third.to_css}, #{@alpha.to_css})"
     end # === def value
 
   end # === struct RGBA_Color

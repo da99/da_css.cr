@@ -18,6 +18,8 @@ require "./property/padding"
 
 module Style
 
+  alias Length = Em | Int32 | Px | Percent
+
   module Class_Methods
     def render
       style = self.new

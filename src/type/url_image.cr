@@ -17,7 +17,7 @@ module Style
       @value
     end # === def raw
 
-    def value
+    def to_css
       "url('#{@value}')"
     end # === def value
 

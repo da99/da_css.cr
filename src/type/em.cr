@@ -9,7 +9,7 @@ module Style
       @val = num
     end # === def initialize
 
-    def value
+    def to_css
       "#{@val}em"
     end # === def value
   end # === class PX

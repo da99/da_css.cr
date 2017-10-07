@@ -41,6 +41,16 @@ class Page_Css
       border_style dotted
       border_color Hex_Color.new("black")
       border_width thick
+
+      border_top_width thick
+      border_bottom { style dotted }
+      border_bottom_left { radius 5.px }
+      border_top_right_radius 5.px
+      border_radius 5.px, 5.percent
+      border_image {
+        outset 30.px, 2, 1.5
+        repeat round, stretch
+      }
     }
 
     to_css

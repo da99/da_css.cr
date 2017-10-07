@@ -14,7 +14,7 @@ module Style
       @val
     end
 
-    def value
+    def to_css
       "#{@val}%"
     end # === def value
   end # === class PX

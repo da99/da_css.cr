@@ -32,9 +32,9 @@ module Style
       @val = val
     end # === def initialize
 
-    def value
+    def to_css
       @val
-    end # === def value
+    end
 
   end # === class Color
 

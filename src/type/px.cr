@@ -7,7 +7,7 @@ module Style
       @val = num
     end # === def initialize
 
-    def value
+    def to_css
       "#{@val}px"
     end # === def value
 

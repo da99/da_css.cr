@@ -14,7 +14,7 @@ macro create_keyword(name)
       end
     end # === def initialize
 
-    def value
+    def to_css
       "{{str_value}}"
     end # === def value
 

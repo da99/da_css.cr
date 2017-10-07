@@ -1,4 +1,6 @@
 
+require "./border_radius"
+
 module Style
 
   struct Border
@@ -11,61 +13,105 @@ module Style
     create_keyword "Thin"
     create_keyword "Thick"
 
+    create_keyword "Top"
+    create_keyword "Bottom"
+    create_keyword "Left"
+    create_keyword "Right"
+    create_keyword "All"
+
     alias Width = Px | Em | Medium | Thin | Thick
     alias Style = Dashed | Dotted | Solid
+    alias Dir = Top | Bottom | Left | Right
 
     def initialize(@io : IO::Memory)
+      @key = "border"
     end # === def initialize
 
-    def __(w : Width)
-      @io << " border: " << w.value << ";"
+    def dir(dir : Dir | All)
+      @key = case dir
+             when All
+               @key
+             else
+               "border-#{dir.to_css}"
+             end
+    end # === def dir
+
+    def width(w : Width)
+      @io << " " << @key << "-width: " << w.to_css << ";"
       return self
-    end # === def border
+    end # === def width
 
-    def __(width : Width, style : Style, color : Color)
-      @io << " border: " << width.value << " " << style.value << " " << color.value << ";"
+    def style(s : Style)
+      @io << " " << @key << "-style: " << s.to_css << ";"
       return self
-    end # === def border
+    end # === def style
 
-    module Property_Methods
+    def color(c : Color)
+      @io << " " << @key << "-color: " << c.to_css << ";"
+      return self
+    end # === def color
 
-      def width(w : Width)
-        @io << " border-width: " << w.value << ";"
-        return self
-      end # === def width
-
-      def style(s : Style)
-        @io << " border-style: " << s.value << ";"
-        return self
-      end # === def style
-
-      def color(c : Color)
-        @io << " border-color: " << c.value << ";"
-        return self
-      end # === def color
-
-    end # === module Property_Methods
-
-    include Property_Methods
   end # === struct Border
 
-  def border_scoped
+  def border_scoped()
     border = Border.new(@content)
     with border yield
   end
 
-  macro border(*args)
-    border_scoped {
-      __({{args.map { |x| x.id }.join(", ").id}})
+  macro border(arg)
+    border_scoped() {
+      width {{arg.id}}
     }
-  end # === macro border
+  end
 
-  {% for meth in Border::Property_Methods.methods %}
-    macro border_{{meth.name.id}}(*args)
+  macro border(arg1, arg2, arg3)
+    border_scoped {
+      width {{arg1.id}}
+      style {{arg2.id}}
+      color {{arg3.id}}
+    }
+  end
+
+  {% for meth in ["width", "style", "color"] %}
+    macro border_{{meth.id}}(*args)
       border_scoped {
-        {{meth.name.id}}(\{{args.map { |x| x.id }.join(", ").id}})
+        {{meth.id}}(\{{args.map { |x| x.id }.join(", ").id}})
       }
     end
+  {% end %}
+
+  {% for dir in ["top", "bottom", "left", "right"] %}
+    macro border_{{dir.id}}(&blok)
+      border_scoped {
+        dir {{dir.id}}
+        \{{blok.body}}
+      }
+    end
+
+    macro border_{{dir.id}}(arg)
+      border_scoped {
+        dir {{dir.id}}
+        width \{{arg.id}}
+      }
+    end # === macro border
+
+    macro border_{{dir.id}}(arg1, arg2, arg3)
+      border_scoped {
+        dir {{dir.id}}
+        width \{{arg1.id}}
+        style \{{arg2.id}}
+        color \{{arg3.id}}
+      }
+    end
+
+    {% for meth in ["width", "style", "color"] %}
+      macro border_{{dir.id}}_{{meth.id}}(*args)
+        border_scoped {
+          dir {{dir.id}}
+          {{meth.id}}(\{{args.map { |x| x.id }.join(", ").id}})
+        }
+      end
+    {% end %}
   {% end %}
 
 end # === module Style
