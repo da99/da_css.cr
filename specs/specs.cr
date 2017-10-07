@@ -24,6 +24,10 @@ class Page_Css
 
     s("body") {
       background { color GREY }
+      background_image url("./image.png")
+      # background { position top }
+      background_position top
+      # background_position bottom
     }
 
     s("#number") { col }

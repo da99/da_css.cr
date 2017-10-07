@@ -1,4 +1,8 @@
 
+require "./type/url_image"
+
+require "./keyword/keyword"
+
 require "./type/percent"
 require "./type/px"
 require "./type/em"
@@ -27,6 +31,12 @@ module Style
   macro p(name, *args)
     {{name.gsub(/-/, "_").id}}({{args.map { |x| x.id }.join(", ").id}})
   end
+
+  {% for name in ["Top", "Bottom", "Left", "Right"] %}
+    macro {{name.downcase.id}}
+      {{name.id}}.new
+    end
+  {% end %}
 
   @in_nest = false
 

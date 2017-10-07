@@ -21,6 +21,8 @@ module Style
               "#ff0000"
             when "orange"
               "#ffa500"
+            else
+              val
             end
 
       if !val.match(/^#[a-zA-Z0-9]{6}([a-zA-Z0-9]{2})?$/)
