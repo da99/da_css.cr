@@ -27,6 +27,7 @@ class Page_Css
       background_image url("./image.png")
       # background { position top }
       background_position top
+      background_repeat no_repeat
       # background_position bottom
     }
 

@@ -32,12 +32,6 @@ module Style
     {{name.gsub(/-/, "_").id}}({{args.map { |x| x.id }.join(", ").id}})
   end
 
-  {% for name in ["Top", "Bottom", "Left", "Right"] %}
-    macro {{name.downcase.id}}
-      {{name.id}}.new
-    end
-  {% end %}
-
   @in_nest = false
 
   def initialize

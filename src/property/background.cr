@@ -3,6 +3,28 @@ module Style
 
   struct Background
 
+    create_keyword "Top"
+    create_keyword "Bottom"
+    create_keyword "Left"
+    create_keyword "Right"
+    create_keyword "Center"
+    create_keyword "Initial"
+    create_keyword "Inherit"
+    create_keyword "Unset"
+
+    create_keyword "No_Repeat"
+    create_keyword "Repeat_X"
+    create_keyword "Repeat_Y"
+    create_keyword "Repeat"
+    create_keyword "Space"
+    create_keyword "Round"
+
+    create_keyword "Currentcolor"
+    create_keyword "Transparent"
+    create_keyword "Cover"
+    create_keyword "Contain"
+    create_keyword "Auto"
+
     @io : IO::Memory
 
     def initialize(@io)
@@ -19,15 +41,13 @@ module Style
         end
       end
 
-      def color(raw : String)
-        downcase = raw.downcase
-        color = case downcase
-                when "currentcolor", "transparent", "inherit", "initial", "unset"
-                  downcase
-                else
-                  Hex_Color.new(raw).value
-                end
+      def color(keyword : Currentcolor | Transparent | Inherit | Initial | Unset)
+        @io << " background-color: " << keyword << ";"
+        return self
+      end # === def color
 
+      def color(raw : String)
+        color = Hex_Color.new(raw).value
         @io << " background-color: " << color << ";"
 
         return self
@@ -54,6 +74,7 @@ module Style
 
       def image(url : URL_Image)
         @io << " background-image: " << url.value << ";"
+        return self
       end
 
       def origin(raw : String)
@@ -63,18 +84,26 @@ module Style
         else
           raise Exception.new("Invalid value for background-origin: #{raw}")
         end
+
+        return self
       end
 
       def position(raw : Top | Bottom | Left | Right | Center | Inherit | Initial | Unset)
         @io << " background-position: " << raw.value << ";"
+
+        return self
       end
 
       def position(first : Em, second : Em)
         @io << " background-position: " << first.value << " " << second.value << ";"
+
+        return self
       end # === def position
 
       def position(first : Percent, second : Percent)
         @io << " background-position: " << first.value << " " << second.value << ";"
+
+        return self
       end # === def position
 
       def position(pos_1 : Top | Bottom, offset : Px | Em, pos_2 : Left | Right)
@@ -83,6 +112,8 @@ module Style
         @io << offset.value << " "
         @io << pos_2.value
         @io << ";"
+
+        return self
       end # === def position
 
       def position(pos_1 : Top | Bottom, pos_2 : Left | Right, offset : Px | Em)
@@ -91,6 +122,8 @@ module Style
         @io << pos_2.value << " "
         @io << offset.value
         @io << ";"
+
+        return self
       end # === def position
 
       def position(pos_1 : Top | Bottom, offset_1 : Px | Em, pos_2 : Left | Right, offset_2 : Px | Em)
@@ -98,15 +131,33 @@ module Style
         @io << pos_1.value << " " << offset_1.value
         @io << " " << pos_2.value<< " " << offset_2.value
         @io << ";"
+        return self
       end # === def position
 
-      def repeat
-        raise Exception.new("not ready")
+      def repeat(keyword : Repeat_X | Repeat_Y | Repeat | Space | Round | No_Repeat | Inherit | Initial | Unset)
+        @io << " background-repeat: " << keyword.value << ";"
+        return self
       end
 
-      def size
-        raise Exception.new("not ready")
+      def repeat(first : Repeat_X | Repeat | Space | Round | No_Repeat, second : Repeat_Y | Repeat | Space | Round | No_Repeat)
+        @io << " background-repeat: " << first.value << " " << second.value ";"
+        return self
       end
+
+      def size(keyword : Cover | Contain | Auto | Inherit | Initial | Unset)
+        @io << " background-size: " << keyword.value << ";"
+        return self
+      end
+
+      def size(size : Percent | Em | Px)
+        @io << " background-size: " << size.value << ";"
+        return self
+      end # === def size
+
+      def size(first : Percent | Em | Px | Auto, second : Percent | Em | Px | Auto)
+        @io << " background-size: " << first.value << " " << second.value << ";"
+        return self
+      end # === def size
 
       def attachment
         raise Exception.new("not ready")
