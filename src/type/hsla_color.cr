@@ -3,10 +3,13 @@ module Style
 
   struct HSLA_Color
 
-    @first  : Int32
+    @first  : Hue
     @second : Percent
     @third  : Percent
-    @alpha  : Float64
+    @alpha  : Alpha
+
+    def initialize(@first, @second, @third, @alpha)
+    end # === def initialize
 
     def initialize(first, @second, @third, alpha)
       @first  = Hue.new(first)
@@ -14,5 +17,9 @@ module Style
     end # === def initialize
 
   end # === struct HSLA_Color
+
+  def hsla(*args)
+    HSLA_Color.new(*args)
+  end # === def hsla
 
 end # === module Style

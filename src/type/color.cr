@@ -1,6 +1,7 @@
 
 require "./rgb_level"
 require "./alpha"
+require "./hue"
 
 require "./hex_color"
 require "./rgb_color"

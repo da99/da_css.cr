@@ -22,4 +22,8 @@ module Style
 
   end # === struct RGB_Color
 
+  def rgb(*args)
+    RGB_Color.new(*args)
+  end # === def rgb
+
 end # === module Style
