@@ -18,22 +18,22 @@ class Page_Css
   def render
 
     s_alias("div") { |x|
-      s(x) { background BLUE }
-      s("#{x} span") { padding 10.px }
+      s(x) { background_color BLUE }
+      s("#{x} span") { padding 0.8.em }
     }
 
     s("body") {
-      background GREY
+      background { color GREY }
     }
 
     s("#number") { col }
-    s("#words") { col; background PINK }
-    s("#quotation") { col; background GREEN }
+    s("#words") { col; background_color PINK }
+    s("#quotation") { col; background_color GREEN }
 
     to_css
   end
 
-end
+end # === Page_Css
 
 css = Page_Css.render
 
