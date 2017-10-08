@@ -16,4 +16,8 @@ module Style
 
   end # === struct Angle_Degree
 
+  def deg(num)
+    Angle_Degree.new(num)
+  end # === def deg
+
 end # === module Style

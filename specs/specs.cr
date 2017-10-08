@@ -1,5 +1,4 @@
 
-
 require "../src/style"
 
 require "../src/property/background"
@@ -18,15 +17,24 @@ class Page_Css
   GREEN = "#4ab1a8"
 
   macro col
-    width 25.percent
+    width percent(25)
     float "left"
   end
+
+  create_property "my-prop"
+
+  def z(i)
+    if i != 0
+      raise Exception.new("Only zero allowed.: #{i.inspect}")
+    end
+    return Allowed.new(i)
+  end # === def z
 
   def render
 
     s_alias("div") { |x|
       s(x) { background_color BLUE }
-      s("#{x} span") { padding 0.8.em }
+      s("#{x} span") { padding em(0.8) }
     }
 
     s("body") {
@@ -46,8 +54,8 @@ class Page_Css
     s("#quotation") { col; background_color GREEN }
 
     s("div") {
-      border 10.px, dotted, Hex_Color.new("white")
-      border 10.em
+      border px(10), dotted, Hex_Color.new("white")
+      border em(10)
       border_style dotted
       border_color Hex_Color.new("black")
       border_width thick
@@ -55,13 +63,13 @@ class Page_Css
       border_top_width thick
       border_bottom { style dotted }
       border_bottom_left_radius inherit
-      border_top_right_radius 5.px
-      border_radius 5.px, 5.percent
-      border_radius 10.px, 5.percent, '/', 20.px
-      border_radius 10.px, 5.percent, '/', 20.px, 30.px
-      border_radius 10.px, 5.percent, '/', 20.px, 30.px, 30.percent, 10.em
+      border_top_right_radius px(5)
+      border_radius px(5), percent(5)
+      border_radius px(10), percent(5), '/', px(20)
+      border_radius px(10), percent(5), '/', px(20), px(30)
+      border_radius px(10), percent(5), '/', px(20), px(30), percent(30), em(10)
       box_shadow inherit
-
+      my_prop px(5), px(0), '/', em(-1), z(0)
     }
 
     to_css

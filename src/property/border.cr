@@ -7,6 +7,8 @@ module Style
 
   struct Border
 
+    include Style::Property
+
     create_keyword "Dotted"
     create_keyword "Dashed"
     create_keyword "Solid"
@@ -39,17 +41,17 @@ module Style
     end # === def dir
 
     def width(w : Width)
-      @io << " " << @key << "-width: " << w.to_css << ";"
+      write("border-width", w)
       return self
     end # === def width
 
     def style(s : Style)
-      @io << " " << @key << "-style: " << s.to_css << ";"
+      write("border-style", s)
       return self
     end # === def style
 
     def color(c : Color)
-      @io << " " << @key << "-color: " << c.to_css << ";"
+      write "border-color", c
       return self
     end # === def color
 

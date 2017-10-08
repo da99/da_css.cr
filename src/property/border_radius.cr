@@ -59,13 +59,11 @@ module Style
                arg3 : Length,
                arg4 : Length)
       valid_slash!(slash)
-      Style.write_property(@io, @key) { |x|
-        x.<<(
-          arg1, arg2,
-          slash,
-          arg3, arg4
-        )
-      }
+      write(@key,
+            arg1, arg2,
+            slash,
+            arg3, arg4
+           )
       return self
     end # === def radius
 
@@ -77,14 +75,11 @@ module Style
                arg5 : Length,
                arg6 : Length)
       valid_slash!(slash)
-      Style.write_property(@io, @key) { |x|
-        x.<<(
-          arg1, arg2, arg3,
-          slash,
-          arg4, arg5, arg6,
-        )
-
-      }
+      write(@key,
+            arg1, arg2, arg3,
+            slash,
+            arg4, arg5, arg6,
+           )
       return self
     end # === def radius
 
@@ -96,13 +91,11 @@ module Style
                arg5 : Length,
                arg6 : Length)
       valid_slash!(slash)
-      Style.write_property(@io, @key) { |x|
-        x.<<(
-          arg1, arg2,
-          slash,
-          arg3, arg4, arg5, arg6
-        )
-      }
+      write(@key,
+            arg1, arg2,
+            slash,
+            arg3, arg4, arg5, arg6
+           )
       return self
     end # === def radius
 

@@ -19,4 +19,8 @@ module Style
 
   end # === class PX
 
+  def px(num)
+    Px.new(num)
+  end # === def px
+
 end # === module Style

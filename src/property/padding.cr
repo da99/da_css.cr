@@ -1,8 +1,8 @@
 
 module Style
 
-  def padding(px : Px | Percent | Em)
-    @io << " padding: " << px.to_css << ";"
+  def padding(px : Zero | Px | Percent | Em)
+    write("padding", px)
   end # === def padding
 
 end # === module Style

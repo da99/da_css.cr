@@ -18,4 +18,8 @@ module Style
     end # === def value
   end # === class PX
 
+  def percent(num)
+    Percent.new(num)
+  end
+
 end # === module Style

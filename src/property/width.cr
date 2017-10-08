@@ -1,8 +1,8 @@
 
 module Style
 
-  def width(quantity : Px | Em | Percent)
-    @io << " width: #{quantity.to_css}; "
+  def width(quantity : Zero | Px | Em | Percent)
+    write("width", quantity)
   end # === def width
 
 end # === module Style

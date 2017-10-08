@@ -1,6 +1,6 @@
 
 module Style
 
-  alias Length = Em | Int32 | Px | Percent
+  alias Length = Zero | Em | Int32 | Px | Percent
 
 end # === module Style

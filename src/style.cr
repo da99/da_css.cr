@@ -8,10 +8,11 @@ require "./type/px"
 require "./type/em"
 require "./type/color"
 require "./type/linear_gradient"
-require "./type/int32"
 require "./type/angle_degree"
 require "./type/float64"
 require "./type/length"
+require "./type/allowed"
+require "./type/zero"
 
 module Style
 
@@ -30,54 +31,40 @@ module Style
     {{name.gsub(/-/, "_").id}}({{ *args }})
   end
 
-  struct Writer_Property
-
-    def initialize(@io : IO::Memory, @key : String)
-      @io << " " << @key << ":"
-      yield self
-      @io << ";\n"
-    end # === def initialize
-
-    def raw
-      yield(@io)
-    end # === def raw
-
-    def <<(*values)
-      values.each { |x|
-        case x
-        when Char
-          @io << " " << x
-        else
-          @io << " " << x.to_css
-        end
-      }
+  macro create_property(name)
+    def {{name.gsub(/-/,"_").id}}(*args)
+      write({{name}}, *args)
     end
-
-  end # === struct Writer_Property
+  end
 
   module Property
 
     def write(key : String, *args)
-      @io << " " << key << ": " << Style.join(*args) << ";\n"
+      if args.empty?
+        raise Exception.new("No values set for #{key.inspect}")
+      end
+      @io << "  " << key << ":"
+      args.map { |x|
+        @io << " "
+        @io.<<(case x
+        when Char
+          if !x.ascii? || x.ascii_control? || x.ascii_whitespace?
+            raise Exception.new("Invalid value for insertion of a char: #{x.inspect}")
+          end
+          x
+        else
+          x.to_css
+        end)
+      }
+      @io << ";\n"
       return self
     end
 
   end # === module Property
 
+  include Property
+
   module Class_Methods
-
-    def join(*args)
-      args.map { |x|
-        x.to_css
-      }.join(", ")
-    end # === def join
-
-    def write_property(io : IO::Memory, key : String)
-      Writer_Property.new(io, key) { |x|
-        yield x
-      }
-    end
-
   end # === module Class_Methods
 
   extend Class_Methods
