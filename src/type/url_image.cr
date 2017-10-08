@@ -23,4 +23,8 @@ module Style
 
   end # === struct URL_Image
 
+  def url(s : String)
+    URL_Image.new(s)
+  end
+
 end # === module Style

@@ -61,6 +61,12 @@ module Style
     end # === struct {{klass.id}}
   end # === macro create_property
 
+  macro create_value(name, klass)
+    def {{name.id}}(*args)
+      {{klass.id}}.new(*args)
+    end
+  end # === macro create_value
+
   module Property
 
     def write(key : String, *args)
@@ -108,7 +114,7 @@ module Style
 
   def s(name : String)
     @io << "\n" << name << " {"
-    with self yield
+    yield
     @io << " }"
 
     return self
@@ -117,7 +123,7 @@ module Style
   def s_alias(name : String)
     raise Exception.new("Nesting of :rename not allowed.") if @in_nest
     @in_nest = true
-    with self yield(name)
+    yield(name)
     @in_nest = false
     return self
   end

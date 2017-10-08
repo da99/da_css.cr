@@ -1,33 +1,22 @@
 
 require "../src/style"
+require "../src/type/url_image"
+
 module Style
   include Keywords
 end # === module Style
-
-require "../src/property/background"
-require "../src/property/border"
-require "../src/property/box_shadow"
 
 class Page_Css
 
   include Style
   include Style::Keywords
 
-  module Class_Methods
+  BLUE  = Hex_Color.new("#E3E0CF")
+  GREY  = Hex_Color.new("#908E8E")
+  PINK  = Hex_Color.new("#E85669")
+  GREEN = Hex_Color.new("#4ab1a8")
 
-    def hex(s : String)
-      Hex_Color.new(s)
-    end
-
-  end # === module Class_methods
-
-  extend Class_Methods
-
-  BLUE  = hex("#E3E0CF")
-  GREY  = hex("#908E8E")
-  PINK  = hex("#E85669")
-  GREEN = hex("#4ab1a8")
-
+  create_property "background", "color"
   create_property "background-color"
   create_property "padding"
   create_property "width"
@@ -44,7 +33,7 @@ class Page_Css
     # s       (means: selector)
 
     s_alias("div") { |x|
-      s(x) { background_color BLUE }
+      # s(x) { background_color BLUE }
       s("#{x} span") { padding px(10) }
     }
 
@@ -70,10 +59,10 @@ class Spec_Css
   include Style
   include Style::Keywords
 
-  BLUE = "#E3E0CF"
-  GREY = "#908E8E"
-  PINK = "#E85669"
-  GREEN = "#4ab1a8"
+  BLUE  = Hex_Color.new("#E3E0CF")
+  GREY  = Hex_Color.new("#908E8E")
+  PINK  = Hex_Color.new("#E85669")
+  GREEN = Hex_Color.new("#4ab1a8")
 
   macro col
     width percent(25)
@@ -82,16 +71,25 @@ class Spec_Css
 
   create_property "my-prop"
   create_property "my-box", "width", "height"
+  create_property "background", "color"
+  create_property "background-color"
+  create_property "background-image"
+  create_property "background-position"
+  create_property "background-repeat"
+  create_property "border"
+  create_property "border-style"
+  create_property "border-color"
+  create_property "border-width"
+  create_property "border-top-width"
+  create_property "border-radius"
+  create_property "border-bottom", "style"
+  create_property "box-shadow"
+  create_property "position"
   create_property "padding"
   create_property "width"
   create_property "float"
 
-  def z(i)
-    if i != 0
-      raise Exception.new("Only zero allowed.: #{i.inspect}")
-    end
-    return Allowed.new(i)
-  end # === def z
+  create_value "z", Zero
 
   def render
 
@@ -109,7 +107,7 @@ class Spec_Css
         position top
       }
       background_repeat no_repeat
-      # background_position bottom
+      background_position bottom
     }
 
     s("#number") { col }
@@ -125,8 +123,6 @@ class Spec_Css
 
       border_top_width thick
       border_bottom { style dotted }
-      border_bottom_left_radius inherit
-      border_top_right_radius px(5)
       border_radius px(5), percent(5)
       border_radius px(10), percent(5), '/', px(20)
       border_radius px(10), percent(5), '/', px(20), px(30)
