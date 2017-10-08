@@ -108,6 +108,11 @@ module Style
     return self
   end
 
+  def scoped(klass)
+    i = klass.new(@io)
+    with i yield
+  end
+
   def css
     @io.to_s
   end

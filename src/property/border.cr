@@ -55,19 +55,15 @@ module Style
 
   end # === struct Border
 
-  def border_scoped()
-    border = Border.new(@io)
-    with border yield
-  end
 
   macro border(arg)
-    border_scoped() {
+    scoped(Border) {
       width {{arg}}
     }
   end
 
   macro border(arg1, arg2, arg3)
-    border_scoped {
+    scoped(Border) {
       width {{arg1}}
       style {{arg2}}
       color {{arg3}}
@@ -76,7 +72,7 @@ module Style
 
   {% for meth in ["width", "style", "color"] %}
     macro border_{{meth.id}}(*args)
-      border_scoped {
+      scoped(Border) {
         {{meth.id}}(\{{*args}})
       }
     end
@@ -84,21 +80,21 @@ module Style
 
   {% for dir in ["top", "bottom", "left", "right"] %}
     macro border_{{dir.id}}(&blok)
-      border_scoped {
+      scoped(Border) {
         dir {{dir.id}}
         \{{blok.body}}
       }
     end
 
     macro border_{{dir.id}}(arg)
-      border_scoped {
+      scoped(Border) {
         dir {{dir.id}}
         width \{{arg}}
       }
     end # === macro border
 
     macro border_{{dir.id}}(arg1, arg2, arg3)
-      border_scoped {
+      scoped(Border) {
         dir {{dir.id}}
         width \{{arg1.id}}
         style \{{arg2.id}}
@@ -108,7 +104,7 @@ module Style
 
     {% for meth in ["width", "style", "color"] %}
       macro border_{{dir.id}}_{{meth.id}}(*args)
-        border_scoped {
+        scoped(Border) {
           dir {{dir.id}}
           {{meth.id}}( \{{*args}} )
         }

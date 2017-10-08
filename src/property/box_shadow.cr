@@ -35,13 +35,8 @@ module Style
 
   end # === struct Box_Shadow
 
-  def box_shadow_scoped
-    bs = Box_Shadow.new(@io)
-    with bs yield
-  end # === def box_shadow_scoped
-
   macro box_shadow(*args)
-    box_shadow_scoped {
+    scoped(Box_Shadow) {
       box_shadow({{*args}})
     }
   end

@@ -53,13 +53,8 @@ module Style
 
   end # === struct Border_Image
 
-  def border_image_scoped
-    bi = Border_Image.new(@io)
-    with bi yield
-  end # === def border_image_scoped
-
   macro border_image(&blok)
-    border_image_scoped {
+    scoped(Border_Image) {
       {{blok.body}}
     }
   end # === macro border_image

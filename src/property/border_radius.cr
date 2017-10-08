@@ -113,13 +113,8 @@ module Style
 
   end # === struct Border_Radius
 
-  def border_radius_scoped
-    br = Border_Radius.new(@io)
-    with br yield
-  end # === def border_radius_scoped
-
   macro border_radius(*args)
-    border_radius_scoped {
+    scoped(Border_Radius) {
       radius( {{ *args }} )
     }
   end
