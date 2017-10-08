@@ -17,7 +17,11 @@ module Style
   end # === struct Angle_Degree
 
   def deg(num)
-    Angle_Degree.new(num)
+    if num == 0
+      Zero.new
+    else
+      Angle_Degree.new(num)
+    end
   end # === def deg
 
 end # === module Style

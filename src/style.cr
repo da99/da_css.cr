@@ -37,13 +37,36 @@ module Style
     end
   end
 
+  macro create_property(name, *args)
+    {% klass = name.id.gsub(/\-/, "_").split("_").map { |x| x.capitalize }.join("_") %}
+    {% meth = name.downcase.gsub(/\-/, "_") %}
+
+    def {{meth.id}}
+      i = {{klass.id}}.new(@io)
+      with i yield
+    end
+
+    struct {{klass.id}}
+
+      include Style::Property
+
+      def initialize(@io : IO::Memory)
+      end # === def initialize
+
+      {% for prop in args %}
+        def {{prop.id}}(*args)
+          write("{{name.gsub(/_/, "-").id}}-{{prop.gsub(/_/, "-").id}}", *args)
+        end
+      {% end %}
+    end # === struct {{klass.id}}
+  end # === macro create_property
+
   module Property
 
     def write(key : String, *args)
-      if args.empty?
-        raise Exception.new("No values set for #{key.inspect}")
-      end
-      @io << "  " << key << ":"
+      raise Exception.new("No values set for #{key.inspect}") if args.empty?
+
+      @io << "\n  " << key << ":"
       args.map { |x|
         @io << " "
         @io.<<(case x
@@ -56,7 +79,7 @@ module Style
           x.to_css
         end)
       }
-      @io << ";\n"
+      @io << ";"
       return self
     end
 
@@ -109,3 +132,5 @@ module Style
   end
 
 end # === module Style
+
+

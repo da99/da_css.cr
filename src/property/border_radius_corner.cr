@@ -5,12 +5,6 @@ module Style
 
     include Style::Property
 
-    create_keyword "Top"
-    create_keyword "Bottom"
-    create_keyword "Right"
-    create_keyword "Left"
-    create_keyword "Inherit"
-
     alias Y      = Top | Bottom
     alias X      = Left | Right
     alias Length = Px | Em | Int32

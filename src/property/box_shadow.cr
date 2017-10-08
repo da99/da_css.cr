@@ -5,10 +5,6 @@ module Style
 
     include Style::Property
 
-    create_keyword "Inherit"
-    create_keyword "Initial"
-    create_keyword "Unset"
-
     def initialize(@io : IO::Memory)
     end # === def initialize
 

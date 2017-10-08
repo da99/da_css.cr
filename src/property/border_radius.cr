@@ -4,9 +4,7 @@ module Style
   struct Border_Radius
 
     include Style::Property
-
-    create_keyword "Inherit"
-    create_keyword "Slash", '/'
+    include Style::Keywords
 
     macro valid_slash!(var_name)
       if {{var_name}} != '/'

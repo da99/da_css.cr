@@ -5,23 +5,33 @@ style.cr
 Instead of SASS or LESS, I am going to use
 Crystal to generate CSS.
 
-Example:
+Note:
 =======
 
 This is not ready for production.
+
+Example:
+=======
 
 ```Crystal
 class Page_Css
 
   include Style
-  BLUE = "#E3E0CF"
-  GREY = "#908E8E"
-  PINK = "#E85669"
-  GREEN = "#4ab1a8"
+  include Style::Keywords
+
+  BLUE  = Hex_Color.new("#E3E0CF")
+  GREY  = Hex_Color.new("#908E8E")
+  PINK  = Hex_Color.new("#E85669")
+  GREEN = Hex_Color.new("#4ab1a8")
+
+  create_property "background-color"
+  create_property "padding"
+  create_property "width"
+  create_property "float"
 
   macro col
-    width 25.percent
-    float "left"
+    width percent(25)
+    float left
   end
 
   def render
@@ -31,7 +41,7 @@ class Page_Css
 
     s_alias("div") { |x|
       s(x) { background_color BLUE }
-      s("#{x} span") { padding 10.px }
+      s("#{x} span") { padding px(10) }
     }
 
     s("body") {

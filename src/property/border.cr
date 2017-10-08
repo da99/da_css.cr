@@ -9,20 +9,6 @@ module Style
 
     include Style::Property
 
-    create_keyword "Dotted"
-    create_keyword "Dashed"
-    create_keyword "Solid"
-
-    create_keyword "Medium"
-    create_keyword "Thin"
-    create_keyword "Thick"
-
-    create_keyword "Top"
-    create_keyword "Bottom"
-    create_keyword "Left"
-    create_keyword "Right"
-    create_keyword "All"
-
     alias Width = Px | Em | Medium | Thin | Thick
     alias Style = Dashed | Dotted | Solid
     alias Dir = Top | Bottom | Left | Right

@@ -3,38 +3,6 @@ module Style
 
   struct Background
 
-    create_keyword "Top"
-    create_keyword "Bottom"
-    create_keyword "Left"
-    create_keyword "Right"
-    create_keyword "Center"
-    create_keyword "Initial"
-    create_keyword "Inherit"
-    create_keyword "Unset"
-
-    create_keyword "No_Repeat"
-    create_keyword "Repeat_X"
-    create_keyword "Repeat_Y"
-    create_keyword "Repeat"
-    create_keyword "Space"
-    create_keyword "Round"
-
-    create_keyword "Currentcolor"
-    create_keyword "Transparent"
-    create_keyword "Cover"
-    create_keyword "Contain"
-    create_keyword "Auto"
-
-    create_keyword "Scroll"
-    create_keyword "Fixed"
-    create_keyword "Local"
-
-    create_keyword "Border_Box"
-    create_keyword "Padding_Box"
-    create_keyword "Content_Box"
-    create_keyword "Text"
-    create_keyword "None"
-
     @io : IO::Memory
 
     def initialize(@io)
