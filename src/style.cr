@@ -1,4 +1,6 @@
 
+require "./helpers/positive_negative"
+
 require "./type/url_image"
 
 require "./keyword/keyword"
@@ -7,7 +9,9 @@ require "./type/percent"
 require "./type/px"
 require "./type/em"
 require "./type/color"
+require "./type/linear_gradient"
 require "./type/int32"
+require "./type/angle_degree"
 require "./type/float64"
 
 require "./property/background"
@@ -15,6 +19,7 @@ require "./property/border"
 require "./property/width"
 require "./property/float"
 require "./property/padding"
+require "./property/box_shadow"
 
 module Style
 
@@ -61,6 +66,17 @@ module Style
   end # === struct Writer_Property
 
   module Class_Methods
+
+    def join(*args)
+      args.map { |x|
+        case x
+        when Char
+          x
+        else
+          x.to_css
+        end
+      }.join(", ")
+    end # === def join
 
     def write_property(io : IO::Memory, key : String)
      Writer_Property.new(io, key) { |x|

@@ -1,6 +1,7 @@
 
 require "./border_radius"
 require "./border_radius_corner"
+require "./border_image"
 
 module Style
 

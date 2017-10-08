@@ -50,10 +50,8 @@ class Page_Css
       border_radius 10.px, 5.percent, '/', 20.px
       border_radius 10.px, 5.percent, '/', 20.px, 30.px
       border_radius 10.px, 5.percent, '/', 20.px, 30.px, 30.percent, 10.em
-      # border_image {
-      #   outset 30.px, 2, 1.5
-      #   repeat round, stretch
-      # }
+      box_shadow inherit
+
     }
 
     to_css

@@ -2,11 +2,10 @@
 module Style
 
   struct Percent
-    def initialize(num : Int32)
-      if num > 100 || num < 0
-        raise Exception.new("Invalid value for percent: #{num.inspect}")
-      end
 
+    include Positive_Negative
+
+    def initialize(num : Int32)
       @val = num
     end # === def initialize
 
