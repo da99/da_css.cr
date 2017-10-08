@@ -55,21 +55,25 @@ module Style
 
   end # === struct Writer_Property
 
+  module Property
+
+    def write(key : String, *args)
+      @io << " " << key << ": " << Style.join(*args) << ";\n"
+      return self
+    end
+
+  end # === module Property
+
   module Class_Methods
 
     def join(*args)
       args.map { |x|
-        case x
-        when Char
-          x
-        else
-          x.to_css
-        end
+        x.to_css
       }.join(", ")
     end # === def join
 
     def write_property(io : IO::Memory, key : String)
-     Writer_Property.new(io, key) { |x|
+      Writer_Property.new(io, key) { |x|
         yield x
       }
     end

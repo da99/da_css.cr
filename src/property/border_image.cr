@@ -3,6 +3,8 @@ module Style
 
   struct Border_Image
 
+    include Style::Property
+
     create_keyword "Repeat"
     create_keyword "Stretch"
     create_keyword "Round"
@@ -19,9 +21,7 @@ module Style
     end # === def url
 
     def source(addr : None | URL_Image | Linear_Gradient | Inherit | Initial | Unset)
-      Style.write_property(@io, key("source")) { |x|
-        x.<<(addr)
-      }
+      write(key("source"), addr)
     end
 
     macro not_ready(name)

@@ -3,7 +3,10 @@ module Style
 
   struct Border_Radius
 
+    include Style::Property
+
     create_keyword "Inherit"
+    create_keyword "Slash", '/'
 
     macro valid_slash!(var_name)
       if {{var_name}} != '/'
@@ -21,39 +24,31 @@ module Style
     end # === def radius
 
     def radius(arg1 : Length, arg2 : Length)
-      Style.write_property(@io, @key) { |x|
-        x.<<(arg1, arg2)
-      }
+      write(@key, arg1, arg2)
       return self
     end # === def radius
 
     def radius(arg1 : Length, arg2 : Length, arg3 : Length)
-
-      Style.write_property(@io, @key) { |x|
-        x.<<(arg1, arg2, arg3)
-      }
+      write(@key, arg1, arg2, arg3)
       return self
     end # === def radius
 
     def radius(arg1 : Length, arg2 : Length, arg3 : Length, arg4 : Length)
-      Style.write_property(@io, @key) { |x|
-        x.<<(arg1, arg2, arg3, arg4)
-      }
+      write(@key, arg1, arg2, arg3, arg4)
       return self
     end # === def radius
 
     def radius(arg1 : Length,
                arg2 : Length,
-               slash : Char,
+               raw_slash : Char,
                arg3 : Length)
-      valid_slash!(slash)
-      Style.write_property(@io, @key) { |x|
-        x.<<(
-          arg1, arg2,
-          slash,
-          arg3
-        )
-      }
+
+      valid_slash!(raw_slash)
+
+      write(@key,
+            arg1, arg2,
+            slash,
+            arg3)
 
       return self
     end # === def radius

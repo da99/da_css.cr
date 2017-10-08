@@ -1,7 +1,5 @@
 
-macro create_keyword(name)
-
-  {% str_value = name.downcase.gsub(/_/, "-").id %}
+macro create_keyword(name, val)
 
   struct {{name.id}}
 
@@ -9,13 +7,13 @@ macro create_keyword(name)
     end # === def initialize
 
     def initialize(raw : String)
-      if raw != "{{str_value}}"
+      if raw != {{val}}
         raise Exception.new("Invalid value for {{name.id}}: #{raw.inspect}")
       end
     end # === def initialize
 
     def to_css
-      "{{str_value}}"
+      {{val}}
     end # === def value
 
   end # === struct {{name.id}}
@@ -23,6 +21,11 @@ macro create_keyword(name)
   def {{name.downcase.id}}
     {{name.id}}.new
   end
+end # === macro create_keyword
+
+macro create_keyword(name)
+
+  create_keyword({{name}}, {{ name.downcase.gsub(/_/, "-") }})
 
 end # === macro create_keyword
 

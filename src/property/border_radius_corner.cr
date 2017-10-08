@@ -3,6 +3,8 @@ module Style
 
   struct Border_Radius_Corner
 
+    include Style::Property
+
     create_keyword "Top"
     create_keyword "Bottom"
     create_keyword "Right"
@@ -17,14 +19,11 @@ module Style
     end # === def initialize
 
     def radius(y : Y, x : X, raw : Length | Inherit)
-      Style.write_property(@io, key(y, x)) { |prop|
-        prop << raw
-      }
+      write(
+        "border-#{y.to_css}-#{x.to_css}-radius",
+        raw
+      )
     end # === def radius
-
-    def key(y : Y, x : X)
-      "border-#{y.to_css}-#{x.to_css}-radius"
-    end # === def write_property
 
   end # === struct Border_Radius_Corner
 

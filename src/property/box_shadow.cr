@@ -3,6 +3,8 @@ module Style
 
   struct Box_Shadow
 
+    include Style::Property
+
     create_keyword "Inherit"
     create_keyword "Initial"
     create_keyword "Unset"
@@ -11,9 +13,7 @@ module Style
     end # === def initialize
 
     def box_shadow(keyword : Inherit | Initial | Unset)
-      Style.write_property(@io, "box-shadow") { |x|
-        x.<<(keyword)
-      }
+      write("box-shadow", keyword)
     end # === def box_shadow
 
     def box_shadow(*args)
@@ -30,7 +30,7 @@ module Style
         end
       }
 
-      @io << " box-shadow: " << Style.join(*args) << ";"
+      write("box-shadow", *args)
     end
 
   end # === struct Box_Shadow
