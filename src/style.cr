@@ -3,15 +3,17 @@ require "./keyword/keyword"
 
 require "./type/positive_negative"
 require "./type/url_image"
+
+require "./type/color"
+require "./type/linear_gradient"
+
+require "./type/allowed"
+
+require "./type/length"
 require "./type/percent"
 require "./type/px"
 require "./type/em"
-require "./type/color"
-require "./type/linear_gradient"
 require "./type/angle_degree"
-require "./type/float64"
-require "./type/length"
-require "./type/allowed"
 require "./type/zero"
 
 module Style
@@ -66,6 +68,16 @@ module Style
       {{klass.id}}.new(*args)
     end
   end # === macro create_value
+
+  macro create_value_or_zero(name, klass)
+    def {{name.id}}(val)
+      if val == 0
+        Zero.new
+      else
+        {{klass.id}}.new(val)
+      end
+    end
+  end # === macro create_value_or_zero
 
   module Property
 

@@ -22,12 +22,4 @@ module Style
 
   end # === class PX
 
-  def em(num)
-    if num == 0
-      Zero.new
-    else
-      Em.new(num)
-    end
-  end # === def em
-
 end # === module Style
