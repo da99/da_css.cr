@@ -56,7 +56,7 @@ module Style
   end # === struct Border
 
   def border_scoped()
-    border = Border.new(@content)
+    border = Border.new(@io)
     with border yield
   end
 

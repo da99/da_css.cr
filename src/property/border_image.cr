@@ -54,7 +54,7 @@ module Style
   end # === struct Border_Image
 
   def border_image_scoped
-    bi = Border_Image.new(@content)
+    bi = Border_Image.new(@io)
     with bi yield
   end # === def border_image_scoped
 

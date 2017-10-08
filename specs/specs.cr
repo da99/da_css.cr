@@ -2,6 +2,13 @@
 
 require "../src/style"
 
+require "../src/property/background"
+require "../src/property/border"
+require "../src/property/width"
+require "../src/property/float"
+require "../src/property/padding"
+require "../src/property/box_shadow"
+
 class Page_Css
 
   include Style
@@ -25,8 +32,11 @@ class Page_Css
     s("body") {
       background { color GREY }
       background_image url("./image.png")
-      # background { position top }
       background_position top
+
+      background {
+        position top
+      }
       background_repeat no_repeat
       # background_position bottom
     }

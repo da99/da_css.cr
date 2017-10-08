@@ -166,7 +166,7 @@ module Style
   end # === struct Type_Background
 
   def background
-    bg = Background.new(@content)
+    bg = Background.new(@io)
     with bg yield
   end # === def background
 

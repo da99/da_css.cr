@@ -1,10 +1,8 @@
 
-require "./helpers/positive_negative"
-
-require "./type/url_image"
-
 require "./keyword/keyword"
 
+require "./type/positive_negative"
+require "./type/url_image"
 require "./type/percent"
 require "./type/px"
 require "./type/em"
@@ -13,17 +11,9 @@ require "./type/linear_gradient"
 require "./type/int32"
 require "./type/angle_degree"
 require "./type/float64"
-
-require "./property/background"
-require "./property/border"
-require "./property/width"
-require "./property/float"
-require "./property/padding"
-require "./property/box_shadow"
+require "./type/length"
 
 module Style
-
-  alias Length = Em | Int32 | Px | Percent
 
   module Class_Methods
     def render
@@ -91,11 +81,11 @@ module Style
   @in_nest = false
 
   def initialize
-    @content = IO::Memory.new
+    @io = IO::Memory.new
   end # === def initialize
 
   def to_css
-    @content.to_s
+    @io.to_s
   end
 
   def render
@@ -103,9 +93,9 @@ module Style
   end # === def render
 
   def s(name : String)
-    @content << "\n" << name << " {"
+    @io << "\n" << name << " {"
     with self yield
-    @content << " }"
+    @io << " }"
 
     return self
   end
@@ -119,7 +109,7 @@ module Style
   end
 
   def css
-    @content.to_s
+    @io.to_s
   end
 
 end # === module Style

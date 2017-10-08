@@ -114,7 +114,7 @@ module Style
   end # === struct Border_Radius
 
   def border_radius_scoped
-    br = Border_Radius.new(@content)
+    br = Border_Radius.new(@io)
     with br yield
   end # === def border_radius_scoped
 

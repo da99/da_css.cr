@@ -36,7 +36,7 @@ module Style
   end # === struct Box_Shadow
 
   def box_shadow_scoped
-    bs = Box_Shadow.new(@content)
+    bs = Box_Shadow.new(@io)
     with bs yield
   end # === def box_shadow_scoped
 
