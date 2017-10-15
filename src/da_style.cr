@@ -5,7 +5,7 @@ require "./type/*"
 module DA_STYLE
 
   module BASE
-    include DA_STYLE::Keywords
+    include DA_STYLE::KEYWORD
     include DA_STYLE::PX
     include DA_STYLE::EM
     include DA_STYLE::PERCENT

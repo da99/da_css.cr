@@ -1,31 +1,26 @@
 
-macro create_keyword(name, val)
-  {% klass = name.gsub(/[^a-zA-Z0-9\_]/, "_").upcase %}
-  struct {{klass.id}}
-
-    def initialize
-    end # === def initialize
-
-    def write_to(io)
-      io.raw! {{val}}
-    end # === def value
-
-  end # === struct {{klass.id}}
-
-  def {{name.downcase.id}}
-    {{klass.id}}.new
-  end
-end # === macro create_keyword
-
-macro create_keyword(name)
-
-  create_keyword({{name}}, {{ name.downcase.gsub(/_/, "-") }})
-
-end # === macro create_keyword
 
 module DA_STYLE
+  module KEYWORD
 
-  module Keywords
+    macro create_keyword(name)
+      create_keyword({{name}}, {{ name.downcase.gsub(/_/, "-") }})
+    end # === macro create_keyword
+
+    macro create_keyword(name, val)
+      def {{name.downcase.id}}
+        DA_STYLE::KEYWORD::VALUE.new({{name}}, {{val}})
+      end
+    end # === macro create_keyword
+
+    struct VALUE
+      def initialize(@name : String, @value : String)
+      end # === def initialize
+
+      def write_to(io)
+        io.raw! @value
+      end # === def value
+    end # === struct VALUE
 
     create_keyword "All"
     create_keyword "Auto"
@@ -63,8 +58,7 @@ module DA_STYLE
     create_keyword "Transparent"
     create_keyword "Unset"
 
-  end # === module Keywords
-
+  end # === module KEYWORD
 end # === module DA_STYLE
 
 
