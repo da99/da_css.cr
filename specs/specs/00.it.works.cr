@@ -35,10 +35,6 @@ class It_Works
   create_property "width"
   create_property "float"
 
-  def z(i)
-    Zero.new(i)
-  end
-
   def render
 
     s_alias("div") { |x|
@@ -63,10 +59,10 @@ class It_Works
     s("#quotation") { col; background_color GREEN }
 
     s("div") {
-      border px(10), dotted, Hex_Color.new("white")
+      border px(10), dotted, hex("white")
       border em(10)
       border_style dotted
-      border_color Hex_Color.new("black")
+      border_color hex("black")
       border_width thick
 
       border_top_width thick
@@ -76,7 +72,7 @@ class It_Works
       border_radius px(10), percent(5), '/', px(20), px(30)
       border_radius px(10), percent(5), '/', px(20), px(30), percent(30), em(10)
       box_shadow inherit
-      my_prop px(5), px(0), '/', em(-1), z(0)
+      my_prop px(5), px(0), '/', em(-1), 0
       my_box {
         width px(10)
         height px(20)

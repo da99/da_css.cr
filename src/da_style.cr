@@ -11,6 +11,7 @@ module DA_STYLE
     include DA_STYLE::PERCENT
     include DA_STYLE::URL
     include DA_STYLE::HEX
+    include DA_STYLE::DEG
   end # === module BASE
 
   include BASE

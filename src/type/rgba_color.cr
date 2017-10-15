@@ -1,28 +1,32 @@
 
 module DA_STYLE
 
-  struct RGBA_Color
+  module RGBA
 
-    @first  : Int32
-    @second : Int32
-    @third  : Int32
-    @alpha  : Alpha
+    def rgba(*args)
+      DA_STYLE::RGBA::VALUE.new(*args)
+    end # === def rgb
 
-    def initialize(@first, @second, @third, @alpha : Alpha)
-    end # === def initialize
+    struct VALUE
 
-    def initialize(@first, @second, @third, alpha)
-      @alpha  = Alpha.new(alpha)
-    end # === def initialize
+      @first  : Int32
+      @second : Int32
+      @third  : Int32
+      @alpha  : DA_STYLE::ALPHA::VALUE
 
-    def write_to(io)
-      io.raw! "rgba(", @first, ",", @second, ",", @third, @alpha.to_css, ")"
-    end # === def value
+      def initialize(@first, @second, @third, @alpha)
+      end # === def initialize
 
-  end # === struct RGBA_Color
+      def initialize(@first, @second, @third, alpha)
+        @alpha  = DA_STYLE::ALPHA::VALUE.new(alpha)
+      end # === def initialize
 
-  def rgba(*args)
-    RGBA_Color.new(*args)
-  end # === def rgb
+      def write_to(io)
+        io.raw! "rgba(", @first, ",", @second, ",", @third, @alpha.to_css, ")"
+      end # === def value
+
+    end # === struct RGBA_Color
+
+  end # === module RGBA
 
 end # === module DA_STYLE

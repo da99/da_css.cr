@@ -1,4 +1,6 @@
 
+module DA_STYLE
+
   module Positive_Negative
 
     def positive!
@@ -16,3 +18,5 @@
     end
 
   end # === module Positive_Negative
+
+end # === module DA_STYLE

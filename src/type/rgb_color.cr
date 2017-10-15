@@ -1,23 +1,27 @@
 
 module DA_STYLE
 
-  struct RGB_Color
+  module RGB
 
-    @first  : Int32
-    @second : Int32
-    @third  : Int32
+    def rgb(*args)
+      DA_STYLE::RGB::VALUE.new(*args)
+    end # === def rgb
 
-    def initialize(@first, @second, @third)
-    end # === def initialize
+    struct VALUE
 
-    def write_to(io)
-      io.raw! "rgb(", @first, ",", @second, ",", @third, ")"
-    end
+      @first  : Int32
+      @second : Int32
+      @third  : Int32
 
-  end # === struct RGB_Color
+      def initialize(@first, @second, @third)
+      end # === def initialize
 
-  def rgb(*args)
-    RGB_Color.new(*args)
-  end # === def rgb
+      def write_to(io)
+        io.raw! "rgb(", @first, ",", @second, ",", @third, ")"
+      end
+
+    end # === struct RGB_Color
+
+  end # === module RGB
 
 end # === module DA_STYLE

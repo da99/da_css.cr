@@ -13,7 +13,8 @@ module DA_STYLE
       end # === def initialize
 
       def write_to(io)
-        io.raw! @i, "px"
+        io.raw! @i
+        io.raw! "px" unless @i == 0
       end # === def write_to
 
     end # === struct PX

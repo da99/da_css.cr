@@ -7,11 +7,11 @@ module DA_STYLE
       if num == 0
         Zero.new
       else
-        Angle_Degree.new(num)
+        DA_STYLE::DEG::VALUE.new(num)
       end
     end # === def deg
 
-    struct Angle_Degree
+    struct VALUE
 
       def initialize(raw : Int32)
         if raw < 0 || raw > 360
