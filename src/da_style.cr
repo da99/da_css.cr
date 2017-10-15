@@ -112,7 +112,14 @@ module DA_STYLE
     with self yield(self)
   end # === def render
 
-  def s(name : String)
+  def selector!(s)
+    val = s.gsub(/[^a-zA-Z0-9\.\_\-\ \@\[\]]+/, "")
+    raise Exception.new("Invalid value for selector: #{s.inspect}") if val.empty?
+    val
+  end
+
+  def s(raw : String)
+    name = selector!(raw)
     io.raw! "\n", name, " {\n"
     yield
     io.raw! "\n}"
