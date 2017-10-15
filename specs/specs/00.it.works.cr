@@ -6,6 +6,7 @@ class It_Works
   include DA_STYLE::PX
   include DA_STYLE::EM
   include DA_STYLE::PERCENT
+  include DA_STYLE::URL
 
   BLUE  = Hex_Color.new("#E3E0CF")
   GREY  = Hex_Color.new("#908E8E")
