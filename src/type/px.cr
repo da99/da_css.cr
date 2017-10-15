@@ -1,6 +1,14 @@
 
 module DA_STYLE
 
+  module PX
+
+    def px(v)
+      Px.new(v)
+    end # === def px
+
+  end # === module PX
+
   struct Px
 
     include Positive_Negative

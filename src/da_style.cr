@@ -1,32 +1,15 @@
 
-require "./keyword/keyword"
-
-require "./type/positive_negative"
-require "./type/url_image"
-
-require "./type/color"
-require "./type/linear_gradient"
-
-require "./type/allowed"
-
-require "./type/length"
-require "./type/percent"
-require "./type/px"
-require "./type/em"
-require "./type/angle_degree"
-require "./type/zero"
+require "./keyword/*"
+require "./type/*"
 
 module DA_STYLE
 
-  module Class_Methods
-    def render
-      style = self.new
-      style.render
-    end
-  end
-
   macro included
-    extend DA_STYLE::Class_Methods
+    def self.to_css
+      s = new
+      with s yield
+      s.to_css
+    end
   end
 
   macro p(name, *args)
@@ -68,16 +51,6 @@ module DA_STYLE
       {{klass.id}}.new(*args)
     end
   end # === macro create_value
-
-  macro create_value_or_zero(name, klass)
-    def {{name.id}}(val)
-      if val == 0
-        Zero.new
-      else
-        {{klass.id}}.new(val)
-      end
-    end
-  end # === macro create_value_or_zero
 
   module Property
 
@@ -127,7 +100,7 @@ module DA_STYLE
   def s(name : String)
     @io << "\n" << name << " {"
     yield
-    @io << " }"
+    @io << "\n}"
 
     return self
   end

@@ -1,5 +1,12 @@
 
+require "./positive_negative"
 module DA_STYLE
+
+  module EM
+    def em(i)
+      Em.new(i)
+    end # === def em
+  end # === module EM
 
   struct Em
 

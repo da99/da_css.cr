@@ -1,6 +1,14 @@
 
 module DA_STYLE
 
+  module PERCENT
+
+    def percent(i)
+      Percent.new(i)
+    end # === def percent
+
+  end # === module PERCENT
+
   struct Percent
 
     include Positive_Negative
@@ -17,9 +25,5 @@ module DA_STYLE
       "#{@val}%"
     end # === def value
   end # === class PX
-
-  def percent(num)
-    Percent.new(num)
-  end
 
 end # === module DA_STYLE
