@@ -1,25 +1,19 @@
 
 macro create_keyword(name, val)
-
-  struct {{name.id}}
+  {% klass = name.gsub(/[^a-zA-Z0-9\_]/, "_").upcase %}
+  struct {{klass.id}}
 
     def initialize
-    end # === def initialize
-
-    def initialize(raw : String)
-      if raw != {{val}}
-        raise Exception.new("Invalid value for {{name.id}}: #{raw.inspect}")
-      end
     end # === def initialize
 
     def write_to(io)
       io.raw! {{val}}
     end # === def value
 
-  end # === struct {{name.id}}
+  end # === struct {{klass.id}}
 
   def {{name.downcase.id}}
-    {{name.id}}.new
+    {{klass.id}}.new
   end
 end # === macro create_keyword
 
