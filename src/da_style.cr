@@ -4,11 +4,16 @@ require "./type/*"
 
 module DA_STYLE
 
-  include DA_STYLE::Keywords
-  include DA_STYLE::PX
-  include DA_STYLE::EM
-  include DA_STYLE::PERCENT
-  include DA_STYLE::URL
+  module BASE
+    include DA_STYLE::Keywords
+    include DA_STYLE::PX
+    include DA_STYLE::EM
+    include DA_STYLE::PERCENT
+    include DA_STYLE::URL
+    include DA_STYLE::HEX
+  end # === module BASE
+
+  include BASE
 
   macro included
     def self.to_css
@@ -39,6 +44,8 @@ module DA_STYLE
 
     struct {{klass.id}}
 
+      include DA_STYLE::BASE
+
       getter :io
       def initialize(@io : DA_STYLE::INPUT_OUTPUT)
       end # === def initialize
@@ -65,7 +72,7 @@ module DA_STYLE
       vals.each { |v|
         raw! " ", v
       }
-      raw! ";"
+      raw! ";\n"
       self
     end # === def write_property
 
