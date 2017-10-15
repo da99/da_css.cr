@@ -27,10 +27,9 @@ module DA_STYLE
     {% meth = name.downcase.gsub(/\-/, "_") %}
 
     def {{meth.id}}
-      i = {{klass.id}}.new(@io)
+      i = {{klass.id}}.new(io)
       with i yield
     end
-
 
     struct {{klass.id}}
 
@@ -43,19 +42,10 @@ module DA_STYLE
           io.write_property("{{name.gsub(/_/, "-").id}}-{{prop.gsub(/_/, "-").id}}", *args)
         end
       {% end %}
+
     end # === struct {{klass.id}}
+
   end # === macro create_property
-
-  class VALUE
-
-    def initialize(@value : String)
-    end # === def initialize
-
-    def write_to(io)
-      io.raw! @value
-    end
-
-  end # === class VALUE
 
   class INPUT_OUTPUT
 
