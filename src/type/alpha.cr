@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Alpha
 
@@ -18,4 +18,4 @@ module Style
 
   end # === struct Alpha
 
-end # === module Style
+end # === module DA_STYLE

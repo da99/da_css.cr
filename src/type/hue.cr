@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Hue
 
@@ -23,4 +23,4 @@ module Style
 
   end # === struct Hue
 
-end # === module Style
+end # === module DA_STYLE

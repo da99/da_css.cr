@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct URL_Image
 
@@ -27,4 +27,4 @@ module Style
     URL_Image.new(s)
   end
 
-end # === module Style
+end # === module DA_STYLE

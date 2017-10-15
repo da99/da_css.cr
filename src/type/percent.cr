@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Percent
 
@@ -22,4 +22,4 @@ module Style
     Percent.new(num)
   end
 
-end # === module Style
+end # === module DA_STYLE

@@ -8,8 +8,8 @@ require "./rgb_color"
 require "./rgba_color"
 require "./hsla_color"
 
-module Style
+module DA_STYLE
 
   alias Color = Hex_Color | RGB_Color | RGBA_Color | HSLA_Color
 
-end # === module Style
+end # === module DA_STYLE

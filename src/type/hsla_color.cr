@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct HSLA_Color
 
@@ -22,4 +22,4 @@ module Style
     HSLA_Color.new(*args)
   end # === def hsla
 
-end # === module Style
+end # === module DA_STYLE

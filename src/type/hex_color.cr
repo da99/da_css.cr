@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Hex_Color
 
@@ -38,4 +38,4 @@ module Style
 
   end # === class Color
 
-end # === module Style
+end # === module DA_STYLE

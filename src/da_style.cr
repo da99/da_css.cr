@@ -16,7 +16,7 @@ require "./type/em"
 require "./type/angle_degree"
 require "./type/zero"
 
-module Style
+module DA_STYLE
 
   module Class_Methods
     def render
@@ -26,7 +26,7 @@ module Style
   end
 
   macro included
-    extend Style::Class_Methods
+    extend DA_STYLE::Class_Methods
   end
 
   macro p(name, *args)
@@ -50,7 +50,7 @@ module Style
 
     struct {{klass.id}}
 
-      include Style::Property
+      include DA_STYLE::Property
 
       def initialize(@io : IO::Memory)
       end # === def initialize
@@ -149,6 +149,6 @@ module Style
     @io.to_s
   end
 
-end # === module Style
+end # === module DA_STYLE
 
 

@@ -29,7 +29,7 @@ macro create_keyword(name)
 
 end # === macro create_keyword
 
-module Style
+module DA_STYLE
 
   module Keywords
 
@@ -71,6 +71,6 @@ module Style
 
   end # === module Keywords
 
-end # === module Style
+end # === module DA_STYLE
 
 

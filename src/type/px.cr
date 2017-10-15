@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Px
 
@@ -19,4 +19,4 @@ module Style
 
   end # === class PX
 
-end # === module Style
+end # === module DA_STYLE

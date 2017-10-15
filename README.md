@@ -1,5 +1,5 @@
 
-style.cr
+da\_style.cr
 ========
 
 Instead of SASS or LESS, I am going to use
@@ -16,8 +16,8 @@ Example:
 ```Crystal
 class Page_Css
 
-  include Style
-  include Style::Keywords
+  include DA_STYLE
+  include DA_STYLE::Keywords
 
   BLUE  = Hex_Color.new("#E3E0CF")
   GREY  = Hex_Color.new("#908E8E")

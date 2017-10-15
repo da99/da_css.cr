@@ -1,16 +1,16 @@
 
-module Style
+module DA_STYLE
 
   struct Linear_Gradient
 
     KEY = "linear-gradient"
 
     def initialize(angle : Angle_Degree, c1 : Color, c2 : Color)
-      @value = "#{key}(#{Style.join(angle, c1, c2)})"
+      @value = "#{key}(#{DA_STYLE.join(angle, c1, c2)})"
     end # === def initialize
 
     def initialize(angle : Angle_Degree, c1 : Color, c2 : Color)
-      @value = "#{key}(#{Style.join(angle, c1, c2)})"
+      @value = "#{key}(#{DA_STYLE.join(angle, c1, c2)})"
     end # === def initialize
 
     def initialize(*args)
@@ -28,7 +28,7 @@ module Style
       end
       }
 
-      @value = "#{key}(#{Style.join(*args)})"
+      @value = "#{key}(#{DA_STYLE.join(*args)})"
     end # === def initialize
 
     def to_css
@@ -37,4 +37,4 @@ module Style
 
   end # === struct Linear_Gradient
 
-end # === module Style
+end # === module DA_STYLE

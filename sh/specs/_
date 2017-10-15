@@ -14,7 +14,7 @@ fi
 case "$ACTION" in
 
   watch)
-    local +x CMD="style.cr specs run $@"
+    local +x CMD="da_style.cr specs run $@"
     ${=CMD} || :
     process watch "-r src -r specs -r bin -r sh" "$CMD"
     ;;

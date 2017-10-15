@@ -1,16 +1,16 @@
 
-require "../src/style"
+require "../src/da_style"
 require "../src/type/url_image"
 
-module Style
+module DA_STYLE
   include Keywords
-end # === module Style
+end # === module DA_STYLE
 
 
 class Spec_Css
 
-  include Style
-  include Style::Keywords
+  include DA_STYLE
+  include DA_STYLE::Keywords
 
   BLUE  = Hex_Color.new("#E3E0CF")
   GREY  = Hex_Color.new("#908E8E")

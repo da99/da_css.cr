@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct RGB_Color
 
@@ -26,4 +26,4 @@ module Style
     RGB_Color.new(*args)
   end # === def rgb
 
-end # === module Style
+end # === module DA_STYLE

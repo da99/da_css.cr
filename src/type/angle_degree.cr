@@ -1,5 +1,5 @@
 
-module Style
+module DA_STYLE
 
   struct Angle_Degree
 
@@ -24,4 +24,4 @@ module Style
     end
   end # === def deg
 
-end # === module Style
+end # === module DA_STYLE
