@@ -17,12 +17,12 @@ Example:
 class Page_Css
 
   include DA_STYLE
-  include DA_STYLE::Keywords
+  extend DA_STYLE::HEX
 
-  BLUE  = Hex_Color.new("#E3E0CF")
-  GREY  = Hex_Color.new("#908E8E")
-  PINK  = Hex_Color.new("#E85669")
-  GREEN = Hex_Color.new("#4ab1a8")
+  BLUE  = hex("#E3E0CF")
+  GREY  = hex("#908E8E")
+  PINK  = hex("#E85669")
+  GREEN = hex("#4ab1a8")
 
   create_property "background-color"
   create_property "padding"
