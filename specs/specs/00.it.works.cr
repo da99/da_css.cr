@@ -17,9 +17,11 @@ class It_Works
     float left
   end
 
+  create_family "my-box", "width", "height"
+  create_family "border-bottom", "style"
+  create_family "background", "color"
+
   create_property "my-prop"
-  create_property "my-box", "width", "height"
-  create_property "background", "color"
   create_property "background-color"
   create_property "background-image"
   create_property "background-position"
@@ -30,14 +32,15 @@ class It_Works
   create_property "border-width"
   create_property "border-top-width"
   create_property "border-radius"
-  create_property "border-bottom", "style"
   create_property "box-shadow"
   create_property "position"
   create_property "padding"
   create_property "width"
   create_property "float"
 
-  create_value "z", Zero
+  def z(i)
+    Zero.new(i)
+  end
 
   def render
 
