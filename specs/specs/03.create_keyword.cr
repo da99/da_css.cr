@@ -1,6 +1,5 @@
 
 class Create_Keyword
-
   include DA_STYLE
   create_keyword "to_the_top", "to the top"
   create_property "direction"
