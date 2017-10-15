@@ -16,8 +16,8 @@ module DA_STYLE
       @val
     end # === def raw
 
-    def to_css
-      @val.to_s
+    def write_to(io)
+      io.raw! @val
     end
 
   end # === struct RGB_Level

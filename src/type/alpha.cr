@@ -13,7 +13,11 @@ module DA_STYLE
     end # === def initialize
 
     def to_css
-      @value.to_s
+      @value
+    end
+
+    def write_to(io)
+      io.raw! @value
     end # === def value
 
   end # === struct Alpha

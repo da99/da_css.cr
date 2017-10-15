@@ -8,8 +8,8 @@ module DA_STYLE
       @val = x.to_s
     end # === def initialize
 
-    def to_css
-      @val
+    def write_to(io)
+      io.raw! @val
     end
 
   end # === struct Allowed

@@ -3,23 +3,20 @@ module DA_STYLE
 
   struct RGBA_Color
 
-    @first  : RGB_Level
-    @second : RGB_Level
-    @third  : RGB_Level
+    @first  : Int32
+    @second : Int32
+    @third  : Int32
     @alpha  : Alpha
 
-    def initialize(@first : RGB_Level, @second : RGB_Level, @third : RGB_Level, @alpha : Alpha)
+    def initialize(@first, @second, @third, @alpha : Alpha)
     end # === def initialize
 
-    def initialize(first, second, third, alpha)
-      @first  = RGB_Level.new(first)
-      @second = RGB_Level.new(second)
-      @third  = RGB_Level.new(third)
+    def initialize(@first, @second, @third, alpha)
       @alpha  = Alpha.new(alpha)
     end # === def initialize
 
-    def to_css
-      "rgba(#{@first.to_css}, #{@second.to_css}, #{@third.to_css}, #{@alpha.to_css})"
+    def write_to(io)
+      io.raw! "rgba(", @first, ",", @second, ",", @third, @alpha.to_css, ")"
     end # === def value
 
   end # === struct RGBA_Color

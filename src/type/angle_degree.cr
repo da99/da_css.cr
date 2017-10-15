@@ -10,8 +10,8 @@ module DA_STYLE
       @val = raw
     end # === def initialize
 
-    def to_css
-      "#{@val}deg"
+    def write_to(io)
+      io.raw! @val, "deg"
     end # === def to_css
 
   end # === struct Angle_Degree

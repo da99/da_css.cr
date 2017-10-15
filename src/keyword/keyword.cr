@@ -12,8 +12,8 @@ macro create_keyword(name, val)
       end
     end # === def initialize
 
-    def to_css
-      {{val}}
+    def write_to(io)
+      io.raw! {{val}}
     end # === def value
 
   end # === struct {{name.id}}

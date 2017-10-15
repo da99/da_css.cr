@@ -21,8 +21,8 @@ module DA_STYLE
       @val
     end
 
-    def to_css
-      "#{@val}%"
+    def write_to(io)
+      io.raw! @val, "%"
     end # === def value
   end # === class PX
 

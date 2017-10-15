@@ -12,8 +12,8 @@ module DA_STYLE
       end
     end # === def initialize
 
-    def to_css
-      "0"
+    def write_to(io)
+      io.raw! 0
     end # === def to_css
 
   end # === struct Zero

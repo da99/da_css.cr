@@ -40,8 +40,8 @@ module DA_STYLE
       @val = val
     end # === def initialize
 
-    def to_css
-      @val
+    def write_to(io)
+      io.raw! @val
     end
 
   end # === class Color

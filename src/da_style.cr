@@ -40,31 +40,9 @@ module DA_STYLE
 
       {% for prop in args %}
         def {{prop.id}}(*args)
-          write("{{name.gsub(/_/, "-").id}}-{{prop.gsub(/_/, "-").id}}", *args)
+          io.write_property("{{name.gsub(/_/, "-").id}}-{{prop.gsub(/_/, "-").id}}", *args)
         end
       {% end %}
-
-      def write(key : String, *args)
-        raise Exception.new("No values set for #{key.inspect}") if args.empty?
-
-        io.raw!("\n  ", key, ":")
-        args.map { |x|
-          io.raw! " "
-          @io.raw!(
-            case x
-          when Char
-            if !x.ascii? || x.ascii_control? || x.ascii_whitespace?
-              raise Exception.new("Invalid value for insertion of a char: #{x.inspect}")
-            end
-            x
-          else
-            x.to_css
-          end
-          )
-        }
-        io.raw! ";"
-        return self
-      end
     end # === struct {{klass.id}}
   end # === macro create_property
 
@@ -73,11 +51,12 @@ module DA_STYLE
     def initialize(@value : String)
     end # === def initialize
 
-    def to_css
-      @value
-    end # === def to_css
+    def write_to(io)
+      io.raw! @value
+    end
 
   end # === class VALUE
+
   class INPUT_OUTPUT
 
     def initialize
@@ -86,26 +65,30 @@ module DA_STYLE
 
     def write_property(s : String, *vals)
       return self if vals.empty?
-      raw! s, ": "
-      raw! vals.map { |v|
-        case v
-        when Char
-          v
-        else
-          v.to_css
-        end
-      }.join(" ")
+      raw! s, ":"
+      vals.each { |v|
+        raw! " ", v
+      }
       raw! ";"
       self
     end # === def write_property
 
     def raw!(*args)
-      args.each { |s|
-        case s
+      args.each { |x|
+        case x
         when String
-          @io__ << s
+          @io__ << x
+        when Int32
+          @io__ << x
+        when Float64
+          @io__ << x
+        when Char
+          if !x.ascii? || x.ascii_control? || x.ascii_whitespace?
+            raise Exception.new("Invalid value for insertion of a char: #{x.inspect}")
+          end
+          @io__ << x
         else
-          raise Exception.new("Invalid value for io: #{s.inspect}")
+          x.write_to(self)
         end
       }
       self

@@ -17,8 +17,8 @@ module DA_STYLE
       @value
     end # === def raw
 
-    def to_css
-      "url('#{@value}')"
+    def write_to(io)
+      io.raw! "url('", @value, "')"
     end # === def value
 
   end # === struct URL_Image
