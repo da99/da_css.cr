@@ -2,16 +2,12 @@
 class It_Works
 
   include DA_STYLE
-  include DA_STYLE::Keywords
-  include DA_STYLE::PX
-  include DA_STYLE::EM
-  include DA_STYLE::PERCENT
-  include DA_STYLE::URL
+  extend DA_STYLE::HEX
 
-  BLUE  = Hex_Color.new("#E3E0CF")
-  GREY  = Hex_Color.new("#908E8E")
-  PINK  = Hex_Color.new("#E85669")
-  GREEN = Hex_Color.new("#4ab1a8")
+  BLUE  = hex("#E3E0CF")
+  GREY  = hex("#908E8E")
+  PINK  = hex("#E85669")
+  GREEN = hex("#4ab1a8")
 
   macro col
     width percent(25)

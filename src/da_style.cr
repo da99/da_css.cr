@@ -4,6 +4,12 @@ require "./type/*"
 
 module DA_STYLE
 
+  include DA_STYLE::Keywords
+  include DA_STYLE::PX
+  include DA_STYLE::EM
+  include DA_STYLE::PERCENT
+  include DA_STYLE::URL
+
   macro included
     def self.to_css
       s = new
