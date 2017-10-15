@@ -1,6 +1,14 @@
 
 module DA_STYLE
 
+  module HEX
+
+    def hex(s)
+      Hex_Color.new(s)
+    end
+
+  end # === module HEX_COLOR
+
   struct Hex_Color
 
     def initialize(val : String)

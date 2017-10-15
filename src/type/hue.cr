@@ -1,6 +1,14 @@
 
 module DA_STYLE
 
+  module HUE
+
+    def hue(s)
+      Hue.new(s)
+    end # === def hue
+
+  end # === module HUE
+
   struct Hue
 
     @value : Int32

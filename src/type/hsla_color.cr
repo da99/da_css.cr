@@ -1,6 +1,14 @@
 
 module DA_STYLE
 
+  module HSLA
+
+    def hsla(s)
+      HSLA_Color.new(s)
+    end # === def hsla
+
+  end # === module HSLA
+
   struct HSLA_Color
 
     @first  : Hue
