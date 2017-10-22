@@ -47,8 +47,8 @@ module DA_STYLE
 
       include DA_STYLE::BASE
 
-      getter :io
-      def initialize(@io : DA_STYLE::INPUT_OUTPUT)
+      getter io : DA_STYLE::INPUT_OUTPUT
+      def initialize(@io)
       end # === def initialize
 
       {% for prop in args %}
@@ -63,9 +63,7 @@ module DA_STYLE
 
   class INPUT_OUTPUT
 
-    def initialize
-      @io__ = IO::Memory.new
-    end # === def initialize
+    @io__ : IO::Memory = IO::Memory.new
 
     def write_property(s : String, *vals)
       return self if vals.empty?
@@ -140,10 +138,8 @@ module DA_STYLE
     with i yield
   end
 
-  def initialize
-    @io = DA_STYLE::INPUT_OUTPUT.new
-    @in_nest = false
-  end # === def initialize
+  getter io = DA_STYLE::INPUT_OUTPUT.new
+  @in_nest = false
 
   def io
     @io
