@@ -31,6 +31,7 @@ module DA_STYLE
     getter io           = IO::Memory.new
     getter private_vars = Vars.new
     getter vars         = Vars.new
+    getter scope_count  = 0
 
     def self.split(str : String)
       str.split(/[[:cntrl:]\ \s]+/)
@@ -54,6 +55,7 @@ module DA_STYLE
     end # === def initialize
 
     def initialize(@tokens, parent : Parser)
+      @scope_count = parent.scope_count + 1
       @io       = parent.io
       @file_dir = parent.file_dir
       @origin   = ""
@@ -62,6 +64,7 @@ module DA_STYLE
     end # === def initialize
 
     def initialize(raw, parent : Parser, string_type = :css)
+      @scope_count = parent.scope_count + 1
       @origin = case string_type
                 when :css
                   raw
@@ -150,24 +153,28 @@ module DA_STYLE
       private_vars.set("family", family)
     end
 
-    def start_def(raw : String)
+    def start_def
+      raw = stack.previous.join(" ")
+      stack.previous.clear
+
       result = raw.match /^def\ +([a-zA-Z0-9\_\-]+)\(\ *([a-zA-Z0-9\_\-\,\ ]+)\ *\)$/
-      return false unless result
+      if !result
+        raise Exception.new("Invalid selector definition: #{raw.inspect}")
+      end
       name = $1
       var_names = $2.split(",").map(&.strip)
-
       body = stack.grab_partial("{", "}", [] of String)
     end # === def start_def
 
     def start_selector
       return :family if start_family
 
+      if stack.previous.first == "def" && stack.previous.last.rindex(")") == (stack.previous.last.size - 1)
+        return start_def
+      end
+
       selector = stack.previous.join(" ")
       private_vars.set("selector", selector)
-
-      if selector.index("def ") == 0 && start_def(selector)
-        return true
-      end
 
       if !is_valid_selector?(selector)
         raise Exception.new("Invalid selector: #{selector.inspect}")
@@ -282,6 +289,10 @@ module DA_STYLE
     end # === def run_property
 
     def run
+      if @scope_count > 10
+        raise Exception.new("Too many nested scopes: #{@scope_count}")
+      end
+
       while !stack.fin?
         t = stack.current
 
