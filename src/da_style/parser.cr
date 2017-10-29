@@ -141,7 +141,8 @@ module DA_STYLE
           ('A'.hash)..('Z'.hash),
           ('0'.hash)..('9'.hash),
           '#'.hash, '-'.hash, '('.hash, ')'.hash, ' '.hash,
-          '%'.hash, '{'.hash, '}'.hash
+          '%'.hash, '{'.hash, '}'.hash, '\''.hash, '/'.hash,
+          '.'.hash
           false
         else
           point
@@ -307,12 +308,12 @@ module DA_STYLE
       end
 
       if !is_valid_property_name?(style)
-        raise Exception.new("Invalid characters in property name: #{style}: #{value}")
+        raise Exception.new("Invalid characters in property name: #{style.inspect} (value: #{value.inspect})")
       end
 
       value = replace_vars(value)
       if !is_valid_property_value?(value)
-        raise Exception.new("Invalid characters in value: #{style}: #{value}")
+        raise Exception.new("Invalid characters for property value #{style.inspect}: #{value}")
       end
 
       if private_vars.has?("family")
