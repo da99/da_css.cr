@@ -10,5 +10,8 @@ def border-radius(RADIUS1, RADIUS2 ) {
 }
 
 .box {
-  border-radius(10px);
+  border-radius(10px, 20px);
+  border-radius( 20px, 10px );
+  border-radius( 30px , 10px );
+  border-radius(30px ,  10px) ;
 }

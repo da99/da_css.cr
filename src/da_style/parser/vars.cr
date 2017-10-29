@@ -25,6 +25,10 @@ module DA_STYLE
         @vars[key]
       end # === def var
 
+      def update!(key : String, val : String)
+        @vars[key] = val
+      end # === def update
+
       def set(key : String, val : String)
         if @vars.has_key?(key)
           raise Exception.new("Already defined: #{key.inspect} = #{@vars[key]?.inspect} (new value: #{val.inspect})")
@@ -37,7 +41,7 @@ module DA_STYLE
         @vars.delete(key)
       end # === def delete
 
-      def self.valid_key?(raw : String)
+      def self.is_valid_key?(raw : String)
         invalid = raw.codepoints.find { |point|
           case point
           when ('a'.hash)..('z'.hash),
@@ -50,7 +54,7 @@ module DA_STYLE
           end
         }
         return !invalid
-      end # === def self.valid_key?
+      end # === def self.is_valid_key?
 
     end # === class Vars
 

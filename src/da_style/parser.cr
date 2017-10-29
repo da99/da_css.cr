@@ -1,6 +1,7 @@
 
 require "./parser/stack"
 require "./parser/vars"
+require "./parser/def_func"
 
 module DA_STYLE
 
@@ -23,6 +24,7 @@ module DA_STYLE
     familys "background", "font"
 
     @is_fin = false
+    getter def_funcs : Hash(String, Hash(Int32,Def_Func))
     getter origin : String
     getter tokens : Array(String)
     getter stack : Parser::Stack
@@ -46,12 +48,20 @@ module DA_STYLE
                 end
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
+      @def_funcs = {} of String => Hash(Int32, Def_Func)
     end
 
     def initialize(@tokens, raw_vars : Hash(String, String), @file_dir)
       @origin = ""
       @vars   = Vars.new(raw_vars)
       @stack  = Parser::Stack.new(@tokens)
+      @def_funcs = {} of String => Hash(Int32, Def_Func)
+    end # === def initialize
+
+    def initialize(@tokens, @vars, @file_dir)
+      @origin = ""
+      @stack  = Parser::Stack.new(@tokens)
+      @def_funcs = {} of String => Hash(Int32, Def_Func)
     end # === def initialize
 
     def initialize(@tokens, parent : Parser)
@@ -61,9 +71,10 @@ module DA_STYLE
       @origin   = ""
       @vars     = parent.vars.dup
       @stack    = Parser::Stack.new(@tokens)
+      @def_funcs = parent.def_funcs.dup
     end # === def initialize
 
-    def initialize(raw, parent : Parser, string_type = :css)
+    def initialize(raw : String, parent : Parser, string_type = :css)
       @scope_count = parent.scope_count + 1
       @origin = case string_type
                 when :css
@@ -76,6 +87,15 @@ module DA_STYLE
       @tokens   = Parser.split(@origin)
       @vars     = parent.vars.dup
       @stack    = Parser::Stack.new(@tokens)
+      @def_funcs = parent.def_funcs.dup
+    end # === def initialize
+
+    def initialize(@tokens, @vars, parent : Parser)
+      @origin    = ""
+      @file_dir  = parent.file_dir
+      @io        = parent.io
+      @stack     = Parser::Stack.new(@tokens)
+      @def_funcs = parent.def_funcs.dup
     end # === def initialize
 
     def is_valid_selector?(raw : String)
@@ -161,9 +181,26 @@ module DA_STYLE
       if !result
         raise Exception.new("Invalid selector definition: #{raw.inspect}")
       end
-      name = $1
-      var_names = $2.split(",").map(&.strip)
+
+      name = $1.strip.upcase
+      var_names = $2.split(",").map { |x|
+        new_x = x.strip.upcase
+        if !Vars.is_valid_key?(new_x)
+          raise Exception.new("Invalid argument name for def #{name.inspect}: #{x.inspect}")
+        end
+        new_x
+      }
       body = stack.grab_partial("{", "}", [] of String)
+
+      if @def_funcs.has_key?(name) && @def_funcs[name].has_key?(var_names.size)
+        raise Exception.new("Func already defined: #{name.inspect}")
+      end
+
+      if !@def_funcs.has_key?(name)
+        @def_funcs[name] = {} of Int32 => Def_Func
+      end
+
+      @def_funcs[name][var_names.size] = Def_Func.new(name, var_names, body);
     end # === def start_def
 
     def start_selector
@@ -242,7 +279,7 @@ module DA_STYLE
         raise Exception.new("Invalid assignment: #{stack.previous.join(" ")} = [empty]")
       end
 
-      if !Vars.valid_key?(key)
+      if !Vars.is_valid_key?(key)
         raise Exception.new("Assignment key contains invalid characters: #{key.inspect} = #{next_value.inspect};")
       end
 
@@ -256,7 +293,7 @@ module DA_STYLE
     end # === def run_assignment
 
     def run_property
-      style = stack.current.gsub(":", "")
+      style = stack.current.rstrip(":")
 
       stack.move
       value = stack.grab_through(";", [] of String).join(" ")
@@ -328,6 +365,20 @@ module DA_STYLE
         when t.index(@@SINGLE_LINE_FUNCS_PATTERN) == 0
           css_call = stack.grab_through(";", [] of String)
           run_css_call(css_call)
+
+        when stack.previous.empty? && (t.index("(") || 0) > 1
+          name = t.split("(").first.upcase
+          if !@def_funcs.has_key?(name)
+            raise Exception.new("Function call not found with name: #{name.inspect} (Available: #{@def_funcs.keys.join ", "})")
+          end
+
+          css_call = stack.grab_through(";", [] of String).join(" ")
+          arg_size = css_call.count { |x| x == ',' } + 1
+
+          if !@def_funcs[name].has_key?(arg_size)
+            raise Exception.new("Function call not found with name: #{name}(#{("__ " * arg_size).split.join(", ")})")
+          end
+          @def_funcs[name][arg_size].run(css_call, self)
 
         # when t.index(@@FUNCS_PATTERN) == 0
         #   css_call = stack.grab_through(")", [] of String)
