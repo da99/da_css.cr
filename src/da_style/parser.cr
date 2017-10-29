@@ -2,6 +2,8 @@
 require "./parser/stack"
 require "./parser/vars"
 require "./parser/def_func"
+require "./parser/clean_url"
+require "./parser/invalid_url"
 
 module DA_STYLE
 
@@ -312,6 +314,8 @@ module DA_STYLE
       end
 
       value = replace_vars(value)
+      value = replace_urls(value)
+
       if !is_valid_property_value?(value)
         raise Exception.new("Invalid characters for property value #{style.inspect}: #{value}")
       end
@@ -423,6 +427,25 @@ module DA_STYLE
 
       current
     end # === def replace
+
+    def replace_urls(value)
+      value.split.map { |x|
+        if x.index("url(") != 0
+          next x
+        end
+        if !x.match(/^url\(['"]?(.+?)['"]?\)$/)
+          raise Exception.new("Invalid url: #{x.inspect} in #{value.inspect}")
+        end
+
+        dirty = $1
+        clean_url = Clean_Url.clean(dirty)
+        if !clean_url
+          raise Invalid_URL.new("Invalid url: #{clean_url}")
+        end
+
+        "url('#{clean_url}')"
+      }.join(" ")
+    end # === def replace_urls
 
     def replace_var_assignments__(raw : String)
       raw.gsub(/\{\{\ *([^\}]+)\ *\}\}/) do |match|

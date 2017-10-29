@@ -1,0 +1,18 @@
+version: 1.0
+shards:
+  da_html_escape:
+    github: da99/da_html_escape.cr
+    commit: 7ec9cf4e7c0995fadab5def94b30cd8dfbad1745
+
+  da_string:
+    github: da99/da_string.cr
+    commit: 6d4f284c3cb85e1b12b6ba6ba6ad88efa6266983
+
+  da_uri:
+    github: da99/da_uri.cr
+    version: 1.1.1
+
+  myhtml:
+    github: kostya/myhtml
+    commit: 69c8043590ca8bad58c84ab465e89f40dfbad07e
+
