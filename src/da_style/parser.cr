@@ -42,6 +42,13 @@ module DA_STYLE
       @stack  = Parser::Stack.new(@tokens)
     end # === def initialize
 
+    def initialize(raw_tokens : Array(String), raw_vars : Hash(String, String), @file_dir)
+      @origin = ""
+      @vars   = Vars.new(raw_vars)
+      @tokens = raw_tokens
+      @stack  = Parser::Stack.new(@tokens)
+    end # === def initialize
+
     def is_valid_selector?(raw : String)
       codepoints = raw.codepoints
       if codepoints.first == '@'.hash
@@ -110,11 +117,11 @@ module DA_STYLE
       return false if stack.previous.size != 1
       return false if !@@FAMILY.has_key?(stack.previous.last || "")
       family = stack.previous.pop
-      if vars.has?("family")
+      if private_vars.has?("family")
         raise Exception.new("Family has already been set: OLD: #{family} NEW: #{family}")
       end
       stack.open(:family)
-      vars.set("family", family)
+      private_vars.set("family", family)
     end
 
     def start_def(raw : String)
@@ -124,19 +131,13 @@ module DA_STYLE
       var_names = $2.split(",").map(&.strip)
 
       body = stack.grab_partial("{", "}", [] of String)
-      puts name
-      puts var_names
-
-      puts body
-      puts stack.current
-      Process.exit 1
     end # === def start_def
 
     def start_selector
       return :family if start_family
 
       selector = stack.previous.join(" ")
-      vars.set("selector", selector)
+      private_vars.set("selector", selector)
 
       if selector.index("def ") == 0 && start_def(selector)
         return true
@@ -154,7 +155,7 @@ module DA_STYLE
 
       spaces(:selector)
       stack.open(:selector)
-      io << vars.get("selector") << " {"
+      io << private_vars.get("selector") << " {"
       private_vars.delete("selector")
       stack.previous.clear
     end
@@ -167,7 +168,7 @@ module DA_STYLE
     end # === def spaces
 
     def finish_selector
-      if vars.has?("family")
+      if private_vars.has?("family")
         private_vars.delete("family")
         return stack.close(:family)
       end
@@ -175,7 +176,7 @@ module DA_STYLE
       io << "\n"
       spaces(:selector)
       io << "}"
-      private_vars.delete("selector")
+      private_vars.delete("selector") if private_vars.has?("selector")
     end # === def finish_selector
 
     def run_css_call(arr : Array(String))
@@ -242,8 +243,8 @@ module DA_STYLE
         raise Exception.new("Invalid characters in value: #{style}: #{value}")
       end
 
-      if vars.has?("family")
-        style = "#{vars.get("family")}-#{style}"
+      if private_vars.has?("family")
+        style = "#{private_vars.get("family")}-#{style}"
       end
 
       value = value.gsub(";", "")

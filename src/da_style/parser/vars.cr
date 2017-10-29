@@ -5,8 +5,12 @@ module DA_STYLE
 
     class Vars
 
+      @vars = {} of String => String
+
+      def initialize(@vars)
+      end # === def initialize
+
       def initialize
-        @vars = {} of String => String
       end # === def initialize
 
       def has?(key : String)

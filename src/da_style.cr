@@ -151,4 +151,12 @@ module DA_STYLE
 
 end # === module DA_STYLE
 
+{% if env("DEV_BUILD") %}
+  macro inspect!(*args)
+    puts \{{*args}}
+  end
+{% else %}
+  macro inspect!(*args)
+  end
+{% end %}
 

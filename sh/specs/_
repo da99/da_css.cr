@@ -20,6 +20,7 @@ case "$ACTION" in
     ;;
 
   run)
+    export DEV_BUILD=yes
     reset
     mkdir -p tmp/out
     sh_color ORANGE "=== {{Compiling}}..."

@@ -5,10 +5,10 @@ module DA_STYLE
 
     class Stack
 
-      @index  : Int32 = 0
       @len    : Int32
       @origin : Array(String)
 
+      getter index  : Int32 = 0
       getter opens        = [] of Symbol
       getter closes       = [] of Symbol
       getter previous     = [] of String
@@ -21,6 +21,10 @@ module DA_STYLE
         @origin[@index + 1, 0] = arr
         @len = @len + arr.size
       end # === def unshift
+
+      def size
+        @origin.size
+      end
 
       def open?
         !@opens.empty?
@@ -49,22 +53,18 @@ module DA_STYLE
       end
 
       def fin?
-        @index >= (@len - 1)
+        @index >= (@len)
       end
 
       def move
         raise Exception.new("Can't move to next item. Finished.") if fin?
         @index += 1
-        current
+        current unless fin?
       end
 
       def current
         @origin[@index]
       end
-
-      def assign(name : String, val : String)
-        @assignments[name.upcase] = val
-      end # === def assign
 
       def grab_partial(open : String, close : String, partial : Array(String))
         temp_opens = [] of String
