@@ -20,6 +20,7 @@ case "$ACTION" in
     ;;
 
   run)
+    reset
     mkdir -p tmp/out
     sh_color ORANGE "=== {{Compiling}}..."
     my_crystal __ build specs/specs.cr -o tmp/out/specs

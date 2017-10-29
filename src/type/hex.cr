@@ -31,7 +31,7 @@ module DA_STYLE
                 val
               end
 
-        if !val.match(/^#[a-zA-Z0-9]{6}([a-zA-Z0-9]{2})?$/)
+        if !val.match(/^#[a-zA-Z0-9]{6}([a-zA-Z0-9]{2})?$/) && !val.match(/^#[a-zA-Z0-9]{3}$/)
           raise Exception.new("Invalid color: #{val.inspect}")
         end
 

@@ -12,6 +12,7 @@ macro strip_each_line(s)
 end # === macro strip_each_line
 
 require "./specs/*"
+require "./parser/specs"
 
 # div {
 #   background: #E3E0CF;
