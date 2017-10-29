@@ -214,7 +214,9 @@ module DA_STYLE
       val  = $2
       case name
       when "include"
+        io << "\n"
         Parser.new(val, self, :file).run
+        io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
       end
@@ -314,9 +316,7 @@ module DA_STYLE
 
         when t.index(@@SINGLE_LINE_FUNCS_PATTERN) == 0
           css_call = stack.grab_through(";", [] of String)
-          io << "\n"
           run_css_call(css_call)
-          io << "\n"
 
         # when t.index(@@FUNCS_PATTERN) == 0
         #   css_call = stack.grab_through(")", [] of String)
@@ -368,32 +368,6 @@ module DA_STYLE
         vars.get(key)
       end
     end # === def replace
-
-    def self.run_include(raw : String, dir : String) : String
-      prev = ""
-      current = raw
-      counter = 0
-      max = 4
-      while (prev != current && counter <= (max + 2))
-        prev = current
-        current = run_include__(current, dir)
-        counter += 1
-      end
-
-      if counter > max
-        raise Exception.new("Too many nested includes.")
-      end
-
-      current
-    end # === def self.run_include
-
-    def self.run_include__(raw : String, dir : String)
-      raw.gsub(/^\ *include\(\ *['"]([a-z\/\.A-Z0-9\_\-]+)['"]\ *\)$/) do |match|
-        file = File.expand_path($1, dir)
-        raise Exception.new("File not found: #{file} via include(\"$1\")") unless File.exists?(file)
-        File.read(file)
-      end
-    end
 
   end # === class Parser
 
