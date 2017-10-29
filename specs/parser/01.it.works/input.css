@@ -1,0 +1,25 @@
+
+GREY  = color(grey a(10%));
+WHITE = #FFF;
+BLACK = #000;
+LIGHT_BLACK = {{BLACK}}0011;
+
+div { background-color: {{WHITE}}; }
+.empty {
+  background { color: {{BLACK}}; }
+  font { size: 1em; }
+  font-size: 2em;
+}
+@media (max-width: 12450px, min-width: 1000px) {
+  body {
+    padding: 20px 0 0 10em;
+    background: {{BLACK}};
+    background {
+      color: {{GREY}};
+      repeat: no-repeat;
+    }
+    background: {{LIGHT_BLACK}};
+  }
+}
+
+include("./file.css");

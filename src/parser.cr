@@ -30,7 +30,9 @@ module DA_STYLE
     end # === def self.split
 
     def initialize(@origin, @file_dir)
-      @tokens = ["a"]
+      if !@origin.index("\n")
+        @origin = File.read(File.expand_path(@origin, @file_dir))
+      end
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
     end # === def initialize

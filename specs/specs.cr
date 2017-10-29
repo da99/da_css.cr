@@ -11,7 +11,9 @@ macro strip_each_line(s)
   {{s}}.split("\n").map { |s| s.strip }.reject { |s| s.empty? }.join("\n")
 end # === macro strip_each_line
 
-require "./specs/*"
+{% if !env("DA_STYLE_PARSER") %}
+  require "./specs/*"
+{% end %}
 require "./parser/specs"
 
 # div {
