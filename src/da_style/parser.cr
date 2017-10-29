@@ -142,7 +142,7 @@ module DA_STYLE
           ('0'.hash)..('9'.hash),
           '#'.hash, '-'.hash, '('.hash, ')'.hash, ' '.hash,
           '%'.hash, '{'.hash, '}'.hash, '\''.hash, '/'.hash,
-          '.'.hash
+          '.'.hash, ':'.hash, '_'.hash
           false
         else
           point
