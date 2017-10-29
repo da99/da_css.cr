@@ -1,6 +1,6 @@
 
-require "./keyword/*"
-require "./type/*"
+require "./da_style/keyword/*"
+require "./da_style/type/*"
 
 module DA_STYLE
 

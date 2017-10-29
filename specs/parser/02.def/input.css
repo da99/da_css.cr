@@ -1,0 +1,13 @@
+def border-radius(RADIUS1, RADIUS2 ) {
+  -webkit-border-radius: {{RADIUS1}};
+     -moz-border-radius: {{RADIUS1}};
+      -ms-border-radius: {{RADIUS2}};
+          border-radius: {{RADIUS2}};
+  background {
+    color: #fff;
+  }
+}
+
+.box {
+  border-radius(10px);
+}

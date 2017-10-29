@@ -1,4 +1,6 @@
 
+require "./parser/stack"
+require "./parser/vars"
 
 module DA_STYLE
 
@@ -20,10 +22,13 @@ module DA_STYLE
     familys "background", "font"
 
     getter origin : String
-    getter io : IO::Memory = IO::Memory.new
     getter tokens : Array(String)
     getter stack : Parser::Stack
     getter file_dir : String
+
+    getter io           = IO::Memory.new
+    getter private_vars = Vars.new
+    getter vars         = Vars.new
 
     def self.split(str : String)
       str.split(/[[:cntrl:]\ \s]+/)
@@ -36,119 +41,6 @@ module DA_STYLE
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
     end # === def initialize
-
-    class Stack
-      @index : Int32 = 0
-      @len   : Int32
-      @origin : Array(String)
-      @private_vars = {} of String => String
-      getter opens : Array(Symbol) = [] of Symbol
-      getter closes : Array(Symbol) = [] of Symbol
-      getter assignments = {} of String => String
-      getter previous : Array(String) = [] of String
-
-      def initialize(@origin)
-        @len = @origin.size
-      end # === def initialize
-
-      def unshift(arr : Array(String))
-        @origin[@index + 1, 0] = arr
-        @len = @len + arr.size
-      end # === def unshift
-
-      def open?
-        !@opens.empty?
-      end
-
-      def open
-        @opens.last
-      end
-
-      def open(name : Symbol)
-        @opens << name
-      end
-
-      def close
-        val = @opens.pop
-        @closes << val
-        val
-      end # === def close
-
-      def close(expected : Symbol)
-        actual = close
-        if actual != expected
-          raise Exception.new("Expecting to close #{expected}, but instead cloasing #{actual}")
-        end
-        actual
-      end
-
-      def fin?
-        @index >= (@len - 1)
-      end
-
-      def private(key : String)
-        @private_vars[key]
-      end
-
-      def private_delete(key)
-        @private_vars.delete(key)
-      end
-
-      def private?(key : String)
-        @private_vars.has_key?(key)
-      end
-
-      def private(key : String, val : String)
-        if @private_vars.has_key?(key)
-          raise Exception.new("Already defined: #{key.inspect} = #{@private_vars[key]?.inspect} (new value: #{val.inspect})")
-        end
-        @private_vars[key] = val
-      end
-
-      def move
-        raise Exception.new("Can't move to next item. Finished.") if fin?
-        @index += 1
-        current
-      end
-
-      def current
-        @origin[@index]
-      end
-
-      def assign(name : String, val : String)
-        @assignments[name.upcase] = val
-      end # === def assign
-
-      def grab_through(str : String, arr : Array(String))
-        while !fin? && current.index(str) == nil
-          arr.push(current)
-          move
-        end
-
-        if current == str
-          return arr
-        end
-
-        if current.index(str) != nil
-          arr.push current.rstrip(str)
-          return arr
-        end
-
-        raise Exception.new("Missing token: #{str}")
-      end
-
-      def grab_until_token_is(token : String)
-        while !fin? && current != token
-          previous.push(current)
-          move
-        end
-        if current != token
-          raise Exception.new("Missing token: #{token}")
-        end
-        return previous
-      end # === def grab_until_token_is
-
-    end # === class Stack
 
     def is_valid_selector?(raw : String)
       codepoints = raw.codepoints
@@ -202,21 +94,6 @@ module DA_STYLE
       !invalid
     end # === def is_valid_property_value?
 
-    def is_valid_var_key?(raw : String)
-      invalid = raw.codepoints.find { |point|
-        case point
-        when ('a'.hash)..('z'.hash),
-          ('A'.hash)..('Z'.hash),
-          ('0'.hash)..('9'.hash),
-          '-'.hash, '_'.hash
-          false
-        else
-          point
-        end
-      }
-      return !invalid
-    end
-
     # def whitespace!
       # case name
       # when :selector
@@ -233,18 +110,38 @@ module DA_STYLE
       return false if stack.previous.size != 1
       return false if !@@FAMILY.has_key?(stack.previous.last || "")
       family = stack.previous.pop
-      if stack.private?("family")
+      if vars.has?("family")
         raise Exception.new("Family has already been set: OLD: #{family} NEW: #{family}")
       end
       stack.open(:family)
-      stack.private("family", family)
+      vars.set("family", family)
     end
+
+    def start_def(raw : String)
+      result = raw.match /^def\ +([a-zA-Z0-9\_\-]+)\(\ *([a-zA-Z0-9\_\-\,\ ]+)\ *\)$/
+      return false unless result
+      name = $1
+      var_names = $2.split(",").map(&.strip)
+
+      body = stack.grab_partial("{", "}", [] of String)
+      puts name
+      puts var_names
+
+      puts body
+      puts stack.current
+      Process.exit 1
+    end # === def start_def
 
     def start_selector
       return :family if start_family
 
       selector = stack.previous.join(" ")
-      stack.private("selector", selector)
+      vars.set("selector", selector)
+
+      if selector.index("def ") == 0 && start_def(selector)
+        return true
+      end
+
       if !is_valid_selector?(selector)
         raise Exception.new("Invalid selector: #{selector.inspect}")
       end
@@ -257,8 +154,8 @@ module DA_STYLE
 
       spaces(:selector)
       stack.open(:selector)
-      io << stack.private("selector") << " {"
-      stack.private_delete("selector")
+      io << vars.get("selector") << " {"
+      private_vars.delete("selector")
       stack.previous.clear
     end
 
@@ -270,15 +167,15 @@ module DA_STYLE
     end # === def spaces
 
     def finish_selector
-      if stack.private?("family")
-        stack.private_delete("family")
+      if vars.has?("family")
+        private_vars.delete("family")
         return stack.close(:family)
       end
       stack.close(:selector)
       io << "\n"
       spaces(:selector)
       io << "}"
-      stack.private_delete("selector")
+      private_vars.delete("selector")
     end # === def finish_selector
 
     def run_css_call(arr : Array(String))
@@ -296,7 +193,7 @@ module DA_STYLE
       end
     end
 
-    def run_assignment
+    def run_var_assignment
       stack.move
       next_value = stack.grab_through(";", [] of String).join(" ");
       key        = (stack.previous.size > 0) ? stack.previous.pop : ""
@@ -309,7 +206,7 @@ module DA_STYLE
         raise Exception.new("Invalid assignment: #{stack.previous.join(" ")} = [empty]")
       end
 
-      if !is_valid_var_key?(key)
+      if !Vars.valid_key?(key)
         raise Exception.new("Assignment key contains invalid characters: #{key.inspect} = #{next_value.inspect};")
       end
 
@@ -317,7 +214,7 @@ module DA_STYLE
         raise Exception.new("Assignment value contains invalid characters: #{key.inspect} = #{next_value.inspect};")
       end
 
-      stack.assign(key, next_value)
+      vars.set(key, next_value)
       stack.previous.clear
       stack.closes << :var
     end # === def run_assignment
@@ -340,13 +237,13 @@ module DA_STYLE
         raise Exception.new("Invalid characters in property name: #{style}: #{value}")
       end
 
-      value = replace_assignments(value)
+      value = replace_vars(value)
       if !is_valid_property_value?(value)
         raise Exception.new("Invalid characters in value: #{style}: #{value}")
       end
 
-      if stack.private?("family")
-        style = "#{stack.private("family")}-#{style}"
+      if vars.has?("family")
+        style = "#{vars.get("family")}-#{style}"
       end
 
       value = value.gsub(";", "")
@@ -365,7 +262,7 @@ module DA_STYLE
           :ignore
 
         when t == "="
-          run_assignment
+          run_var_assignment
 
         when t == "{"
           start_selector
@@ -413,32 +310,47 @@ module DA_STYLE
       @io.to_s 
     end # === def to_css
 
-    def replace_assignments(raw : String)
+    def replace_vars(raw : String)
       prev = ""
       current = raw
-      while (prev != current)
+      counter = 0
+      max = 4
+      while (prev != current && counter <= (max + 2))
         prev = current
-        current = replace_assignments__(current)
+        current = replace_var_assignments__(current)
+        counter += 1
       end
+
+      if counter > max
+        raise Exception.new("Too many nested assignments.")
+      end
+
       current
     end # === def replace
 
-    def replace_assignments__(raw : String)
+    def replace_var_assignments__(raw : String)
       raw.gsub(/\{\{\ *([^\}]+)\ *\}\}/) do |match|
         key = $1.upcase
-        value = stack.assignments[key]?
-        raise Exception.new("Variable not found: #{key}") unless value
-        value
+        raise Exception.new("Variable not found: #{key}") unless vars.has?(key)
+        vars.get(key)
       end
     end # === def replace
 
     def self.run_include(raw : String, dir : String) : String
       prev = ""
       current = raw
-      while (prev != current)
+      counter = 0
+      max = 4
+      while (prev != current && counter <= (max + 2))
         prev = current
         current = run_include__(current, dir)
+        counter += 1
       end
+
+      if counter > max
+        raise Exception.new("Too many nested includes.")
+      end
+
       current
     end # === def self.run_include
 
@@ -453,3 +365,4 @@ module DA_STYLE
   end # === class Parser
 
 end # === module DA_STYLE
+

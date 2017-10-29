@@ -1,7 +1,7 @@
 
 require "spec"
 require "../src/da_style"
-require "../src/type/url"
+require "../src/da_style/type/url"
 
 macro should_eq(a, e)
   strip_each_line({{a}}).should eq(strip_each_line({{e}}))
