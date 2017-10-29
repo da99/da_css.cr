@@ -13,6 +13,10 @@ module DA_STYLE
       def initialize
       end # === def initialize
 
+      def dup
+        Vars.new(@vars.dup)
+      end
+
       def has?(key : String)
         @vars.has_key?(key)
       end

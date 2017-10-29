@@ -6,9 +6,10 @@ module DA_STYLE
 
   class Parser
 
-    @@SINGLE_LINE_FUNCS = %w(include)
+    @@SINGLE_LINE_FUNCS         = %w(include)
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
-    @@FAMILY = {} of String => Bool
+    @@FAMILY                    = {} of String => Bool
+
     macro family(name)
       familys(name)
     end # === macro family
@@ -21,6 +22,7 @@ module DA_STYLE
 
     familys "background", "font"
 
+    @is_fin = false
     getter origin : String
     getter tokens : Array(String)
     getter stack : Parser::Stack
@@ -34,19 +36,43 @@ module DA_STYLE
       str.split(/[[:cntrl:]\ \s]+/)
     end # === def self.split
 
-    def initialize(@origin, @file_dir)
-      if !@origin.index("\n")
-        @origin = File.read(File.expand_path(@origin, @file_dir))
-      end
+    def initialize(raw : String, @file_dir : String, string_type = :css)
+      @origin = case string_type
+                when :css
+                  raw
+                else
+                  File.read(File.expand_path(raw, @file_dir))
+                end
       @tokens = Parser.split(@origin)
+      @stack  = Parser::Stack.new(@tokens)
+    end
+
+    def initialize(@tokens, raw_vars : Hash(String, String), @file_dir)
+      @origin = ""
+      @vars   = Vars.new(raw_vars)
       @stack  = Parser::Stack.new(@tokens)
     end # === def initialize
 
-    def initialize(raw_tokens : Array(String), raw_vars : Hash(String, String), @file_dir)
-      @origin = ""
-      @vars   = Vars.new(raw_vars)
-      @tokens = raw_tokens
-      @stack  = Parser::Stack.new(@tokens)
+    def initialize(@tokens, parent : Parser)
+      @io       = parent.io
+      @file_dir = parent.file_dir
+      @origin   = ""
+      @vars     = parent.vars.dup
+      @stack    = Parser::Stack.new(@tokens)
+    end # === def initialize
+
+    def initialize(raw, parent : Parser, string_type = :css)
+      @origin = case string_type
+                when :css
+                  raw
+                else
+                  File.read File.expand_path(raw, parent.file_dir)
+                end
+      @file_dir = parent.file_dir
+      @io       = parent.io
+      @tokens   = Parser.split(@origin)
+      @vars     = parent.vars.dup
+      @stack    = Parser::Stack.new(@tokens)
     end # === def initialize
 
     def is_valid_selector?(raw : String)
@@ -188,7 +214,7 @@ module DA_STYLE
       val  = $2
       case name
       when "include"
-        stack.unshift Parser.split(File.read(File.expand_path(val, @file_dir)))
+        Parser.new(val, self, :file).run
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
       end
@@ -253,7 +279,7 @@ module DA_STYLE
       io << style << ": " << value << ";"
     end # === def run_property
 
-    def to_css
+    def run
       while !stack.fin?
         t = stack.current
 
@@ -288,7 +314,9 @@ module DA_STYLE
 
         when t.index(@@SINGLE_LINE_FUNCS_PATTERN) == 0
           css_call = stack.grab_through(";", [] of String)
+          io << "\n"
           run_css_call(css_call)
+          io << "\n"
 
         # when t.index(@@FUNCS_PATTERN) == 0
         #   css_call = stack.grab_through(")", [] of String)
@@ -307,7 +335,11 @@ module DA_STYLE
       if stack.open?
         raise Exception.new("Missing closing } for: #{stack.open}")
       end
+      @is_fin = true
+    end
 
+    def to_css
+      run unless @is_fin
       @io.to_s 
     end # === def to_css
 
