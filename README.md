@@ -72,3 +72,19 @@ The output:
   #quotation { width: 25%;  float: left;  background: #4ab1a8; }
 ```
 
+Parsing:
+=======
+
+* rgb functional syntax:
+  * `rgb(255, 0, 153)`
+  * `rgb(100%, 0%, 60%)`
+* rgba functional syntax:
+  * `rgba(255, 0, 153, .5)`
+  * `rgba(255, 0, 153, 1)`
+  * `rgba(255, 0, 153, 0)`
+
+Security links:
+===============
+
+* http://www.diaryofaninja.com/blog/2013/10/30/executing-javascript-inside-css-another-reason-to-whitelist-and-encode-user-input
+* https://www.curesec.com/blog/article/blog/Reading-Data-via-CSS-Injection-180.html

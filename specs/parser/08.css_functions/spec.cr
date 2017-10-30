@@ -2,11 +2,12 @@
 describe "Parser css functions" do
   it "allows rgba(...)" do
     input = %[
-      div { background-color: rgba(0,0,0,0);
+      div { background-color: rgba(0,0,0,0); }
     ]
     expected = %[
       div {
         background-color: rgba(0, 0, 0, 0);
+      }
     ]
 
     should_eq SPEC_PARSER.new(input, __DIR__, :css).to_css, expected

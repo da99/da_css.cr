@@ -10,10 +10,10 @@ div {
 @media (max-width: 12450px, min-width: 1000px) {
     body {
       padding: 20px 0 0 10em;
-      background: #000;
-      background-color: color(grey a(10%));
+      background-color: #000;
+      background-color: rgb(1, 1, 1);
       background-repeat: no-repeat;
-      background: #0000011;
+      background-color: #0000011;
     }
 }
 .include {

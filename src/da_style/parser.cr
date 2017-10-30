@@ -10,9 +10,15 @@ module DA_STYLE
 
     macro def_exception(name, prefix, &blok)
       class {{name.id}} < Exception
+
         def prefix_msg
           {{prefix}}
         end
+
+        def message
+          "#{prefix_msg} #{@message}"
+        end
+
         {% if blok %}
           {{blok.body}}
         {% end %}
@@ -165,6 +171,16 @@ module DA_STYLE
     end # === def is_valid_selector?
 
     def is_valid_property_name?(raw : String)
+      # Make exceptions for certain families:
+      case raw
+      when "padding", "border", "margin"
+        return true
+      end
+
+      # Family names are not allowed as property
+      #   names for security reasons:
+      return false if is_property_family?(raw)
+
       {% begin %}
         case raw
         when {{ system("cat \"#{__DIR__}/list.txt\"").split.map(&.stringify).join(", ").id }}
@@ -175,7 +191,10 @@ module DA_STYLE
       {% end %}
     end # === def is_valid_property_name?
 
-    def is_valid_property_value?(raw : String)
+    def is_valid_property_value?(raw : String, style)
+      if raw.empty?
+        raise Exception.new("Invalid property assignment: #{style}: [empty]")
+      end
       invalid = raw.codepoints.find { |point|
         case point
         when ('a'.hash)..('z'.hash),
@@ -183,7 +202,7 @@ module DA_STYLE
           ('0'.hash)..('9'.hash),
           '#'.hash, '-'.hash, '('.hash, ')'.hash, ' '.hash,
           '%'.hash, '{'.hash, '}'.hash, '\''.hash, '/'.hash,
-          '.'.hash, ':'.hash, '_'.hash
+          '.'.hash, ':'.hash, '_'.hash, ','.hash
           false
         else
           point
@@ -325,14 +344,43 @@ module DA_STYLE
         raise Exception.new("Assignment key contains invalid characters: #{key.inspect} = #{next_value.inspect};")
       end
 
-      if !is_valid_property_value?(next_value)
-        raise Exception.new("Assignment value contains invalid characters: #{key.inspect} = #{next_value.inspect};")
-      end
-
       vars.set(key, next_value)
       stack.previous.clear
       stack.closes << :var
     end # === def run_assignment
+
+    def replace_url(property_name : String, func_name : String, arg : String)
+      dirty = arg.strip("'\"")
+      clean_url = Clean_Url.clean(dirty)
+      if !clean_url
+        raise Invalid_URL.new("Invalid url: #{dirty}")
+      end
+
+      "url('#{clean_url}')"
+    end # === def replace_url
+
+    def replace_rgb(property_name : String, func_name : String, raw_args : String)
+      args = raw_args.strip.split(/[\,|\s]+/).map(&.strip)
+      return false unless args.size == 3
+      case
+      when args.first.index("%")
+        return false unless args.all? { |x| x.match(/^[0-9]{1,3}\%$/) }
+      else # whole number
+        return false unless args.all? { |x| x.match(/^[0-9]{1,3}$/) }
+      end
+
+      "rgb(#{args.join(", ")})"
+    end # === def replace_color
+
+    def replace_rgba(property_name : String, func_name : String, raw_args : String)
+      args  = raw_args.strip.split(/[\,|\s]+/).map(&.strip)
+      return false unless args.size == 4
+      alpha = args.pop
+      return false unless args.all? { |x| x.match(/^[0-9]{1,3}$/) }
+      return false unless alpha.match(/^\.?[0-9]{1}$/)
+
+      "rgba(#{args.join(", ")}, #{alpha})"
+    end # === def replace_color
 
     def run_property
       style = if stack.current == ":" && stack.previous.size == 1
@@ -348,13 +396,6 @@ module DA_STYLE
         raise Exception.new("Invalid property name: [empty]: #{value}")
       end
 
-      if value.empty?
-        raise Exception.new("Invalid property assignment: #{style}: [empty]")
-      end
-
-      value = replace_vars(value)
-      value = replace_urls(value)
-
       if open_family?
         style = "#{open_family.join("-")}-#{style}"
       end
@@ -363,7 +404,11 @@ module DA_STYLE
         raise Invalid_Property_Name.new("#{style.inspect} (value: #{value.inspect})")
       end
 
-      if !is_valid_property_value?(value)
+      # === property value:
+      value = replace_vars(value)
+      value = replace_css_funcs(value, style)
+
+      if !is_valid_property_value?(value, style)
         raise Invalid_Property_Value.new("#{value} (property name #{style.inspect})")
       end
 
@@ -467,24 +512,27 @@ module DA_STYLE
       current
     end # === def replace
 
-    def replace_urls(value)
-      value.split.map { |x|
-        if x.index("url(") != 0
-          next x
-        end
-        if !x.match(/^url\(['"]?(.+?)['"]?\)$/)
-          raise Exception.new("Invalid url: #{x.inspect} in #{value.inspect}")
-        end
+    def replace_css_funcs(raw : String, property_name : String)
+      raw.gsub(/([^\(]+)\(\ *(.+)\ *\)/) do |match|
+        func_name = $1
+        args      = $2
+        new_str = case
+                  when (property_name.index("-image") || 0) > 1 && func_name == "url"
+                    replace_url(property_name, func_name, args)
 
-        dirty = $1
-        clean_url = Clean_Url.clean(dirty)
-        if !clean_url
-          raise Invalid_URL.new("Invalid url: #{dirty}")
-        end
+                  when property_name.index("color") && func_name == "rgb"
+                    replace_rgb(property_name, func_name, args)
 
-        "url('#{clean_url}')"
-      }.join(" ")
-    end # === def replace_urls
+                  when property_name.index("color") && func_name == "rgba"
+                    replace_rgba(property_name, func_name, args)
+                  end # === case
+
+        if !new_str.is_a?(String)
+          raise Unknown_CSS_Function.new("#{func_name.inspect} can't be used with #{property_name.inspect}")
+        end
+        new_str
+      end # === gsub
+    end # === def replace_css_funcs
 
     def replace_var_assignments__(raw : String)
       raw.gsub(/\{\{\ *([^\}]+)\ *\}\}/) do |match|

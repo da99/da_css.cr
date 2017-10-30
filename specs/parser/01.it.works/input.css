@@ -1,5 +1,5 @@
 
-GREY  = color(grey a(10%));
+GREY  = rgb(1, 1, 1);
 WHITE = #FFF;
 BLACK = #000;
 LIGHT_BLACK = {{BLACK}}0011;
@@ -13,12 +13,12 @@ div { background-color: {{WHITE}}; }
 @media (max-width: 12450px, min-width: 1000px) {
   body {
     padding: 20px 0 0 10em;
-    background: {{BLACK}};
+    background-color: {{BLACK}};
     background {
       color: {{GREY}};
       repeat: no-repeat;
     }
-    background: {{LIGHT_BLACK}};
+    background-color: {{LIGHT_BLACK}};
   }
 }
 
