@@ -17,6 +17,15 @@ local +x LIST_NON_STANDARD=src/da_style/list.non.standard.txt
 
 case "$ACTION" in
 
+  diff)
+    local +x TMP_FILE_1="$(mktemp)"
+    local +x TMP_FILE_2="$(mktemp)"
+    da_style.cr property-list latest > "$TMP_FILE_1"
+    cat "$LIST_TXT" | sort | uniq  > "$TMP_FILE_2"
+    diff --ignore-all-space "$TMP_FILE_1" "$TMP_FILE_2"
+    rm -f "$TMP_FILE_1" "$TMP_FILE_2"
+    ;;
+
   family)
     {
       IFS=$'\n'
@@ -31,15 +40,18 @@ case "$ACTION" in
     cat "$LIST_FAMILY"
     ;;
 
-  list)
+  latest)
     cd "$THIS_DIR"
     {
       lynx --dump "https://www.w3.org/TR/CSS2/propidx.html" | grep -Po "]'\K[^']+"
       cat "$LIST_NON_STANDARD"
-    } | sort | uniq > "$LIST_TXT"
+    } | sort | uniq | grep -v -P '^$'
+    ;;
 
-    da_style.cr property-list family &>/dev/null
-
+  list)
+    if my_fs a-is-younger-than-b "$LIST_TXT" "$LIST_FAMILY" ; then
+      da_style.cr property-list family &>/dev/null
+    fi
     cat "$LIST_TXT"
     ;;
 

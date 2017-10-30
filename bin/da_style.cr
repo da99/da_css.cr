@@ -14,6 +14,7 @@ PATH="$PATH:$THIS_DIR/bin"
 PATH="$PATH:$THIS_DIR/../my_crystal/bin"
 PATH="$PATH:$THIS_DIR/../process/bin"
 PATH="$PATH:$THIS_DIR/../sh_color/bin"
+PATH="$PATH:$THIS_DIR/../my_fs/bin"
 
 case $ACTION in
 

@@ -21,4 +21,15 @@ describe "Parser invalid selectors" do
       SPEC_PARSER.new(input, __DIR__, :css).to_css
     }
   end # === it "does not allow [ or ] in the selector"
+
+  {% for x in %w(* a b) %}
+    it "does not allow single character selectors: {{x.id}} { } " do
+      input = %[
+        {{x.id}} { background-image: url('/local.png'); }
+      ]
+      expect_raises(DA_STYLE::Parser::Invalid_Selector) {
+        SPEC_PARSER.new(input, __DIR__, :css).to_css
+      }
+    end # === it "does not allow single character selectors: * { } a { } "
+  {% end %}
 end # === desc "Parser invalid selectors"
