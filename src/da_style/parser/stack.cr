@@ -100,6 +100,22 @@ module DA_STYLE
         return partial
       end # === def grab_partial
 
+      def erase_through(str : String)
+        while !fin? && current.index(str) == nil
+          move
+        end
+
+        if current == str
+          return( true )
+        end
+
+        if current.index(str) != nil
+          return( true )
+        end
+
+        raise Exception.new("Missing token: #{str}")
+      end
+
       def grab_through(str : String, arr : Array(String))
         while !fin? && current.index(str) == nil
           arr.push(current)
@@ -107,16 +123,16 @@ module DA_STYLE
         end
 
         if current == str
-          return arr
+          return( arr )
         end
 
         if current.index(str) != nil
-          arr.push current.rstrip(str)
-          return arr
+          arr.push(current.rstrip(str))
+          return( arr )
         end
 
         raise Exception.new("Missing token: #{str}")
-      end
+      end # === def grab_through
 
       def grab_until_token_is(token : String)
         while !fin? && current != token

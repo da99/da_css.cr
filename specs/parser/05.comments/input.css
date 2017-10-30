@@ -1,0 +1,10 @@
+/*
+ * This is a comment.
+ */
+div {
+  background-color: #000;
+  background-color : #fff; /* is a comment */
+  background-color: #ccc ; /*
+  another comment */
+}
+

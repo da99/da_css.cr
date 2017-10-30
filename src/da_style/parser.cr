@@ -302,7 +302,11 @@ module DA_STYLE
     end # === def run_assignment
 
     def run_property
-      style = stack.current.rstrip(":")
+      style = if stack.current == ":" && stack.previous.size == 1
+                stack.previous.pop
+              else
+                stack.current.rstrip(":")
+              end
 
       stack.move
       value = stack.grab_through(";", [] of String).join(" ")
@@ -364,14 +368,9 @@ module DA_STYLE
         when t.index("@") == 0
           stack.grab_until_token_is("{")
           start_selector
-        # when t == "{"
-        #   stack << t
-        # when t == "}"
-        #   stack << t
-        # when t[":"]?
-        #   stack << t
-        # when t[";"]?
-        #   stack << t
+
+        when t.index("/*") == 0
+          stack.erase_through("*/")
 
         when t.index(@@SINGLE_LINE_FUNCS_PATTERN) == 0
           css_call = stack.grab_through(";", [] of String)
@@ -391,9 +390,6 @@ module DA_STYLE
           end
           @def_funcs[name][arg_size].run(css_call, self)
 
-        # when t.index(@@FUNCS_PATTERN) == 0
-        #   css_call = stack.grab_through(")", [] of String)
-        #   run_css_call(css_call)
         else
           stack.previous.push t
         end
