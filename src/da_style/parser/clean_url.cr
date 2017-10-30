@@ -10,10 +10,6 @@ module DA_STYLE
       extend self
 
       def allowed_scheme?(s)
-        case s
-        when "http", "https"
-          return true
-        end
         false
       end
 

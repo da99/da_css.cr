@@ -3,11 +3,30 @@ require "./parser/stack"
 require "./parser/vars"
 require "./parser/def_func"
 require "./parser/clean_url"
-require "./parser/invalid_url"
 
 module DA_STYLE
 
   module Parser
+
+    macro def_exception(name, prefix, &blok)
+      class {{name.id}} < Exception
+        def prefix_msg
+          {{prefix}}
+        end
+        {% if blok %}
+          {{blok.body}}
+        {% end %}
+      end # === class Invalid_Selector
+    end # === macro def_exception
+
+    def_exception Invalid_Selector, "Invalid selector: "
+    def_exception Invalid_URL, "Invalid url: "
+    def_exception Unknown_CSS_Function, "Unknown css function: "
+    def_exception Output_File_Size_Max_Reached, "CSS output too large: " do
+      def self.max_file_size
+        5_000
+      end
+    end
 
     @@SINGLE_LINE_FUNCS         = %w(include)
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
@@ -114,6 +133,11 @@ module DA_STYLE
 
     def is_valid_selector?(raw : String)
       codepoints = raw.codepoints
+
+      # Min size of selector to
+      #   avoid this vulnerability: http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2010-3971
+      return false if codepoints.size < 2
+
       if codepoints.first == '@'.hash
         return raw =~ /@[a-z]+\ *\([a-z\,\/\:\ 0-9\,\_\-]+\)/i
       end
@@ -195,7 +219,7 @@ module DA_STYLE
 
       result = raw.match /^def\ +([a-zA-Z0-9\_\-]+)\(\ *([a-zA-Z0-9\_\-\,\ ]+)\ *\)$/
       if !result
-        raise Exception.new("Invalid selector definition: #{raw.inspect}")
+        raise Invalid_Selector.new(raw.inspect)
       end
 
       name = $1.strip.upcase
@@ -230,7 +254,7 @@ module DA_STYLE
       private_vars.set("selector", selector)
 
       if !is_valid_selector?(selector)
-        raise Exception.new("Invalid selector: #{selector.inspect}")
+        raise Invalid_Selector.new(selector.inspect)
       end
 
       if !stack.closes.empty?
@@ -416,7 +440,11 @@ module DA_STYLE
 
     def to_css
       run unless @is_fin
-      @io.to_s 
+      str = @io.to_s 
+      if str.bytesize > Output_File_Size_Max_Reached.max_file_size
+        raise Output_File_Size_Max_Reached.new(str.bytesize.to_s)
+      end
+      str
     end # === def to_css
 
     def replace_vars(raw : String)
@@ -449,7 +477,7 @@ module DA_STYLE
         dirty = $1
         clean_url = Clean_Url.clean(dirty)
         if !clean_url
-          raise Invalid_URL.new("Invalid url: #{clean_url}")
+          raise Invalid_URL.new("Invalid url: #{dirty}")
         end
 
         "url('#{clean_url}')"
