@@ -47,7 +47,7 @@ module DA_STYLE
       def close(expected : Symbol)
         actual = close
         if actual != expected
-          raise Exception.new("Expecting to close #{expected}, but instead cloasing #{actual}")
+          raise Exception.new("Expecting to close #{expected}, but instead closing #{actual}")
         end
         actual
       end

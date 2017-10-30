@@ -41,6 +41,7 @@ module DA_STYLE
     getter private_vars = Vars.new
     getter vars         = Vars.new
     getter scope_count  = 0
+    getter open_family  : Array(String)
 
     def self.split(str : String)
       str.split(/[[:cntrl:]\ \s]+/)
@@ -56,6 +57,7 @@ module DA_STYLE
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
       @def_funcs = {} of String => Hash(Int32, Def_Func)
+      @open_family = [] of String
     end
 
     def initialize(@tokens, raw_vars : Hash(String, String), @file_dir)
@@ -63,12 +65,14 @@ module DA_STYLE
       @vars   = Vars.new(raw_vars)
       @stack  = Parser::Stack.new(@tokens)
       @def_funcs = {} of String => Hash(Int32, Def_Func)
+      @open_family = [] of String
     end # === def initialize
 
     def initialize(@tokens, @vars, @file_dir)
       @origin = ""
       @stack  = Parser::Stack.new(@tokens)
       @def_funcs = {} of String => Hash(Int32, Def_Func)
+      @open_family = [] of String
     end # === def initialize
 
     def initialize(@tokens, parent : Parser)
@@ -79,6 +83,7 @@ module DA_STYLE
       @vars     = parent.vars.dup
       @stack    = Parser::Stack.new(@tokens)
       @def_funcs = parent.def_funcs.dup
+      @open_family = parent.open_family.dup
     end # === def initialize
 
     def initialize(raw : String, parent : Parser, string_type = :css)
@@ -95,6 +100,7 @@ module DA_STYLE
       @vars     = parent.vars.dup
       @stack    = Parser::Stack.new(@tokens)
       @def_funcs = parent.def_funcs.dup
+      @open_family = parent.open_family.dup
     end # === def initialize
 
     def initialize(@tokens, @vars, parent : Parser)
@@ -103,6 +109,7 @@ module DA_STYLE
       @io        = parent.io
       @stack     = Parser::Stack.new(@tokens)
       @def_funcs = parent.def_funcs.dup
+      @open_family = parent.open_family.dup
     end # === def initialize
 
     def is_valid_selector?(raw : String)
@@ -159,18 +166,6 @@ module DA_STYLE
       !invalid
     end # === def is_valid_property_value?
 
-    # def whitespace!
-      # case name
-      # when :selector
-      #   case
-      #   when closes.empty?
-      #     :do_nothing
-      #   when closes.last == :var
-      #     io << "\n"
-      #   end
-      # end
-    # end # === def whitespace!
-
     def is_property_family?(raw : String)
       {% begin %}
         case raw
@@ -182,15 +177,16 @@ module DA_STYLE
       {% end %}
     end # === def is_property_family?
 
+    def open_family?
+      !@open_family.empty?
+    end # === def in_family?
+
     def start_family
       return false if stack.previous.size != 1
-      return false unless is_property_family?(stack.previous.last || "")
+      return false if !open_family? &&  !is_property_family?(stack.previous.last || "")
       family = stack.previous.pop
-      if private_vars.has?("family")
-        raise Exception.new("Family has already been set: OLD: #{family} NEW: #{family}")
-      end
+      open_family.push family
       stack.open(:family)
-      private_vars.set("family", family)
     end
 
     def start_def
@@ -258,8 +254,8 @@ module DA_STYLE
     end # === def spaces
 
     def finish_selector
-      if private_vars.has?("family")
-        private_vars.delete("family")
+      if open_family?
+        open_family.pop
         return stack.close(:family)
       end
       stack.close(:selector)
@@ -333,12 +329,12 @@ module DA_STYLE
       value = replace_vars(value)
       value = replace_urls(value)
 
-      if private_vars.has?("family")
-        style = "#{private_vars.get("family")}-#{style}"
+      if open_family?
+        style = "#{open_family.join("-")}-#{style}"
       end
 
       if !is_valid_property_name?(style)
-        raise Exception.new("Invalid characters in property name: #{style.inspect} (value: #{value.inspect})")
+        raise Exception.new("Unknown property name: #{style.inspect} (value: #{value.inspect})")
       end
 
       if !is_valid_property_value?(value)
