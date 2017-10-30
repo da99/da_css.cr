@@ -18,9 +18,16 @@ local +x LIST_NON_STANDARD=src/da_style/list.non.standard.txt
 case "$ACTION" in
 
   family)
-    if [[ ! -d "$LIST_FAMILY" ]]; then
-      da_style.cr property-list &>/dev/null
-    fi
+    {
+      IFS=$'\n'
+      for line in $(cat "$LIST_TXT" | grep -- "-" | cut -d"-" -f1 | sort | uniq -c -d | tr -s " ") ; do
+        local +x num=$line[(ws: :)1]
+        local +x word=$line[(ws: :)2]
+        if [[ "$num" -gt 2 && ! -z "$word" ]]; then
+          echo $word
+        fi
+      done
+    } > "$LIST_FAMILY"
     cat "$LIST_FAMILY"
     ;;
 
@@ -31,8 +38,7 @@ case "$ACTION" in
       cat "$LIST_NON_STANDARD"
     } | sort | uniq > "$LIST_TXT"
 
-    cat "$LIST_TXT" | grep -- "-" | cut -d"-" -f1 | sort | uniq -c -d | grep -P "^\ +[3-9]" | tr -s " " | cut -d" " -f3 \
-      > "$LIST_FAMILY"
+    da_style.cr property-list family &>/dev/null
 
     cat "$LIST_TXT"
     ;;
