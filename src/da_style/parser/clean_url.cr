@@ -2,7 +2,7 @@
 require "da_uri"
 module DA_STYLE
 
-  class Parser
+  module Parser
 
     module Clean_Url
 
@@ -19,6 +19,6 @@ module DA_STYLE
 
     end # === class Clean_Url
 
-  end # === class Parser
+  end # === module Parser
 
 end # === module DA_STYLE

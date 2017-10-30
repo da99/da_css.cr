@@ -1,7 +1,7 @@
 
 module DA_STYLE
 
-  class Parser
+  module Parser
 
     class Stack
 
@@ -147,7 +147,6 @@ module DA_STYLE
 
     end # === class Stack
 
-
-  end # === class Parser
+  end # === module Parser
 
 end # === module DA_STYLE

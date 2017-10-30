@@ -10,7 +10,7 @@ describe "DA_STYLE::Parser" do
     ]
     vars = {"RADIUS1" => "1em", "RADIUS2" => "2em"}
 
-    actual = DA_STYLE::Parser.new(tokens, vars, __DIR__).to_css
-    should_eq actual, File.read("#{__DIR__}/expected.css")
+    actual = SPEC_PARSER.new(tokens, vars, __DIR__).to_css
+    should_eq actual, expected!
   end # === it "runs tokens"
 end # === desc "DA_STYLE::Parser"

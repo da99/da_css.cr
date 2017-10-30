@@ -1,6 +1,6 @@
 
 module DA_STYLE
-  class Parser
+  module Parser
     struct Def_Func
 
       @name : String
@@ -25,10 +25,10 @@ module DA_STYLE
           vars.update!(@vars[i], x)
         end
 
-        Parser.new(@body, vars, parent).run
+        parent.class.new(@body, vars, parent).run
         parent.io << "\n"
       end # === def run
 
     end # === struct Def_Func
-  end # === class Parser
+  end # === module Parser
 end # === module DA_STYLE

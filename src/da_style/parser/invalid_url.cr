@@ -1,11 +1,11 @@
 
 module DA_STYLE
 
-  class Parser
+  module Parser
 
     class Invalid_URL < Exception
     end # === class Invalid_URL
 
-  end # === class Parser
+  end # === module Parser
 
 end # === module DA_STYLE

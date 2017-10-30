@@ -6,7 +6,7 @@ describe "Parser url" do
         background-image: url('/local/image.png');
       }
     ]
-    actual = DA_STYLE::Parser.new(input, __DIR__, :css).to_css
+    actual = SPEC_PARSER.new(input, __DIR__, :css).to_css
     should_eq actual, expected!
   end # === it "accepts local urls"
 
@@ -16,7 +16,7 @@ describe "Parser url" do
         background-image: url('http://remote/local/image.png');
       }
     ]
-    actual = DA_STYLE::Parser.new(input, __DIR__, :css).to_css
+    actual = SPEC_PARSER.new(input, __DIR__, :css).to_css
     should_eq actual, input
   end # === it "accepts urls for with ';' in them"
 
@@ -27,7 +27,7 @@ describe "Parser url" do
       }
     ]
     expect_raises {
-      DA_STYLE::Parser.new(input, __DIR__, :css).to_css
+      SPEC_PARSER.new(input, __DIR__, :css).to_css
     }
   end # === it "accepts urls for with ';' in them"
 
@@ -39,7 +39,7 @@ describe "Parser url" do
         }
       ]
       expect_raises(DA_STYLE::Parser::Invalid_URL) {
-        DA_STYLE::Parser.new(input, __DIR__, :css).to_css
+        SPEC_PARSER.new(input, __DIR__, :css).to_css
       }
     end # === it "accepts urls for with ';' in them"
   {% end %}

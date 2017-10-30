@@ -11,16 +11,30 @@ else
   local +x ACTION=$1; shift
 fi
 
+local +x LIST_TXT=src/da_style/list.txt
+local +x LIST_FAMILY=src/da_style/list.family.txt
+local +x LIST_NON_STANDARD=src/da_style/list.non.standard.txt
+
 case "$ACTION" in
+
+  family)
+    if [[ ! -d "$LIST_FAMILY" ]]; then
+      da_style.cr property-list &>/dev/null
+    fi
+    cat "$LIST_FAMILY"
+    ;;
 
   list)
     cd "$THIS_DIR"
     {
       lynx --dump "https://www.w3.org/TR/CSS2/propidx.html" | grep -Po "]'\K[^']+"
-      cat src/da_style/list.non.standard.txt
-    } | sort | uniq > ./src/da_style/list.txt
+      cat "$LIST_NON_STANDARD"
+    } | sort | uniq > "$LIST_TXT"
 
-    cat ./src/da_style/list.txt
+    cat "$LIST_TXT" | grep -- "-" | cut -d"-" -f1 | sort | uniq -c -d | grep -P "^\ +[3-9]" | tr -s " " | cut -d" " -f3 \
+      > "$LIST_FAMILY"
+
+    cat "$LIST_TXT"
     ;;
 
   *)

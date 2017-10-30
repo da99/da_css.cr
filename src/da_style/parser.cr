@@ -7,22 +7,16 @@ require "./parser/invalid_url"
 
 module DA_STYLE
 
-  class Parser
+  module Parser
 
     @@SINGLE_LINE_FUNCS         = %w(include)
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
     @@FAMILY                    = {} of String => Bool
 
-    {% begin %}
-      @@PROPERTYS = {
-        {% for x in system("cat \"#{__DIR__}/list.txt\"").split.map(&.id) %}
-          "{{x}}" => true,
-        {% end %}
-      }
-    {% end %}
+    @@CUSTOM_PROPERTYS = {} of String => Bool
 
     macro property_name(name)
-      @@PROPERTYS["{{name.id}}"] = true
+      @@CUSTOM_PROPERTYS["{{name.id}}"] = true
     end # === macro property
 
     macro family(name)
@@ -35,7 +29,6 @@ module DA_STYLE
       {% end %}
     end
 
-    familys "background", "font"
 
     @is_fin = false
     getter def_funcs : Hash(String, Hash(Int32,Def_Func))
@@ -139,7 +132,14 @@ module DA_STYLE
     end # === def is_valid_selector?
 
     def is_valid_property_name?(raw : String)
-      @@PROPERTYS.has_key?(raw)
+      {% begin %}
+        case raw
+        when {{ system("cat \"#{__DIR__}/list.txt\"").split.map(&.stringify).join(", ").id }}
+          true
+        else
+          @@CUSTOM_PROPERTYS.has_key?(raw)
+        end
+      {% end %}
     end # === def is_valid_property_name?
 
     def is_valid_property_value?(raw : String)
@@ -171,9 +171,20 @@ module DA_STYLE
       # end
     # end # === def whitespace!
 
+    def is_property_family?(raw : String)
+      {% begin %}
+        case raw
+        when {{ system("cat \"#{__DIR__}/list.family.txt\"").split.map(&.stringify).join(", ").id }}
+          true
+        else
+          false
+        end
+      {% end %}
+    end # === def is_property_family?
+
     def start_family
       return false if stack.previous.size != 1
-      return false if !@@FAMILY.has_key?(stack.previous.last || "")
+      return false unless is_property_family?(stack.previous.last || "")
       family = stack.previous.pop
       if private_vars.has?("family")
         raise Exception.new("Family has already been set: OLD: #{family} NEW: #{family}")
@@ -268,7 +279,7 @@ module DA_STYLE
       case name
       when "include"
         io << "\n"
-        Parser.new(val, self, :file).run
+        self.class.new(val, self, :file).run
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
@@ -457,7 +468,7 @@ module DA_STYLE
       end
     end # === def replace
 
-  end # === class Parser
+  end # === module Parser
 
 end # === module DA_STYLE
 
