@@ -19,6 +19,8 @@ module DA_STYLE
       end # === class Invalid_Selector
     end # === macro def_exception
 
+    def_exception Invalid_Property_Name, "Invalid property name: "
+    def_exception Invalid_Property_Value, "Invalid property value: "
     def_exception Invalid_Selector, "Invalid selector: "
     def_exception Invalid_URL, "Invalid url: "
     def_exception Unknown_CSS_Function, "Unknown css function: "
@@ -358,11 +360,11 @@ module DA_STYLE
       end
 
       if !is_valid_property_name?(style)
-        raise Exception.new("Unknown property name: #{style.inspect} (value: #{value.inspect})")
+        raise Invalid_Property_Name.new("#{style.inspect} (value: #{value.inspect})")
       end
 
       if !is_valid_property_value?(value)
-        raise Exception.new("Invalid characters for property value #{style.inspect}: #{value}")
+        raise Invalid_Property_Value.new("#{value} (property name #{style.inspect})")
       end
 
       value = value.gsub(";", "")
