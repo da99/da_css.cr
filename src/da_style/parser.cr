@@ -13,6 +13,18 @@ module DA_STYLE
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
     @@FAMILY                    = {} of String => Bool
 
+    {% begin %}
+      @@PROPERTYS = {
+        {% for x in system("cat \"#{__DIR__}/list.txt\"").split.map(&.id) %}
+          "{{x}}" => true,
+        {% end %}
+      }
+    {% end %}
+
+    macro property_name(name)
+      @@PROPERTYS["{{name.id}}"] = true
+    end # === macro property
+
     macro family(name)
       familys(name)
     end # === macro family
@@ -122,18 +134,7 @@ module DA_STYLE
     end # === def is_valid_selector?
 
     def is_valid_property_name?(raw : String)
-      invalid = raw.codepoints.find { |point|
-        case point
-        when ('a'.hash)..('z'.hash),
-          ('A'.hash)..('Z'.hash),
-          ('0'.hash)..('9'.hash),
-          '-'.hash
-          false
-        else
-          point
-        end
-      }
-      !invalid
+      @@PROPERTYS.has_key?(raw)
     end # === def is_valid_property_name?
 
     def is_valid_property_value?(raw : String)
@@ -309,19 +310,19 @@ module DA_STYLE
         raise Exception.new("Invalid property assignment: #{style}: [empty]")
       end
 
+      value = replace_vars(value)
+      value = replace_urls(value)
+
+      if private_vars.has?("family")
+        style = "#{private_vars.get("family")}-#{style}"
+      end
+
       if !is_valid_property_name?(style)
         raise Exception.new("Invalid characters in property name: #{style.inspect} (value: #{value.inspect})")
       end
 
-      value = replace_vars(value)
-      value = replace_urls(value)
-
       if !is_valid_property_value?(value)
         raise Exception.new("Invalid characters for property value #{style.inspect}: #{value}")
-      end
-
-      if private_vars.has?("family")
-        style = "#{private_vars.get("family")}-#{style}"
       end
 
       value = value.gsub(";", "")

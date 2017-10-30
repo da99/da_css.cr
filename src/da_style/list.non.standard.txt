@@ -1,0 +1,6 @@
+-webkit-border-radius
+-moz-border-radius
+-ms-border-radius
+border-radius
+
+

@@ -1,0 +1,32 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}}
+#
+set -u -e -o pipefail
+
+local +x ORIGINAL_ARGS="$@"
+if [[ -z "$@" ]]; then
+  local +x ACTION=list
+else
+  local +x ACTION=$1; shift
+fi
+
+case "$ACTION" in
+
+  list)
+    cd "$THIS_DIR"
+    {
+      lynx --dump "https://www.w3.org/TR/CSS2/propidx.html" | grep -Po "]'\K[^']+"
+      cat src/da_style/list.non.standard.txt
+    } | sort | uniq > ./src/da_style/list.txt
+
+    cat ./src/da_style/list.txt
+    ;;
+
+  *)
+    echo "!!! Unknown arguments: $ORIGINAL_ARGS" >&2
+    exit 1
+    ;;
+
+esac
+
