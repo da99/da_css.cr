@@ -120,15 +120,20 @@ module DA_STYLE
 
       invalid = raw.codepoints.find { |point|
         case point
+
         when ('a'.hash)..('z'.hash),
           ('A'.hash)..('Z'.hash),
           ('0'.hash)..('9'.hash),
           '#'.hash, '-'.hash, '.'.hash, ','.hash,
-          ' '.hash
+          ' '.hash, ':'.hash
+          # e.g.
+          #   div:nth-child, #main.klass, #tex-min
           false
+
         else
           point
-        end
+
+        end # case point
       }
       return !invalid
     end # === def is_valid_selector?
