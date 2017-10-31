@@ -1,0 +1,1371 @@
+
+/* background */
+/* Using a <background-color> */
+background: green;
+/* Using a <bg-image> and <repeat-style> */
+background: url("test.jpg") repeat-y;
+/* Using a <box> and <background-color> */
+background: border-box red;
+/* A single image, centered and scaled */
+background: no-repeat center/80% url("../img/image.png");
+
+/* background-attachment */
+/* Keyword values */
+background-attachment: scroll;
+background-attachment: fixed;
+background-attachment: local;
+/* Global values */
+background-attachment: inherit;
+background-attachment: initial;
+background-attachment: unset;
+
+/* background-color */
+/* Keyword values */
+background-color: red;
+/* Hexadecimal value */
+background-color: #bbff00;
+/* Hexadecimal value with alpha channel */
+/* RGB value */
+background-color: rgb(255, 255, 128);
+/* RGBA value or RGB with alpha channel */
+/* HSLA value */
+background-color: hsla(50, 33%, 25%, 0.75);
+/* Special keyword values */
+background-color: currentcolor;
+background-color: transparent;
+/* Global values */
+background-color: inherit;
+background-color: initial;
+background-color: unset;
+
+/* background-image */
+/* Single value */
+background-image: url('/example.com/bck.png');
+/* Multiple values */
+background-image: url('/example.com/top.png'), url('/example.com/bottom.png');
+/* Keyword value */
+background-image: none;
+/* Global values */
+background-image: inherit;
+background-image: initial;
+background-image: unset;
+
+/* background-position */
+/* Keyword values */
+background-position: top;
+background-position: bottom;
+background-position: left;
+background-position: right;
+background-position: center;
+/* <percentage> values */
+background-position: 25% 75%;
+/* <length> values */
+background-position: 0 0;
+background-position: 1cm 2cm;
+background-position: 10ch 8em;
+/* Multiple images */
+background-position: 0 0, center;
+/* Edge offsets values */
+background-position: bottom 10px right 20px;
+background-position: right 3em bottom 10px;
+background-position: bottom 10px right;
+background-position: top right 10px;
+/* Global values */
+background-position: inherit;
+background-position: initial;
+background-position: unset;
+/* Shared among all DIVS */
+/* background-position examples */
+/* These examples use the background shorthand CSS property */
+
+/* background-repeat */
+/* One-value syntax */
+background-repeat: repeat-x;
+background-repeat: repeat-y;
+background-repeat: repeat;
+background-repeat: space;
+background-repeat: round;
+background-repeat: no-repeat;
+/* Two-value syntax: horizontal | vertical */
+background-repeat: repeat space;
+background-repeat: repeat repeat;
+background-repeat: round space;
+background-repeat: no-repeat round;
+/* Global values */
+background-repeat: inherit;
+background-repeat: initial;
+background-repeat: unset;
+/* Shared for all DIVS in example */
+/* Background repeats */
+/* Multiple images */
+
+/* border */
+border: 1px;
+border: 2px dotted;
+border: medium dashed green;
+
+/* border-bottom */
+border-bottom: 1px;
+border-bottom: 2px dotted;
+border-bottom: medium dashed blue;
+border-bottom-style: dotted;
+border-bottom: thick green;
+border-bottom-style: dotted;
+border-bottom: none thick green;
+
+/* border-bottom-color */
+/* <color> values */
+border-bottom-color: red;
+border-bottom-color: #ffbb00;
+border-bottom-color: rgb(255, 0, 0);
+border-bottom-color: hsla(100%, 50%, 25%, 0.75);
+border-bottom-color: currentColor;
+border-bottom-color: transparent;
+/* Global values */
+border-bottom-color: inherit;
+border-bottom-color: initial;
+border-bottom-color: unset;
+
+/* border-bottom-style */
+/* Keyword values */
+border-bottom-style: none;
+border-bottom-style: hidden;
+border-bottom-style: dotted;
+border-bottom-style: dashed;
+border-bottom-style: solid;
+border-bottom-style: double;
+border-bottom-style: groove;
+border-bottom-style: ridge;
+border-bottom-style: inset;
+border-bottom-style: outset;
+/* Global values */
+border-bottom-style: inherit;
+border-bottom-style: initial;
+border-bottom-style: unset;
+/* Define look of the table */
+/* border-bottom-style example classes */
+
+/* border-bottom-width */
+/* Keyword values */
+border-bottom-width: thin;
+border-bottom-width: medium;
+border-bottom-width: thick;
+/* <length> values */
+border-bottom-width: 10em;
+border-bottom-width: 3vmax;
+border-bottom-width: 6px;
+/* Global keywords */
+border-bottom-width: inherit;
+border-bottom-width: initial;
+border-bottom-width: unset;
+
+/* border-collapse */
+/* Keyword values */
+border-collapse: collapse;
+border-collapse: separate;
+/* Global values */
+border-collapse: inherit;
+border-collapse: initial;
+border-collapse: unset;
+
+/* border-color */
+/* border-color: color */ /* the color applies to all sides */
+border-color: red;
+/* border-color: top&bottom right&left */
+border-color: red #f015ca;
+/* border-color: top right&left bottom */
+border-color: red yellow green;
+/* border-color: top right bottom left */
+border-color: red yellow green blue;
+border-color: inherit;
+/* Set width and style for all divs */
+
+/* border-left */
+border-left: 1px;
+border-left: 2px dotted;
+border-left: medium dashed green;
+border-left-style: dotted;
+border-left: thick green;
+border-left-style: dotted;
+border-left: none thick green;
+
+/* border-left-color */
+/* <color> values */
+border-left-color: red;
+border-left-color: #ffbb00;
+border-left-color: rgb(255, 0, 0);
+border-left-color: hsla(100%, 50%, 25%, 0.75);
+border-left-color: currentColor;
+border-left-color: transparent;
+/* Global values */
+border-left-color: inherit;
+border-left-color: initial;
+border-left-color: unset;
+
+/* border-left-style */
+/* Keyword values */
+border-left-style: none;
+border-left-style: hidden;
+border-left-style: dotted;
+border-left-style: dashed;
+border-left-style: solid;
+border-left-style: double;
+border-left-style: groove;
+border-left-style: ridge;
+border-left-style: inset;
+border-left-style: outset;
+/* Global values */
+border-left-style: inherit;
+border-left-style: initial;
+border-left-style: unset;
+/* Define look of the table */
+/* border-left-style example classes */
+
+/* border-left-width */
+/* Keyword values */
+border-left-width: thin;
+border-left-width: medium;
+border-left-width: thick;
+/* <length> values */
+border-left-width: 10em;
+border-left-width: 3vmax;
+border-left-width: 6px;
+/* Global keywords */
+border-left-width: inherit;
+border-left-width: initial;
+border-left-width: unset;
+
+/* border-radius */
+/* The syntax of the first radius allows one to four values */
+/* Radius is set for all 4 sides */
+border-radius: 10px;
+/* top-left-and-bottom-right | top-right-and-bottom-left */
+border-radius: 10px 5%;
+/* top-left | top-right-and-bottom-left | bottom-right */
+border-radius: 2px 4px 2px;
+/* top-left | top-right | bottom-right | bottom-left */
+border-radius: 1px 0 3px 4px;
+/* The syntax of the second radius allows one to four values */
+/* (first radius values) / radius */
+border-radius: 10px 5% / 20px;
+/* (first radius values) / top-left-and-bottom-right | top-right-and-bottom-left */
+border-radius: 10px 5% / 20px 30px;
+/* (first radius values) / top-left | top-right-and-bottom-left | bottom-right */
+border-radius: 10px 5px 2em / 20px 25px 30%;
+/* (first radius values) / top-left | top-right | bottom-right | bottom-left */
+border-radius: 10px 5% / 20px 25em 30px 35em;
+border-radius: inherit;
+/* Vertical line */
+/* Horizontal line */
+border-radius: 1em/5em;
+/* is equivalent to */
+border-top-left-radius:     1em 5em;
+border-top-right-radius:    1em 5em;
+border-bottom-right-radius: 1em 5em;
+border-bottom-left-radius:  1em 5em;
+border-radius: 4px 3px 6px / 2px 4px;
+/* is equivalent to: */
+border-top-left-radius:     4px 2px;
+border-top-right-radius:    3px 4px;
+border-bottom-right-radius: 6px 2px;
+border-bottom-left-radius:  3px 4px;
+
+/* border-right */
+border-right: 1px;
+border-right: 2px dotted;
+border-right: medium dashed green;
+border-right-style: dotted;
+border-right: thick green;
+
+/* border-right-color */
+/* <color> values */
+border-right-color: red;
+border-right-color: #ffbb00;
+border-right-color: rgb(255, 0, 0);
+border-right-color: hsla(100%, 50%, 25%, 0.75);
+border-right-color: currentColor;
+border-right-color: transparent;
+/* Global values */
+border-right-color: inherit;
+border-right-color: initial;
+border-right-color: unset;
+
+/* border-right-style */
+/* Keyword values */
+border-right-style: none;
+border-right-style: hidden;
+border-right-style: dotted;
+border-right-style: dashed;
+border-right-style: solid;
+border-right-style: double;
+border-right-style: groove;
+border-right-style: ridge;
+border-right-style: inset;
+border-right-style: outset;
+/* Global values */
+border-right-style: inherit;
+border-right-style: initial;
+border-right-style: unset;
+/* Define look of the table */
+/* border-right-style example classes */
+
+/* border-right-width */
+/* Keyword values */
+border-right-width: thin;
+border-right-width: medium;
+border-right-width: thick;
+/* <length> values */
+border-right-width: 10em;
+border-right-width: 3vmax;
+border-right-width: 6px;
+/* Global keywords */
+border-right-width: inherit;
+border-right-width: initial;
+border-right-width: unset;
+
+/* border-spacing */
+/* <length> */
+border-spacing: 2px;
+/* horizontal <length> | vertical <length> */
+border-spacing: 1cm 2em;
+/* Global values */
+border-spacing: inherit;
+border-spacing: initial;
+border-spacing: unset;
+
+/* border-style */
+/* Keyword values */
+border-top-style: none;
+border-top-style: hidden;
+border-top-style: dotted;
+border-top-style: dashed;
+border-top-style: solid;
+border-top-style: double;
+border-top-style: groove;
+border-top-style: ridge;
+border-top-style: inset;
+border-top-style: outset;
+/* vertical | horizontal */
+border-style: dotted solid;
+/* top | horizontal | bottom */
+border-style: hidden double dashed;
+/* top | right | bottom | left */
+border-style: none solid dotted dashed;
+/* Global values */
+border-style: inherit;
+border-style: initial;
+border-style: unset;
+/* Define look of the table */
+/* border-style example classes */
+
+/* border-top */
+border-top: 1px;
+border-top: 2px dotted;
+border-top: medium dashed green;
+border-top-style: dotted;
+border-top: thick green;
+border-top-style: dotted;
+border-top: none thick green;
+
+/* border-top-color */
+/* <color> values */
+border-top-color: red;
+border-top-color: #ffbb00;
+border-top-color: rgb(255, 0, 0);
+border-top-color: hsla(100%, 50%, 25%, 0.75);
+border-top-color: currentColor;
+border-top-color: transparent;
+/* Global values */
+border-top-color: inherit;
+border-top-color: initial;
+border-top-color: unset;
+
+/* border-top-style */
+/* Keyword values */
+border-top-style: none;
+border-top-style: hidden;
+border-top-style: dotted;
+border-top-style: dashed;
+border-top-style: solid;
+border-top-style: double;
+border-top-style: groove;
+border-top-style: ridge;
+border-top-style: inset;
+border-top-style: outset;
+/* Global values */
+border-top-style: inherit;
+border-top-style: initial;
+border-top-style: unset;
+/* Define look of the table */
+/* border-top-style example classes */
+
+/* border-top-width */
+/* Keyword values */
+border-top-width: thin;
+border-top-width: medium;
+border-top-width: thick;
+/* <length> values */
+border-top-width: 10em;
+border-top-width: 3vmax;
+border-top-width: 6px;
+/* Global keywords */
+border-top-width: inherit;
+border-top-width: initial;
+border-top-width: unset;
+
+/* border-width */
+/* Keyword values */
+border-width: thin;
+border-width: medium;
+border-width: thick;
+/* <length> values */
+border-width: 4px;
+border-width: 1.2rem;
+/* vertical | horizontal */
+border-width: 2px 1.5em;
+/* top | horizontal | bottom */
+border-width: 1px 2em 1.5cm;
+/* top | right | bottom | left */
+border-width: 1px 2em 0 4rem;
+/* Global keywords */
+border-width: inherit;
+border-width: initial;
+border-width: unset;
+
+/* bottom */
+/* <length> values */
+bottom: 3px;
+bottom: 2.4em;
+/* <percentage>s of the height of the containing block */
+bottom: 10%;
+/* Keyword value */
+bottom: auto;
+/* Global values */
+bottom: inherit;
+bottom: initial;
+bottom: unset;
+
+/* caption-side */
+/* Directional values */
+caption-side: top;
+caption-side: bottom;
+/* Warning: non-standard values */
+caption-side: left;
+caption-side: right;
+caption-side: top-outside;
+caption-side: bottom-outside;
+/* Global values */
+caption-side: inherit;
+caption-side: initial;
+caption-side: unset;
+
+/* clear */
+/* Keyword values */
+clear: none;
+clear: left;
+clear: right;
+clear: both;
+clear: inline-start;
+clear: inline-end;
+/* Global values */
+clear: inherit;
+clear: initial;
+clear: unset;
+
+/* clip */
+/* Keyword value */
+clip: auto;
+/* <shape> values */
+clip: rect(1px 10em 3rem 2ch);
+clip: rect(1px, 10em, 3rem, 2ch);
+/* Global values */
+clip: inherit;
+clip: initial;
+clip: unset;
+
+/* color */
+/* Keyword values */
+color: currentcolor;
+/* <named-color> values */
+color: red;
+color: orange;
+color: tan;
+color: rebeccapurple;
+/* <hex-color> values */
+color: #090;
+color: #009900;
+color: #090a;
+color: #009900aa;
+/* <rgb()> values */
+color: rgb(34, 12, 64, 0.6);
+color: rgba(34, 12, 64, 0.6);
+color: rgb(34 12 64 / 0.6);
+color: rgba(34 12 64 / 0.3);
+/* <hsl()> values */
+color: hsl(30, 100%, 50%, 0.6);
+color: hsla(30, 100%, 50%, 0.6);
+color: hsl(30 100% 50% / 0.6);
+color: hsla(30 100% 50% / 0.6);
+/* Global values */
+color: inherit;
+color: initial;
+color: unset;
+/* Keyword values */
+/*  values */
+/*  values */
+/*  values */
+/*  values */
+/* 50% translucent */
+
+/* content */
+Binary file (standard input) matches
+
+/* counter-increment */
+/* Increment "my-counter" by 1 */
+counter-increment: my-counter;
+/* Decrement "my-counter" by 1 */
+counter-increment: my-counter -1;
+/* Increment "counter1" by 1, and decrement "counter2" by 4 */
+counter-increment: counter1 counter2 -4;
+/* Do not increment/decrement anything: used to override less specific rules */
+counter-increment: none;
+/* Global values */
+counter-increment: inherit;
+counter-increment: initial;
+counter-increment: unset;
+
+/* counter-reset */
+/* Set "my-counter" to 0 */
+counter-reset: my-counter;
+/* Set "my-counter" to -1 */
+counter-reset: my-counter -1;
+/* Set "counter1" to 1, and "counter2" to 4 */
+counter-reset: counter1 1 counter2 4;
+/* Cancel any reset that could have been set in less specific rules */
+counter-reset: none;
+/* Global values */
+counter-reset: inherit;
+counter-reset: initial;
+counter-reset: unset;
+
+/* cursor */
+/* Keyword value only */
+cursor: pointer;
+cursor: auto;
+/* Using URL and coordinates */
+cursor: url(cursor1.png) 4 12, auto;
+cursor: url(cursor2.png) 2 2, pointer;
+/* Global values */
+cursor: inherit;
+cursor: initial;
+cursor: unset;
+cursor: url(one.svg), url(two.svg) 5 5, progress;
+/* A fallback keyword value is required when using a URL */
+
+/* direction */
+/* Keyword values */
+direction: ltr;
+direction: rtl;
+/* Global values */
+direction: inherit;
+direction: initial;
+direction: unset;
+
+/* display */
+/* <display-outside> values */
+display: block;
+display: inline;
+display: run-in;
+/* <display-inside> values */
+display: flow;
+display: flow-root;
+display: table;
+display: flex;
+display: grid;
+display: ruby;
+display: subgrid;
+/* <display-outside> plus <display-inside> values */
+display: block flow;
+display: inline table;
+display: flex run-in;
+/* <display-listitem> values */
+display: list-item;
+display: list-item block;
+display: list-item inline;
+display: list-item flow;
+display: list-item flow-root;
+display: list-item block flow;
+display: list-item block flow-root;
+display: flow list-item block;
+/* <display-internal> values */
+display: table-row-group;
+display: table-header-group;
+display: table-footer-group;
+display: table-row;
+display: table-cell;
+display: table-column-group;
+display: table-column;
+display: table-caption;
+display: ruby-base;
+display: ruby-text;
+display: ruby-base-container;
+display: ruby-text-container;
+/* <display-box> values */
+display: contents;
+display: none;
+/* <display-legacy> values */
+display: inline-block;
+display: inline-table;
+display: inline-flex;
+display: inline-grid;
+/* Global values */
+display: inherit;
+display: initial;
+display: unset;
+
+/* empty-cells */
+/* Keyword values */
+empty-cells: show;
+empty-cells: hide;
+/* Global values */
+empty-cells: inherit;
+empty-cells: initial;
+empty-cells: unset;
+
+/* float */
+/* Keyword values */
+float: left;
+float: right;
+float: none;
+float: inline-start;
+float: inline-end;
+/* Global values */
+float: inherit;
+float: initial;
+float: unset;
+
+/* font */
+/* size | family */
+font: 2em "Open Sans", sans-serif;
+/* style | size | family */
+font: italic 2em "Open Sans", sans-serif;
+/* style | variant | weight | size/line-height | family */
+font: italic small-caps bolder 16px/3 cursive;
+/* style | variant | weight | stretch | size/line-height | family */
+font: italic small-caps bolder condensed 16px/3 cursive;
+/* The font used in system dialogs */
+font: message-box;
+font: icon;
+/* Global values */
+font: inherit;
+font: initial;
+font: unset;
+/* Use the same font as the status bar of the window */
+
+/* font-family */
+/* A font family name and a generic family name */
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+/* A generic family name only */
+font-family: serif;
+font-family: sans-serif;
+font-family: monospace;
+font-family: cursive;
+font-family: fantasy;
+font-family: system-ui;
+/* Global values */
+font-family: inherit;
+font-family: initial;
+font-family: unset;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+font-family: Goudy Bookletter 1911, sans-serif;
+font-family: Red/Black, sans-serif;
+font-family: "Lucida" Grande, sans-serif;
+font-family: Ahem!, sans-serif;
+font-family: test@foo, sans-serif;
+font-family: #POUND, sans-serif;
+font-family: Hawaii 5-0, sans-serif;
+
+/* font-size */
+/* <absolute-size> values */
+font-size: xx-small;
+font-size: x-small;
+font-size: small;
+font-size: medium;
+font-size: large;
+font-size: x-large;
+font-size: xx-large;
+/* <relative-size> values */
+font-size: smaller;
+font-size: larger;
+/* <length> values */
+font-size: 12px;
+font-size: 0.8em;
+/* <percentage> values */
+font-size: 80%;
+/* Global values */
+font-size: inherit;
+font-size: initial;
+font-size: unset;
+/* Set paragraph text to be very large. */
+/* Sets text enclosed within span tag to be 16px */
+
+/* font-style */
+font-style: normal;
+font-style: italic;
+font-style: oblique;
+/* Global values */
+font-style: inherit;
+font-style: initial;
+font-style: unset;
+
+/* font-variant */
+font-variant: small-caps;
+font-variant: common-ligatures small-caps;
+/* Global values */
+font-variant: inherit;
+font-variant: initial;
+font-variant: unset;
+
+/* font-weight */
+/* Keyword values */
+font-weight: normal;
+font-weight: bold;
+/* Keyword values relative to the parent */
+font-weight: lighter;
+font-weight: bolder;
+/* Numeric keyword values */
+font-weight: 100;
+font-weight: 200;
+font-weight: 300;
+font-weight: 400;
+font-weight: 500;
+font-weight: 600;
+font-weight: 700;
+font-weight: 800;
+font-weight: 900;
+/* Global values */
+font-weight: inherit;
+font-weight: initial;
+font-weight: unset;
+/* Set paragraph text to be bold. */
+
+/* height */
+/* Keyword value */
+height: auto;
+/* <length> values */
+height: 120px;
+height: 10em;
+/* <percentage> value */
+height: 75%;
+/* Global values */
+height: inherit;
+height: initial;
+height: unset;
+
+/* left */
+/* <length> values */
+left: 3px;
+left: 2.4em;
+/* <percentage>s of the width of the containing block */
+left: 10%;
+/* Keyword value */
+left: auto;
+/* Global values */
+left: inherit;
+left: initial;
+left: unset;
+
+/* letter-spacing */
+/* <length> values */
+letter-spacing: 0.3em;
+letter-spacing: 3px;
+letter-spacing: .3px;
+/* Keyword values */
+letter-spacing: normal;
+/* Global values */
+letter-spacing: inherit;
+letter-spacing: initial;
+letter-spacing: unset;
+
+/* line-height */
+/* Keyword value */
+line-height: normal;
+line-height: 3.5;
+/* <length> values */
+line-height: 3em;
+/* <percentage> values */
+line-height: 34%;
+/* Global values */
+line-height: inherit;
+line-height: initial;
+line-height: unset;
+/* All rules below have the same resultant line height */
+
+/* list-style */
+/* type */
+list-style: square;
+/* image */
+list-style: url('../img/shape.png');
+/* position */
+list-style: inside;
+/* type | position */
+list-style: georgian inside;
+/* type | image | position */
+list-style: lower-roman url('../img/shape.png') outside;
+/* Keyword value */
+list-style: none;
+/* Global values */
+list-style: inherit;
+list-style: initial;
+list-style: unset;
+
+/* list-style-image */
+/* Keyword values */
+list-style-image: none;
+/* <url> values */
+list-style-image: url('starsolid.gif');
+/* Global values */
+list-style-image: inherit;
+list-style-image: initial;
+list-style-image: unset;
+
+/* list-style-position */
+/* Keyword values */
+list-style-position: inside;
+list-style-position: outside;
+/* Global values */
+list-style-position: inherit;
+list-style-position: initial;
+list-style-position: unset;
+
+/* list-style-type */
+/* Partial list of types */
+list-style-type: disc;
+list-style-type: circle;
+list-style-type: square;
+list-style-type: decimal;
+list-style-type: georgian;
+list-style-type: cjk-ideographic;
+list-style-type: kannada;
+/* <string> value */
+list-style-type: '-';
+/* Identifier matching an @counter-style rule */
+list-style-type: custom-counter-style;
+/* Keyword value */
+list-style-type: none;
+/* Global values */
+list-style-type: inherit;
+list-style-type: initial;
+list-style-type: unset;
+/* or use the shortcut "list-style": */
+
+/* margin */
+/* Apply to all four sides */
+margin: 1em;
+/* vertical | horizontal */
+margin: 5% auto;
+/* top | horizontal | bottom */
+margin: 1em auto 2em;
+/* top | right | bottom | left */
+margin: 2px 1em 0 auto;
+/* Global values */
+margin: inherit;
+margin: initial;
+margin: unset;
+
+/* margin-bottom */
+/* <length> values */
+/* Keyword values */
+margin-bottom: auto;
+/* Global values */
+margin-bottom: inherit;
+margin-bottom: initial;
+margin-bottom: unset;
+
+/* margin-left */
+/* <length> values */
+/* Keyword values */
+margin-left: auto;
+/* Global values */
+margin-left: inherit;
+margin-left: initial;
+margin-left: unset;
+
+/* margin-right */
+/* <length> values */
+/* Keyword values */
+margin-right: auto;
+/* Global values */
+margin-right: inherit;
+margin-right: initial;
+margin-right: unset;
+
+/* margin-top */
+/* <length> values */
+/* Keyword values */
+margin-top: auto;
+/* Global values */
+margin-top: inherit;
+margin-top: initial;
+margin-top: unset;
+
+/* max-height */
+/* <length> value */
+max-height: 3.5em;
+/* <percentage> value */
+max-height: 75%;
+/* Keyword values */
+max-height: none;
+max-height: max-content;
+max-height: min-content;
+max-height: fit-content;
+max-height: fill-available;
+/* Global values */
+max-height: inherit;
+max-height: initial;
+max-height: unset;
+
+/* max-width */
+/* <length> value */
+max-width: 3.5em;
+/* <percentage> value */
+max-width: 75%;
+/* Keyword values */
+max-width: none;
+max-width: max-content;
+max-width: min-content;
+max-width: fit-content;
+max-width: fill-available;
+/* Global values */
+max-width: inherit;
+max-width: initial;
+max-width: unset;
+
+/* min-height */
+/* <length> value */
+min-height: 3.5em;
+/* <percentage> value */
+min-height: 10%;
+/* Keyword values */
+min-height: max-content;
+min-height: min-content;
+min-height: fit-content;
+min-height: fill-available;
+/* Global values */
+min-height: inherit;
+min-height: initial;
+min-height: unset;
+
+/* min-width */
+/* <length> value */
+min-width: 3.5em;
+/* <percentage> value */
+min-width: 10%;
+/* Keyword values */
+min-width: max-content;
+min-width: min-content;
+min-width: fit-content;
+min-width: fill-available;
+/* Global values */
+min-width: inherit;
+min-width: initial;
+min-width: unset;
+
+/* orphans */
+/* <integer> values */
+orphans: 2;
+orphans: 3;
+/* Global values */
+orphans: inherit;
+orphans: initial;
+orphans: unset;
+
+/* outline */
+/* width | style | color */
+outline: 1px solid white;
+/* Global values */
+outline: inherit;
+outline: initial;
+outline: unset;
+/* Two identical declarations */
+
+/* outline-color */
+/* <color> values */
+outline-color: #f92525;
+outline-color: rgb(30,222,121);
+outline-color: blue;
+/* Keyword value */
+outline-color: invert;
+/* Global values */
+outline-color: inherit;
+outline-color: initial;
+outline-color: unset;
+
+/* outline-style */
+/* Keyword values */
+outline-style: auto;
+outline-style: none;
+outline-style: dotted;
+outline-style: dashed;
+outline-style: solid;
+outline-style: double;
+outline-style: groove;
+outline-style: ridge;
+outline-style: inset;
+outline-style: outset;
+/* Global values */
+outline-style: inherit;
+outline-style: initial;
+outline-style: unset;
+/* To make the Demo clearer */
+/* To make the Demo clearer */
+/* To make the Demo clearer */
+/* To make the Demo clearer */
+
+/* outline-width */
+/* Keyword values */
+outline-width: thin;
+outline-width: medium;
+outline-width: thick;
+/* <length> values */
+outline-width: 1px;
+outline-width: 0.1em;
+/* Global values */
+outline-width: inherit;
+
+/* overflow */
+/* Content is not clipped */
+overflow: visible;
+/* Content is clipped, with no scrollbars */
+overflow: hidden;
+/* Content is clipped, with scrollbars */
+overflow: scroll;
+/* Let the browser decide */
+overflow: auto;
+/* Global values */
+overflow: inherit;
+overflow: initial;
+overflow: unset;
+
+/* padding */
+/* Apply to all four sides */
+padding: 1em;
+/* vertical | horizontal */
+padding: 5% 10%;
+/* top | horizontal | bottom */
+padding: 1em 2em 2em;
+/* top | right | bottom | left */
+padding: 5px 1em 0 1em;
+/* Global values */
+padding: inherit;
+padding: initial;
+padding: unset;
+
+/* padding-bottom */
+/* <length> values */
+padding-bottom: 0.5em;
+padding-bottom: 0;
+padding-bottom: 2cm;
+/* <percentage> value */
+padding-bottom: 10%;
+/* Global values */
+padding-bottom: inherit;
+padding-bottom: initial;
+padding-bottom: unset;
+
+/* padding-left */
+/* <length> values */
+padding-left: 0.5em;
+padding-left: 0;
+padding-left: 2cm;
+/* <percentage> value */
+padding-left: 10%;
+/* Global values */
+padding-left: inherit;
+padding-left: initial;
+padding-left: unset;
+
+/* padding-right */
+/* <length> values */
+padding-right: 0.5em;
+padding-right: 0;
+padding-right: 2cm;
+/* <percentage> value */
+padding-right: 10%;
+/* Global values */
+padding-right: inherit;
+padding-right: initial;
+padding-right: unset;
+
+/* padding-top */
+/* <length> values */
+padding-top: 0.5em;
+padding-top: 0;
+padding-top: 2cm;
+/* <percentage> value */
+padding-top: 10%;
+/* Global values */
+padding-top: inherit;
+padding-top: initial;
+padding-top: unset;
+
+/* page-break-after */
+/* Keyword values */
+page-break-after: auto;
+page-break-after: always;
+page-break-after: avoid;
+page-break-after: left;
+page-break-after: right;
+page-break-after: recto;
+page-break-after: verso;
+/* Global values */
+page-break-after: inherit;
+page-break-after: initial;
+page-break-after: unset;
+/* move to a new page after footnotes */
+
+/* page-break-before */
+/* Keyword values */
+page-break-before: auto;
+page-break-before: always;
+page-break-before: avoid;
+page-break-before: left;
+page-break-before: right;
+page-break-before: recto;
+page-break-before: verso;
+/* Global values */
+page-break-before: inherit;
+page-break-before: initial;
+page-break-before: unset;
+/* avoid page break before the div */
+
+/* page-break-inside */
+/* Keyword values */
+page-break-inside: auto;
+page-break-inside: avoid;
+/* Global values */
+page-break-inside: inherit;
+page-break-inside: initial;
+page-break-inside: unset;
+
+/* position */
+/* Keyword values */
+position: static;
+position: relative;
+position: absolute;
+position: fixed;
+position: sticky;
+/* Global values */
+position: inherit;
+position: initial;
+position: unset;
+
+/* quotes */
+/* Keyword value */
+quotes: none;
+/* <string> values */
+/* Global values */
+quotes: inherit;
+quotes: initial;
+quotes: unset;
+
+/* right */
+/* <length> values */
+right: 3px;
+right: 2.4em;
+/* <percentage>s of the width of the containing block */
+right: 10%;
+/* Keyword value */
+right: auto;
+/* Global values */
+right: inherit;
+right: initial;
+right: unset;
+
+/* table-layout */
+/* Keyword values */
+table-layout: auto;
+table-layout: fixed;
+/* Global values */
+table-layout: inherit;
+table-layout: initial;
+table-layout: unset;
+
+/* text-align */
+/* Keyword values */
+text-align: left;
+text-align: right;
+text-align: center;
+text-align: justify;
+text-align: justify-all;
+text-align: start;
+text-align: end;
+text-align: match-parent;
+/* Block alignment values (Non-standard syntax) */
+text-align: -moz-center;
+text-align: -webkit-center;
+/* Global values */
+text-align: inherit;
+text-align: initial;
+text-align: unset;
+
+/* text-decoration */
+/* Keyword values */
+/* Global values */
+text-decoration: inherit;
+text-decoration: initial;
+text-decoration: unset;
+
+/* text-indent */
+/* <length> values */
+text-indent: 3mm;
+text-indent: 40px;
+text-indent: 15%;
+/* Keyword values */
+text-indent: 5em each-line;
+text-indent: 5em hanging;
+text-indent: 5em hanging each-line;
+/* Global values */
+text-indent: inherit;
+text-indent: initial;
+text-indent: unset;
+
+/* text-transform */
+/* Keyword values */
+text-transform: capitalize;
+text-transform: uppercase;
+text-transform: lowercase;
+text-transform: none;
+text-transform: full-width;
+/* Global values */
+text-transform: inherit;
+text-transform: initial;
+text-transform: unset;
+
+/* top */
+/* <length> values */
+top: 3px;
+top: 2.4em;
+/* <percentage>s of the height of the containing block */
+top: 10%;
+/* Keyword value */
+top: auto;
+/* Global values */
+top: inherit;
+top: initial;
+top: unset;
+
+/* unicode-bidi */
+/* Keyword values */
+unicode-bidi: normal;
+unicode-bidi: embed;
+unicode-bidi: isolate;
+unicode-bidi: bidi-override;
+unicode-bidi: isolate-override;
+unicode-bidi: plaintext;
+/* Global values */
+unicode-bidi: inherit;
+unicode-bidi: initial;
+unicode-bidi: unset;
+
+/* vertical-align */
+/* keyword values */
+vertical-align: baseline;
+vertical-align: sub;
+vertical-align: super;
+vertical-align: text-top;
+vertical-align: text-bottom;
+vertical-align: middle;
+vertical-align: top;
+vertical-align: bottom;
+/* <length> values */
+vertical-align: 10em;
+vertical-align: 4px;
+/* <percentage> values */
+vertical-align: 20%;
+/* Global values */
+vertical-align: inherit;
+vertical-align: initial;
+vertical-align: unset;
+
+/* visibility */
+/* Keyword values */
+visibility: visible;
+visibility: hidden;
+visibility: collapse;
+/* Global values */
+visibility: inherit;
+visibility: initial;
+visibility: unset;
+
+/* white-space */
+/* Keyword values */
+white-space: normal;
+white-space: nowrap;
+white-space: pre;
+white-space: pre-wrap;
+white-space: pre-line;
+/* Global values */
+white-space: inherit;
+white-space: initial;
+white-space: unset;
+
+/* widows */
+/* <integer> values */
+widows: 2;
+widows: 3;
+/* Global values */
+widows: inherit;
+widows: initial;
+widows: unset;
+
+/* width */
+/* <length> values */
+width: 300px;
+width: 25em;
+/* <percentage> value */
+width: 75%;
+/* Keyword values */
+width: 25em border-box;
+width: 75% content-box;
+width: max-content;
+width: min-content;
+width: available;
+width: fit-content;
+width: auto;
+/* Global values */
+width: inherit;
+width: initial;
+width: unset;
+/*  values */
+/*  value */
+/* Keyword values (mostly experimental) */
+
+/* word-spacing */
+/* Keyword value */
+word-spacing: normal;
+/* <length> values */
+word-spacing: 3px;
+word-spacing: 0.3em;
+/* <percentage> values */
+word-spacing: 50%;
+word-spacing: 200%;
+/* Global values */
+word-spacing: inherit;
+word-spacing: initial;
+word-spacing: unset;
+
+/* z-index */
+/* Keyword value */
+z-index: auto;
+/* <integer> values */
+z-index: 0;
+z-index: 3;
+z-index: 289;
+/* Global values */
+z-index: inherit;
+z-index: initial;
+z-index: unset;

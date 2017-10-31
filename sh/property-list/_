@@ -17,6 +17,46 @@ local +x LIST_NON_STANDARD=src/da_style/list.non.standard.txt
 
 case "$ACTION" in
 
+  samples)
+    cd "$THIS_DIR"
+
+    print-page () {
+      local +x name="$1"; shift
+      echo "/* $name */"
+
+      local +x content="$(lynx --dump --width 1024 "https://developer.mozilla.org/en-US/docs/Web/CSS/$name" || :)"
+      if [[ -z "$content" ]]; then
+        echo "!!! Failed to get html page for: $name" >&2
+        return 2
+      fi
+      echo "$content" | grep -P "^/\*.+\*/$|^[a-z].+:.+;$" | sed 's/https\?:\///g'
+    }
+
+    local +x continue=""
+    case "$(echo $@ | xargs -I NAME echo NAME)" in
+      "continue "*)
+        shift
+        continue="$1"; shift
+        ;;
+      "")
+        :
+        ;;
+      *)
+        print-page $@
+        return 0
+        ;;
+    esac
+
+    for name in $(cat "./src/da_style/list.txt") ; do
+      if [[ ! -z "$continue" && "$continue" != "$name" ]]; then
+        continue
+      fi
+      echo
+      print-page $name
+      continue=""
+    done
+    ;;
+
   diff)
     local +x TMP_FILE_1="$(mktemp)"
     local +x TMP_FILE_2="$(mktemp)"

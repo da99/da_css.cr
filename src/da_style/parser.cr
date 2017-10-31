@@ -192,9 +192,17 @@ module DA_STYLE
     end # === def is_valid_property_name?
 
     def is_valid_property_value?(raw : String, style)
+      case style
+      when "background-image"
+        return false if raw.bytesize > 120
+      else
+        return false if raw.bytesize > 60
+      end
+
       if raw.empty?
         raise Exception.new("Invalid property assignment: #{style}: [empty]")
       end
+
       invalid = raw.codepoints.find { |point|
         case point
         when ('a'.hash)..('z'.hash),
