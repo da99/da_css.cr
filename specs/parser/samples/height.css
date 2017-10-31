@@ -1,0 +1,12 @@
+/* height */
+/* Keyword value */
+height: auto;
+/* <length> values */
+height: 120px;
+height: 10em;
+/* <percentage> value */
+height: 75%;
+/* Global values */
+height: inherit;
+height: initial;
+height: unset;

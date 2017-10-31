@@ -1,0 +1,11 @@
+/* border-color */
+/* border-color: color */ /* the color applies to all sides */
+border-color: red;
+/* border-color: top&bottom right&left */
+border-color: red #f015ca;
+/* border-color: top right&left bottom */
+border-color: red yellow green;
+/* border-color: top right bottom left */
+border-color: red yellow green blue;
+border-color: inherit;
+/* Set width and style for all divs */

@@ -1,0 +1,12 @@
+/* clear */
+/* Keyword values */
+clear: none;
+clear: left;
+clear: right;
+clear: both;
+clear: inline-start;
+clear: inline-end;
+/* Global values */
+clear: inherit;
+clear: initial;
+clear: unset;

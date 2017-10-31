@@ -1,0 +1,22 @@
+/* font-weight */
+/* Keyword values */
+font-weight: normal;
+font-weight: bold;
+/* Keyword values relative to the parent */
+font-weight: lighter;
+font-weight: bolder;
+/* Numeric keyword values */
+font-weight: 100;
+font-weight: 200;
+font-weight: 300;
+font-weight: 400;
+font-weight: 500;
+font-weight: 600;
+font-weight: 700;
+font-weight: 800;
+font-weight: 900;
+/* Global values */
+font-weight: inherit;
+font-weight: initial;
+font-weight: unset;
+/* Set paragraph text to be bold. */

@@ -1,0 +1,11 @@
+/* background-image */
+/* Single value */
+background-image: url('/example.com/bck.png');
+/* Multiple values */
+background-image: url('/example.com/top.png'), url('/example.com/bottom.png');
+/* Keyword value */
+background-image: none;
+/* Global values */
+background-image: inherit;
+background-image: initial;
+background-image: unset;

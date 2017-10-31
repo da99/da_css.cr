@@ -1,0 +1,11 @@
+/* white-space */
+/* Keyword values */
+white-space: normal;
+white-space: nowrap;
+white-space: pre;
+white-space: pre-wrap;
+white-space: pre-line;
+/* Global values */
+white-space: inherit;
+white-space: initial;
+white-space: unset;

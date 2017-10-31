@@ -1,0 +1,13 @@
+/* padding */
+/* Apply to all four sides */
+padding: 1em;
+/* vertical | horizontal */
+padding: 5% 10%;
+/* top | horizontal | bottom */
+padding: 1em 2em 2em;
+/* top | right | bottom | left */
+padding: 5px 1em 0 1em;
+/* Global values */
+padding: inherit;
+padding: initial;
+padding: unset;

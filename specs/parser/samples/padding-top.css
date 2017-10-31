@@ -1,0 +1,11 @@
+/* padding-top */
+/* <length> values */
+padding-top: 0.5em;
+padding-top: 0;
+padding-top: 2cm;
+/* <percentage> value */
+padding-top: 10%;
+/* Global values */
+padding-top: inherit;
+padding-top: initial;
+padding-top: unset;

@@ -1,0 +1,18 @@
+/* border-left-style */
+/* Keyword values */
+border-left-style: none;
+border-left-style: hidden;
+border-left-style: dotted;
+border-left-style: dashed;
+border-left-style: solid;
+border-left-style: double;
+border-left-style: groove;
+border-left-style: ridge;
+border-left-style: inset;
+border-left-style: outset;
+/* Global values */
+border-left-style: inherit;
+border-left-style: initial;
+border-left-style: unset;
+/* Define look of the table */
+/* border-left-style example classes */

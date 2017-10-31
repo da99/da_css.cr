@@ -1,0 +1,17 @@
+/* text-align */
+/* Keyword values */
+text-align: left;
+text-align: right;
+text-align: center;
+text-align: justify;
+text-align: justify-all;
+text-align: start;
+text-align: end;
+text-align: match-parent;
+/* Block alignment values (Non-standard syntax) */
+text-align: -moz-center;
+text-align: -webkit-center;
+/* Global values */
+text-align: inherit;
+text-align: initial;
+text-align: unset;

@@ -1,0 +1,13 @@
+/* caption-side */
+/* Directional values */
+caption-side: top;
+caption-side: bottom;
+/* Warning: non-standard values */
+caption-side: left;
+caption-side: right;
+caption-side: top-outside;
+caption-side: bottom-outside;
+/* Global values */
+caption-side: inherit;
+caption-side: initial;
+caption-side: unset;

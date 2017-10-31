@@ -1,0 +1,11 @@
+/* padding-right */
+/* <length> values */
+padding-right: 0.5em;
+padding-right: 0;
+padding-right: 2cm;
+/* <percentage> value */
+padding-right: 10%;
+/* Global values */
+padding-right: inherit;
+padding-right: initial;
+padding-right: unset;

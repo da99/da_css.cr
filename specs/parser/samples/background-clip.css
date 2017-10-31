@@ -1,0 +1,10 @@
+/* background-clip */
+/* Keyword values */
+background-clip: border-box;
+background-clip: padding-box;
+background-clip: content-box;
+background-clip: text;
+/* Global values */
+background-clip: inherit;
+background-clip: initial;
+background-clip: unset;

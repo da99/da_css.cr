@@ -1,0 +1,25 @@
+/* font-family */
+/* A font family name and a generic family name */
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+/* A generic family name only */
+font-family: serif;
+font-family: sans-serif;
+font-family: monospace;
+font-family: cursive;
+font-family: fantasy;
+font-family: system-ui;
+/* Global values */
+font-family: inherit;
+font-family: initial;
+font-family: unset;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+font-family: Goudy Bookletter 1911, sans-serif;
+font-family: Red/Black, sans-serif;
+font-family: "Lucida" Grande, sans-serif;
+font-family: Ahem!, sans-serif;
+font-family: test@foo, sans-serif;
+font-family: #POUND, sans-serif;
+font-family: Hawaii 5-0, sans-serif;

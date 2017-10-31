@@ -1,0 +1,8 @@
+/* widows */
+/* <integer> values */
+widows: 2;
+widows: 3;
+/* Global values */
+widows: inherit;
+widows: initial;
+widows: unset;

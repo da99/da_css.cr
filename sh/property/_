@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 #
-# === {{CMD}}
+# === {{CMD}} w3|used
+# === {{CMD}} samples [all]
+# === {{CMD}} samples continue property-name
+# === {{CMD}} samples save-to-specs [continue]
 #
 set -u -e -o pipefail
 
@@ -20,6 +23,13 @@ case "$ACTION" in
   samples)
     cd "$THIS_DIR"
 
+    if [[ -z "$@" ]]; then
+      ACTION="all"
+    else
+      ACTION="$1"; shift
+    fi
+    local +x continue=""
+
     print-page () {
       local +x name="$1"; shift
       echo "/* $name */"
@@ -32,25 +42,52 @@ case "$ACTION" in
       echo "$content" | grep -P "^/\*.+\*/$|^[a-z].+:.+;$" | sed 's/https\?:\///g'
     }
 
-    local +x continue=""
-    case "$(echo $@ | xargs -I NAME echo NAME)" in
-      "continue "*)
-        shift
-        continue="$1"; shift
+    local +x save=""
+    case "$ACTION" in
+      continue)
+        local +x continue="$1"; shift
         ;;
-      "")
-        :
-        ;;
-      *)
+
+      get)
         print-page $@
         return 0
         ;;
+
+      all)
+        :
+        ;;
+
+      save-to-specs)
+        local +x save=true
+        mkdir -p specs/parser/samples
+        if [[ ! -z "$@" ]]; then
+          local +x continue="$1"; shift
+        fi
+        ;;
+
+      *)
+        echo "!!! Unknown action: samples $ACTION" >&2
+        exit 2
+        ;;
     esac
 
-    for name in $(cat "./src/da_style/list.txt") ; do
-      if [[ ! -z "$continue" && "$continue" != "$name" ]]; then
+    for name in $(da_style.cr property used) ; do
+      if [[ ! -z "$continue" && "$name" < "$continue" ]]; then
+        echo "=== skipping: $name" >&2
         continue
       fi
+
+      if [[ ! -z "$save" ]]; then
+        if [[ "$name" == "-ms-border-radius" ]]; then
+          echo "=== Skipping: $name"
+          continue=""
+          continue
+        fi
+        echo "=== Saving: $name"
+        print-page $name > specs/parser/samples/${name}.css
+        continue
+      fi
+
       echo
       print-page $name
       continue=""
@@ -80,19 +117,15 @@ case "$ACTION" in
     cat "$LIST_FAMILY"
     ;;
 
-  latest)
-    cd "$THIS_DIR"
+  used)
+    cat src/da_style/parser/properties.cr | grep -P '^\ *def_property' | cut -d'"' -f2 | sort
+    ;;
+
+  w3)
     {
       lynx --dump "https://www.w3.org/TR/CSS2/propidx.html" | grep -Po "]'\K[^']+"
       cat "$LIST_NON_STANDARD"
     } | sort | uniq | grep -v -P '^$'
-    ;;
-
-  list)
-    if my_fs a-is-younger-than-b "$LIST_TXT" "$LIST_FAMILY" ; then
-      da_style.cr property-list family &>/dev/null
-    fi
-    cat "$LIST_TXT"
     ;;
 
   *)

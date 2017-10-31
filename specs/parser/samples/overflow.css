@@ -1,0 +1,13 @@
+/* overflow */
+/* Content is not clipped */
+overflow: visible;
+/* Content is clipped, with no scrollbars */
+overflow: hidden;
+/* Content is clipped, with scrollbars */
+overflow: scroll;
+/* Let the browser decide */
+overflow: auto;
+/* Global values */
+overflow: inherit;
+overflow: initial;
+overflow: unset;

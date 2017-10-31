@@ -1,0 +1,11 @@
+/* text-decoration-color */
+/* <color> values */
+text-decoration-color: currentColor;
+text-decoration-color: red;
+text-decoration-color: #00ff00;
+text-decoration-color: rgba(255, 128, 128, 0.5);
+text-decoration-color: transparent;
+/* Global values */
+text-decoration-color: inherit;
+text-decoration-color: initial;
+text-decoration-color: unset;

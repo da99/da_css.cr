@@ -1,0 +1,13 @@
+/* line-height */
+/* Keyword value */
+line-height: normal;
+line-height: 3.5;
+/* <length> values */
+line-height: 3em;
+/* <percentage> values */
+line-height: 34%;
+/* Global values */
+line-height: inherit;
+line-height: initial;
+line-height: unset;
+/* All rules below have the same resultant line height */

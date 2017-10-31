@@ -1,0 +1,11 @@
+/* float */
+/* Keyword values */
+float: left;
+float: right;
+float: none;
+float: inline-start;
+float: inline-end;
+/* Global values */
+float: inherit;
+float: initial;
+float: unset;

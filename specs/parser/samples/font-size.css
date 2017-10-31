@@ -1,0 +1,23 @@
+/* font-size */
+/* <absolute-size> values */
+font-size: xx-small;
+font-size: x-small;
+font-size: small;
+font-size: medium;
+font-size: large;
+font-size: x-large;
+font-size: xx-large;
+/* <relative-size> values */
+font-size: smaller;
+font-size: larger;
+/* <length> values */
+font-size: 12px;
+font-size: 0.8em;
+/* <percentage> values */
+font-size: 80%;
+/* Global values */
+font-size: inherit;
+font-size: initial;
+font-size: unset;
+/* Set paragraph text to be very large. */
+/* Sets text enclosed within span tag to be 16px */

@@ -1,0 +1,13 @@
+/* border-top-width */
+/* Keyword values */
+border-top-width: thin;
+border-top-width: medium;
+border-top-width: thick;
+/* <length> values */
+border-top-width: 10em;
+border-top-width: 3vmax;
+border-top-width: 6px;
+/* Global keywords */
+border-top-width: inherit;
+border-top-width: initial;
+border-top-width: unset;

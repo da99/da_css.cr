@@ -1,0 +1,9 @@
+/* list-style-image */
+/* Keyword values */
+list-style-image: none;
+/* <url> values */
+list-style-image: url('starsolid.gif');
+/* Global values */
+list-style-image: inherit;
+list-style-image: initial;
+list-style-image: unset;

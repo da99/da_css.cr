@@ -1,0 +1,8 @@
+/* empty-cells */
+/* Keyword values */
+empty-cells: show;
+empty-cells: hide;
+/* Global values */
+empty-cells: inherit;
+empty-cells: initial;
+empty-cells: unset;

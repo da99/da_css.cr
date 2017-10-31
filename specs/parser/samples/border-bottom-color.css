@@ -1,0 +1,12 @@
+/* border-bottom-color */
+/* <color> values */
+border-bottom-color: red;
+border-bottom-color: #ffbb00;
+border-bottom-color: rgb(255, 0, 0);
+border-bottom-color: hsla(100%, 50%, 25%, 0.75);
+border-bottom-color: currentColor;
+border-bottom-color: transparent;
+/* Global values */
+border-bottom-color: inherit;
+border-bottom-color: initial;
+border-bottom-color: unset;

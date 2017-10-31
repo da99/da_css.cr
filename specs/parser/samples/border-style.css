@@ -1,0 +1,24 @@
+/* border-style */
+/* Keyword values */
+border-top-style: none;
+border-top-style: hidden;
+border-top-style: dotted;
+border-top-style: dashed;
+border-top-style: solid;
+border-top-style: double;
+border-top-style: groove;
+border-top-style: ridge;
+border-top-style: inset;
+border-top-style: outset;
+/* vertical | horizontal */
+border-style: dotted solid;
+/* top | horizontal | bottom */
+border-style: hidden double dashed;
+/* top | right | bottom | left */
+border-style: none solid dotted dashed;
+/* Global values */
+border-style: inherit;
+border-style: initial;
+border-style: unset;
+/* Define look of the table */
+/* border-style example classes */

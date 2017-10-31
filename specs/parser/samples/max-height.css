@@ -1,0 +1,15 @@
+/* max-height */
+/* <length> value */
+max-height: 3.5em;
+/* <percentage> value */
+max-height: 75%;
+/* Keyword values */
+max-height: none;
+max-height: max-content;
+max-height: min-content;
+max-height: fit-content;
+max-height: fill-available;
+/* Global values */
+max-height: inherit;
+max-height: initial;
+max-height: unset;

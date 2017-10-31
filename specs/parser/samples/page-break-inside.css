@@ -1,0 +1,8 @@
+/* page-break-inside */
+/* Keyword values */
+page-break-inside: auto;
+page-break-inside: avoid;
+/* Global values */
+page-break-inside: inherit;
+page-break-inside: initial;
+page-break-inside: unset;

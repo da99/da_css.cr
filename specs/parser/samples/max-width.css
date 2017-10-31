@@ -1,0 +1,15 @@
+/* max-width */
+/* <length> value */
+max-width: 3.5em;
+/* <percentage> value */
+max-width: 75%;
+/* Keyword values */
+max-width: none;
+max-width: max-content;
+max-width: min-content;
+max-width: fit-content;
+max-width: fill-available;
+/* Global values */
+max-width: inherit;
+max-width: initial;
+max-width: unset;

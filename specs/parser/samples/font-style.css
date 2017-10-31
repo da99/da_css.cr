@@ -1,0 +1,8 @@
+/* font-style */
+font-style: normal;
+font-style: italic;
+font-style: oblique;
+/* Global values */
+font-style: inherit;
+font-style: initial;
+font-style: unset;

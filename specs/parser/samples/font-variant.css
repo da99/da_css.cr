@@ -1,0 +1,7 @@
+/* font-variant */
+font-variant: small-caps;
+font-variant: common-ligatures small-caps;
+/* Global values */
+font-variant: inherit;
+font-variant: initial;
+font-variant: unset;
