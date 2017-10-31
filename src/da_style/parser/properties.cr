@@ -40,11 +40,11 @@ module DA_STYLE
     SEGMENT_NUMBER       = SEGMENT_UNITLESS
     SEGMENT_LENGTH       = /(-?\.[0-9][a-z]{2,5})|(-?[0-9]{1,2}(\.?[0-9]{1})?[a-z]{2,5})/
     SEGMENT_PERCENTAGE   = /[0-9]{1,3}%/
-    SEGMENT_BORDER_STYLE = /none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES}/
     SEGMENT_STYLE        = /auto|none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/
+    SEGMENT_BORDER_STYLE = /#{SEGMENT_STYLE}|#{CSS_GLOBAL_VALUES}/
     SEGMENT_URL          = /url\('[\/a-zA-Z0-9\_\-\.]{3,100}'\)/
     SEGMENT_COLOR        = /currentColor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
-    SEGMENT_WIDTH        = /thin|medium|thick|[0-9]{1,3}[a-z]{2,4}/
+    SEGMENT_WIDTH        = /none|thin|medium|thick|0|(\d\.)?[0-9]{1,2}[a-z]{2,4}|[0-9]{1,3}[a-z]{2,4}/
     LENGTH_PERCENT_0     = /#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH}|0/
 
     PATTERN_COLOR        = /^#{SEGMENT_COLOR}|#{CSS_GLOBAL_VALUES}$/

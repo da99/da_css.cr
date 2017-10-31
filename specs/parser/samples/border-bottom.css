@@ -1,8 +1,4 @@
 /* border-bottom */
-border-bottom: 1px;
-border-bottom: 2px dotted;
 border-bottom: medium dashed blue;
-border-bottom-style: dotted;
-border-bottom: thick green;
-border-bottom-style: dotted;
-border-bottom: none thick green;
+border-bottom: 0 dotted green;
+border-bottom: 3em dashed #fff;
