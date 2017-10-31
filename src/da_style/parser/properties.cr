@@ -50,7 +50,8 @@ module DA_STYLE
     PATTERN_BORDER_STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES})$/
     PATTERN_WIDTH        = /^(thin|medium|thick|#{CSS_GLOBAL_VALUES})|[0-9]{1,3}[a-z]{2,4}$/
     PATTERN_BORDER       = /^[0-9]{1,4}[a-z]{2,5}\ +(#{SEGMENT_BORDER_STYLE})\ +([a-z]{3,15}}|rgba?\(\ *[a-z0-9\,\ \%\.]{2,20}\ *\))$/
-    PATTERN_RADIUS       = /^(\ *#{LENGTH_PERCENT_0}\ *){1,4}(\ *\/(\ *#{LENGTH_PERCENT_0}\ *){1,4})?$/
+    PATTERN_RADIUS       = /^(\ *(#{LENGTH_PERCENT_0}|inherit)\ *){1,4}(\ *\/(\ *#{LENGTH_PERCENT_0}\ *){1,4})?$/
+    PATTERN_RADIUS_CORNER= /^(\ *(#{LENGTH_PERCENT_0})\ *){1,2}$/
 
     def_property "background-attachment", /^(scroll|fixed|local|#{CSS_GLOBAL_VALUES})$/
     def_property "background-clip",       /^(border-box|padding-box|content-box|text|#{CSS_GLOBAL_VALUES})$/
@@ -85,10 +86,13 @@ module DA_STYLE
 
     def_property "border-left-width",     PATTERN_WIDTH
 
-    def_property "border-radius",         PATTERN_RADIUS
-    def_property "-moz-border-radius",    PATTERN_RADIUS
-    def_property "-ms-border-radius",     PATTERN_RADIUS
-    def_property "-webkit-border-radius", PATTERN_RADIUS
+    {% for x in ["", "-moz-", "-ms-", "-webkit-"] %}
+      def_property "{{x.id}}border-radius", PATTERN_RADIUS
+      def_property "{{x.id}}border-top-left-radius", PATTERN_RADIUS_CORNER
+      def_property "{{x.id}}border-top-right-radius", PATTERN_RADIUS_CORNER
+      def_property "{{x.id}}border-bottom-left-radius", PATTERN_RADIUS_CORNER
+      def_property "{{x.id}}border-bottom-right-radius", PATTERN_RADIUS_CORNER
+    {% end %}
 
     def_property "border-right",          PATTERN_BORDER
 

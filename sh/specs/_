@@ -21,10 +21,10 @@ case "$ACTION" in
 
   run)
     export DEV_BUILD=yes
-    reset
     mkdir -p tmp/out
     sh_color ORANGE "=== {{Compiling}}..."
     my_crystal __ build specs/specs.cr -o tmp/out/specs
+    reset
     sh_color ORANGE "=== {{Running}}..."
     tmp/out/specs $@
     sh_color GREEN "=== {{DONE}} ==="
