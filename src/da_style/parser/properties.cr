@@ -35,21 +35,22 @@ module DA_STYLE
     end # === macro def_property
 
     CSS_GLOBAL_VALUES    = /inherit|initial|unset/
-    LENGTH_PERCENT_0     = /#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH}|0/
-    SEGMENT_MARGIN       = /#{LENGTH_PERCENT_0}|auto}|#{CSS_GLOBAL_VALUES}/
+    SEGMENT_MARGIN       = /#{LENGTH_PERCENT_0}|auto|#{CSS_GLOBAL_VALUES}/
     SEGMENT_UNITLESS     = /-?[0-9]{1,2}(\.?[0-9]{1})?/
     SEGMENT_NUMBER       = SEGMENT_UNITLESS
-    SEGMENT_LENGTH       = /-?[0-9]{1,2}(\.?[0-9]{1})?[a-z]{2,5}/
+    SEGMENT_LENGTH       = /(-?\.[0-9][a-z]{2,5})|(-?[0-9]{1,2}(\.?[0-9]{1})?[a-z]{2,5})/
     SEGMENT_PERCENTAGE   = /[0-9]{1,3}%/
     SEGMENT_BORDER_STYLE = /none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES}/
     SEGMENT_STYLE        = /auto|none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/
     SEGMENT_URL          = /url\('[\/a-zA-Z0-9\_\-\.]{3,100}'\)/
     SEGMENT_COLOR        = /currentColor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
+    SEGMENT_WIDTH        = /thin|medium|thick|[0-9]{1,3}[a-z]{2,4}/
+    LENGTH_PERCENT_0     = /#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH}|0/
 
     PATTERN_COLOR        = /^#{SEGMENT_COLOR}|#{CSS_GLOBAL_VALUES}$/
     PATTERN_BORDER_STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES})$/
-    PATTERN_WIDTH        = /^(thin|medium|thick|#{CSS_GLOBAL_VALUES})|[0-9]{1,3}[a-z]{2,4}$/
-    PATTERN_BORDER       = /^[0-9]{1,4}[a-z]{2,5}\ +(#{SEGMENT_BORDER_STYLE})\ +([a-z]{3,15}}|rgba?\(\ *[a-z0-9\,\ \%\.]{2,20}\ *\))$/
+    PATTERN_WIDTH        = /^#{SEGMENT_WIDTH}|#{CSS_GLOBAL_VALUES}$/
+    PATTERN_BORDER       = /^#{SEGMENT_WIDTH}\ +(#{SEGMENT_BORDER_STYLE})\ +(#{SEGMENT_COLOR})$/
     PATTERN_RADIUS       = /^(\ *(#{LENGTH_PERCENT_0}|inherit)\ *){1,4}(\ *\/(\ *#{LENGTH_PERCENT_0}\ *){1,4})?$/
     PATTERN_RADIUS_CORNER= /^(\ *(#{LENGTH_PERCENT_0})\ *){1,2}$/
 
@@ -60,7 +61,7 @@ module DA_STYLE
 
     def_property "background-image",      /^(([,\ ]?url\('[\/a-zA-Z\.\_]+'\)[,\ ]?)+$)|none|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "background-position",   /^([\d\%\ chempx\,topbottomleftright]+|top|bottom|left|right|center|#{CSS_GLOBAL_VALUES})$/
+    def_property "background-position",   /^[\d\%\ chempx\,centertopbottomleftright]+|top|bottom|left|right|center|#{CSS_GLOBAL_VALUES}$/
 
     def_property "background-repeat",     /^(repeat-x|repeat-y|repeat|space|round|no-repeat|#{CSS_GLOBAL_VALUES}|\ ){1,50}$/
 
@@ -104,7 +105,7 @@ module DA_STYLE
 
     def_property "border-spacing",        /^([0-9a-z\ ]{3,50}|#{CSS_GLOBAL_VALUES})$/
 
-    def_property "border-style",          PATTERN_BORDER_STYLE
+    def_property "border-style",          /^((\ *#{SEGMENT_BORDER_STYLE}\ *){1,4})$/
 
     def_property "border-top",            PATTERN_BORDER
 
@@ -138,7 +139,7 @@ module DA_STYLE
 
     # def_propertys "font",                  /^[a-zA-Z\"\,\ \-]{2, 50}(\ *\/\ *[a-z0-9\ ]{1,30})?$/
 
-    def_property "font-family",           /^("[a-zA-Z\"\ ]{3,25}"\ *\,\ *)?(serif|sans-serif|monospace|cursive|fantasy|system-ui|#{CSS_GLOBAL_VALUES})$/
+    def_property "font-family",           /^("[\!\/\#\-\_\.a-zA-Z\ \d]{3,25}"\ *\,\ *)?(serif|sans-serif|monospace|cursive|fantasy|system-ui|#{CSS_GLOBAL_VALUES})$/
 
     def_property "font-size",             /^(xx-small|x-small|small|medium|large|x-large|xx-large|smaller|larger|#{CSS_GLOBAL_VALUES})|[0-9]{1,3}%|[0-9]{1,4}(\.[0-9])?([a-z]{2,5})$/
 
@@ -150,13 +151,13 @@ module DA_STYLE
 
     def_property "height",                /^auto|fill|max-content|min-content|available|fit-content|[0-9]{1,3}([a-z]{2,5}|%)(\ *(border-box|content-box))?|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "left",                  /^#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|(auto|inherit)$/
+    def_property "left",                  /^#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|auto|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "letter-spacing",        /^#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|(normal|#{CSS_GLOBAL_VALUES})$/
+    def_property "letter-spacing",        /^#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|normal|#{CSS_GLOBAL_VALUES}$/
 
     def_property "line-height",           /^normal|#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|#{SEGMENT_UNITLESS}|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "list-style-image",      /^#{SEGMENT_URL}$/
+    def_property "list-style-image",      /^#{SEGMENT_URL}|none|#{CSS_GLOBAL_VALUES}$/
 
     def_property "list-style-position",   /^inside|outside|#{CSS_GLOBAL_VALUES}$/
 
@@ -177,8 +178,8 @@ module DA_STYLE
 
     def_property "orphans",               /^#{SEGMENT_NUMBER}|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "outline-color",         /^#{SEGMENT_COLOR}|invert|initial|unset$/
-    def_property "outline-style",         /^#{SEGMENT_STYLE}|invert|initial|unset$/
+    def_property "outline-color",         /^#{SEGMENT_COLOR}|invert|#{CSS_GLOBAL_VALUES}$/
+    def_property "outline-style",         /^#{SEGMENT_STYLE}|invert|#{CSS_GLOBAL_VALUES}$/
     def_property "outline-width",         PATTERN_WIDTH
 
     def_property "overflow",              /^visible|hidden|scroll|auto|#{CSS_GLOBAL_VALUES}$/
@@ -205,7 +206,7 @@ module DA_STYLE
     def_property "text-decoration-color", /^#{SEGMENT_COLOR}$/
     def_property "text-decoration-style", /^solid|double|dotted|dashed|wavy|-moz-none|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "text-indent",           /^#{LENGTH_PERCENT_0}(\* hanging\ *)?(\ *each_line\ *)?$/
+    def_property "text-indent",           /^((#{LENGTH_PERCENT_0})(\ *hanging\ *)?(\ *each-line\ *)?)|#{CSS_GLOBAL_VALUES}$/
 
     def_property "text-transform",        /^capitalize|uppercase|lowercase|none|full-width|#{CSS_GLOBAL_VALUES}$/
 
@@ -213,7 +214,7 @@ module DA_STYLE
 
     def_property "unicode-bidi",          /^normal|embed|isolate|bidi-override|isolate-override|plaintext|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "vertical-align",        /^#{LENGTH_PERCENT_0}|baseline|sub|super|text(-top|-bottom)|middle|bottom|#{CSS_GLOBAL_VALUES}$/
+    def_property "vertical-align",        /^#{LENGTH_PERCENT_0}|baseline|sub|super|text(-top|-bottom)|top|middle|bottom|#{CSS_GLOBAL_VALUES}$/
 
     def_property "visibility",            /^visible|hidden|collapse|#{CSS_GLOBAL_VALUES}$/
 

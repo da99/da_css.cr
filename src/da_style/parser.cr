@@ -368,6 +368,13 @@ module DA_STYLE
       "url('#{clean_url}')"
     end # === def replace_url
 
+    def replace_rect(property_name : String, func_name : String, raw_args : String)
+      args = raw_args.split(/[,\s]+/)
+      return false if args.size != 4
+      return false unless args.all? { |x| x.match(/^[\d]{1,4}[a-z]{2,5}$/) }
+      "rect(#{args.join " "})"
+    end # === def replace_rect
+
     def replace_rgb(property_name : String, func_name : String, raw_args : String)
       args = raw_args.strip.split(/[\,|\s]+/).map(&.strip)
       return false unless args.size == 3
@@ -540,6 +547,10 @@ module DA_STYLE
 
                   when property_name.index("color") && func_name == "rgba"
                     replace_rgba(property_name, func_name, args)
+
+                  when property_name == "clip" && func_name == "rect"
+                    replace_rect(property_name, func_name, args)
+
                   end # === case
 
         if !new_str.is_a?(String)

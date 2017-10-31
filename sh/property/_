@@ -59,18 +59,32 @@ case "$ACTION" in
 
       save)
         local +x name="$1"; shift
+        local +x file="specs/parser/samples/${name}.css"
+
+        if [[ -s "$file" ]]; then
+          echo "!!! File is not empty: $file" >&2
+          return 2
+        fi
+
         echo "=== Saving: $name" >&2
-        print-page $name > specs/parser/samples/${name}.css
+        print-page $name > "$file"
         return 0
         ;;
 
-      save-to-specs)
-        local +x save=true
-        mkdir -p specs/parser/samples
-        if [[ ! -z "$@" ]]; then
-          local +x continue="$1"; shift
+      save-error)
+        local +x name="$1"; shift
+        local +x file="specs/parser/sample-errors/${name}.css"
+
+        if [[ -s "$file" ]]; then
+          echo "!!! File is not empty: $file" >&2
+          return 2
         fi
+
+        echo "=== Saving: $name -> $file" >&2
+        print-page $name > "$file"
+        return 0
         ;;
+
 
       *)
         echo "!!! Unknown action: samples $ACTION" >&2
@@ -91,7 +105,7 @@ case "$ACTION" in
           continue
         fi
         echo "=== Saving: $name"
-        print-page $name > specs/parser/samples/${name}.css
+        print-page $name > tmp/samples/${name}.css
         continue
       fi
 

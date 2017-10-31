@@ -15,8 +15,19 @@ describe DA_STYLE::Parser do
                 .reject { |x| x.index("hsl(") }
                 .reject { |x| x.index(/rgb\(.+, .+, .+, .+\)/) }
                 .reject { |x| x.index(/rgb\([0-9\ ]+\/[0-9\.\ ]+\)/) }
+                .reject { |x| x.index(/^cursor: url\(/) }
+                .reject { |x| x.index(/^border: [^\s]+( [^\s]+)?;$/) }
                 .join("\n")
             end
+
+      case "{{name}}"
+      when "font-family"
+        css = css.gsub(/: ([^",;]+),/, ": \"\\1\",")
+          .split("\n")
+          .reject { |x| x.index(/Grande|@/) }
+          .join("\n")
+      end
+
       input = %[
         div.white {
           #{ css }
