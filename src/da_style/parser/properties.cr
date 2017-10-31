@@ -44,7 +44,7 @@ module DA_STYLE
     SEGMENT_BORDER_STYLE = /none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES}/
     SEGMENT_STYLE        = /auto|none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/
     SEGMENT_URL          = /url\('[\/a-zA-Z0-9\_\-\.]{3,100}'\)/
-    SEGMENT_COLOR        = /currentcolor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
+    SEGMENT_COLOR        = /currentColor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
 
     PATTERN_COLOR        = /^#{SEGMENT_COLOR}|#{CSS_GLOBAL_VALUES}$/
     PATTERN_BORDER_STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES})$/

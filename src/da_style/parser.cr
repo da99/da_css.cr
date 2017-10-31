@@ -382,13 +382,26 @@ module DA_STYLE
     end # === def replace_color
 
     def replace_rgba(property_name : String, func_name : String, raw_args : String)
-      args  = raw_args.strip.split(/[\,|\s]+/).map(&.strip)
-      return false unless args.size == 4
-      alpha = args.pop
-      return false unless args.all? { |x| x.match(/^[0-9]{1,3}$/) }
-      return false unless alpha.match(/^\.?[0-9]{1}$/)
+      args          = raw_args.strip.split(/[\,|\s]+/).map(&.strip)
+      num_pattern   = /^[0-9]{1,3}$/
+      alpha_pattern = /^(0\.)?[0-9]{1}$/
 
-      "rgba(#{args.join(", ")}, #{alpha})"
+      case args.size
+      when 4
+        alpha = args.pop
+        return false unless args.all? { |x| x.match(num_pattern) }
+        return false unless alpha.match(alpha_pattern)
+        "rgba(#{args.join(", ")}, #{alpha})"
+      when 5
+        return false unless args[3] == "/"
+        alpha = args.pop
+        slash = args.pop
+        return false unless args.all? { |x| x.match(num_pattern) }
+        return false unless alpha.match(alpha_pattern)
+        "rgba(#{args.join(" ")} / #{alpha})"
+      else
+        return false
+      end
     end # === def replace_color
 
     def run_property
@@ -530,7 +543,7 @@ module DA_STYLE
                   end # === case
 
         if !new_str.is_a?(String)
-          raise Unknown_CSS_Function.new("#{func_name.inspect} can't be used with #{property_name.inspect}")
+          raise Unknown_CSS_Function.new("#{raw.inspect} can't be used with #{property_name.inspect}")
         end
         new_str
       end # === gsub

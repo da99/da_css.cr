@@ -1,1 +1,18 @@
 /* background-color */
+/* Keyword values */
+background-color: red;
+/* Hexadecimal value */
+background-color: #bbff00;
+/* Hexadecimal value with alpha channel */
+/* RGB value */
+background-color: rgb(255, 255, 128);
+/* RGBA value or RGB with alpha channel */
+/* HSLA value */
+background-color: hsla(50, 33%, 25%, 0.75);
+/* Special keyword values */
+background-color: currentcolor;
+background-color: transparent;
+/* Global values */
+background-color: inherit;
+background-color: initial;
+background-color: unset;

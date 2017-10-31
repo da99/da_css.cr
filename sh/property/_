@@ -57,6 +57,13 @@ case "$ACTION" in
         :
         ;;
 
+      save)
+        local +x name="$1"; shift
+        echo "=== Saving: $name" >&2
+        print-page $name > specs/parser/samples/${name}.css
+        return 0
+        ;;
+
       save-to-specs)
         local +x save=true
         mkdir -p specs/parser/samples
