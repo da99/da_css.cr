@@ -1,3 +1,32 @@
+azimuth           # obsolete
+elevation         # obsolete
+content           # For later. Not ready, for security concerns
+counter-increment # For later.
+counter-reset     # For later.
+cue               # For later.
+cue-after         # For later.
+cue-before        # For later.
+quotes            # For later.
+
+background      # Family.
+border          # Family.
+font            # Family.
+list            # Family.
+list-style      # Family.
+margin          # Family.
+outline         # Family.
+padding         # Family.
+page            # Family.
+speak           # Family.
+text            # Family.
+text-decoration # Family.
+
+-webkit-border-radius # Non-standard
+-moz-border-radius    # Non-standard
+-ms-border-radius     # Non-standard
+-webkit-border-radius # Non-standard
+border-radius         # Non-standard
+
 background
 background-attachment
 background-color

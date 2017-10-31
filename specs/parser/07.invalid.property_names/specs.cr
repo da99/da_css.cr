@@ -12,7 +12,7 @@ describe "Parser invalid property names" do
     }
   end # === it "does not allow: behaviour"
 
-  {% for x in system("cat \"#{__DIR__}/../../../src/da_style/list.family.txt\"").split.reject(&.empty?) %}
+  {% for x in system("grep  '# Family' \"#{__DIR__}/../../../src/da_style/list.txt\"").split("\n").map { |x| x.split.first } %}
     {% if !%w(padding border margin).includes?(x) %}
       it "does not allow family names as property names: {{x.id}}" do
         input = %[

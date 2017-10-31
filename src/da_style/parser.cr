@@ -222,7 +222,7 @@ module DA_STYLE
     def is_property_family?(raw : String)
       {% begin %}
         case raw
-        when {{ system("cat \"#{__DIR__}/list.family.txt\"").split.map(&.stringify).join(", ").id }}
+        when {{ system("grep  '# Family' \"#{__DIR__}/list.txt\"").split("\n").map { |x| x.split.first.stringify }.join(", ").id }}
           true
         else
           false
