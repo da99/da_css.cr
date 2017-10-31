@@ -7,18 +7,31 @@ module DA_STYLE
   module Parser
 
     {% system("mkdir -p tmp") %}
+    {% system("rm -f tmp/da_style.def_property.tmp") %}
     {% system("touch tmp/da_style.def_property.tmp") %}
 
     macro def_property(raw_name, r)
-      {% str = r.source.stringify %}
-      {% if str.starts_with?("\"^") && str.ends_with?("$\"") %}
-        {% const_name = "PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}" %}
-        {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}" %}
-        {{const_name}} = {{r}}
-        {% system("bash -c \"echo #{raw_name} #{name} >> tmp/da_style.def_property.tmp\"") %}
+      {% if r.is_a?(Path) %}
+        {% str = r.resolve.source.stringify %}
+        {% const_name = r %}
       {% else %}
-        raise Exception.new("Regex not secure: must start with ^ and end with $: {{r.id}} " + {{str.id}})
+        {% str = r.source.stringify %}
+        {% const_name = "PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}".id %}
+        {{const_name}} = {{r}}
       {% end %}
+
+      {% if str.starts_with?("\"^") && str.ends_with?("$\"") %}
+        {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}".id %}
+        {% system("bash -c \"echo #{raw_name} #{meth_name} >> tmp/da_style.def_property.tmp\"") %}
+      {% else %}
+        {% raise("Regex not secure: must start with ^ and end with $: #{raw_name} -> #{str.id}") %}
+      {% end %}
+
+      def {{meth_name}}(raw : String)
+        return raw if raw.match({{const_name}})
+        false
+      end # === def meth_name
+
     end # === macro def_property
 
     LENGTH_PERCENT_0     = /#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH}|0/
@@ -29,8 +42,10 @@ module DA_STYLE
     SEGMENT_PERCENTAGE   = /[0-9]{1,3}%/
     SEGMENT_BORDER_STYLE = /none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|inherit|initial|unset/
     SEGMENT_STYLE        = /auto|none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/
+    SEGMENT_URL          = /url\('[\/a-zA-Z0-9\_\-\.]{3,100}'\)/
+    SEGMENT_COLOR        = /currentcolor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
 
-    PATTERN_COLOR        = /^(currentcolor|transparent|inherit|initial|unset|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\))$/
+    PATTERN_COLOR        = /^#{SEGMENT_COLOR}|inherit|initial|unset$/
     PATTERN_BORDER_STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|inherit|initial|unset)$/
     PATTERN_WIDTH        = /^(thin|medium|think|inherit|initial|unset)|[0-9]{1,3}[a-z]{2,4}$/
     PATTERN_BORDER       = /^[0-9]{1,4}[a-z]{2,5}\ +(#{SEGMENT_BORDER_STYLE})\ +([a-z]{3,15}}|rgba?\(\ *[a-z0-9\,\ \%\.]{2,20}\ *\))$/
@@ -41,7 +56,7 @@ module DA_STYLE
 
     def_property "background-color",      PATTERN_COLOR
 
-    def_property "background-image",      /^([,\ ]?url\('[\/a-zA-Z\.\_]+'\)[,\ ]?)+$/, /^(none|inherit|initial|unset)$/
+    def_property "background-image",      /^(([,\ ]?url\('[\/a-zA-Z\.\_]+'\)[,\ ]?)+$)|none|inherit|initial|unset$/
 
     def_property "background-position",   /^([\d\%\ chempx\,topbottomleftright]+|top|bottom|left|right|center|inherit|initial|unset)$/
 
@@ -72,6 +87,7 @@ module DA_STYLE
     def_property "border-radius",         PATTERN_RADIUS
     def_property "-moz-border-radius",    PATTERN_RADIUS
     def_property "-ms-border-radius",     PATTERN_RADIUS
+    def_property "-webkit-border-radius", PATTERN_RADIUS
 
     def_property "border-right",          PATTERN_BORDER
 
@@ -95,11 +111,11 @@ module DA_STYLE
 
     def_property "border-width",          PATTERN_WIDTH
 
-    def_property "bottom",                /^([0-9a-z\ \.\%]{2,50})|auto|inherit|initial|unset)$/
+    def_property "bottom",                /^([0-9a-z\ \.\%]{2,50})|auto|inherit|initial|unset$/
 
     def_property "caption-side",          /^(top|bottom|left|right|top-outside|bottom-outside|inherit|initial|unset)$/
 
-    def_property "clear",                 /^(none|left|right|both|inline-start|inline-end|inherit|initial|unset)$/
+    def_property "clear",                 /^none|left|right|both|inline-start|inline-end|inherit|initial|unset$/
 
     def_property "clip",                  /^(auto|inherit|initial|unset|rect\([0-9a-z\ \,]{3,50}\))$/
 
@@ -115,7 +131,7 @@ module DA_STYLE
 
     def_property "float",                 /^(left|right|none|inline-(start|end)|inherit|initial|unset)$/
 
-    def_property "font",                  /^[a-zA-Z\"\,\ \-]{2, 50}(\ *\/\ *[a-z0-9\ ]{1,30})?$/
+    # def_propertys "font",                  /^[a-zA-Z\"\,\ \-]{2, 50}(\ *\/\ *[a-z0-9\ ]{1,30})?$/
 
     def_property "font-family",           /^("[a-zA-Z\"\ ]{3,25}"\ *\,\ *)?(serif|sans-serif|monospace|cursive|fantasy|system-ui|inherit|initial|unset)$/
 
@@ -141,7 +157,7 @@ module DA_STYLE
 
     def_property "list-style-type",       /^disc|circle|square|decimal|georgian|cjk-ideographic|kannada|-|none|inherit|initial|unset$/
 
-    def_property "margin",                /^(\ *(#{SEGMENT_MARGIN)\ *){1,4}$/
+    def_property "margin",                /^(\ *(#{SEGMENT_MARGIN})\ *){1,4}$/
 
     def_property "margin-bottom",         /^#{SEGMENT_MARGIN}$/
     def_property "margin-left",           /^#{SEGMENT_MARGIN}$/
@@ -200,23 +216,36 @@ module DA_STYLE
 
     def_property "widows",                /^[1-9]|inherit|initial|unset$/
 
-    def_property "width",                 /((#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH})(\ {1,5}(border-box|content-box))?)|max-content|min-content|available|fit-content|auto|inherit|initial|unset?/
+    def_property "width",                 /^((#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH})(\ {1,5}(border-box|content-box))?)|max-content|min-content|available|fit-content|auto|inherit|initial|unset$/
 
     def_property "word-spacing",          /^#{SEGMENT_LENGTH}|#{SEGMENT_PERCENTAGE}|0|normal|inherit|initial|unset$/
 
-    def_property "z-index",               /^auto|-?[0-9]{1,3}$|inherit|initial|unset/
+    def_property "z-index",               /^auto|-?[0-9]{1,3}$|inherit|initial|unset$/
 
-    def is_valid_property?(raw_name : String, raw_value : String)
+    def clean_property!(raw_name : String, raw_value : String)
+      value = clean_property(raw_name, raw_value)
+      case value
+      when String
+        return value
+      when :invalid_property_name
+        raise Invalid_Property_Name.new("#{raw_name.inspect} (value: #{raw_value.inspect})")
+      else
+        raise Invalid_Property_Value.new("#{raw_name.inspect}: #{raw_value.inspect})")
+      end
+    end # === def clean_property!
+
+    def clean_property(raw_name : String, raw_value : String)
       {% begin %}
         case raw_name
-          {% for x in system() %}
-            {% css_name = x.split.first %}
-            {% meth_name = x.split.last %}
+          {% for x in system("cat tmp/da_style.def_property.tmp").split("\n").reject { |x| x.strip.empty? } %}
+            {% css_name = x.split.first.id %}
+            {% meth_name = x.split.last.id %}
           when "{{css_name}}"
-            {{meth_name}}(raw_value)
-          else
-            raise Invalid_Property_Name.new(raw_name)
+            result = {{meth_name}}(raw_value)
+            return result
           {% end %}
+          else
+            :invalid_property_name
         end # === case
       {% end %}
     end # === def is_valid_property?

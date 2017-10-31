@@ -17,7 +17,7 @@ describe "Parser css functions" do
     input = %[
       div { width: expression(document.width); }
     ]
-    expect_raises(DA_STYLE::Parser::Unknown_CSS_Function) {
+    expect_raises(DA_STYLE::Parser::Invalid_Property_Value) {
       SPEC_PARSER.new(input, __DIR__, :css).to_css
     }
   end # === it "does not allow expression(...)"

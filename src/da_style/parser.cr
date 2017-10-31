@@ -3,6 +3,7 @@ require "./parser/stack"
 require "./parser/vars"
 require "./parser/def_func"
 require "./parser/clean_url"
+require "./parser/properties"
 
 module DA_STYLE
 
@@ -222,7 +223,7 @@ module DA_STYLE
     def is_property_family?(raw : String)
       {% begin %}
         case raw
-        when {{ system("grep  '# Family' \"#{__DIR__}/list.txt\"").split("\n").map { |x| x.split.first.stringify }.join(", ").id }}
+        when {{ system("grep  -P '#\\ +Family' \"#{__DIR__}/list.txt\"").split("\n").map { |x| x.split.first.stringify }.join(", ").id }}
           true
         else
           false
@@ -407,18 +408,11 @@ module DA_STYLE
       if open_family?
         style = "#{open_family.join("-")}-#{style}"
       end
-
-      if !is_valid_property_name?(style)
-        raise Invalid_Property_Name.new("#{style.inspect} (value: #{value.inspect})")
-      end
-
       # === property value:
       value = replace_vars(value)
-      value = replace_css_funcs(value, style)
 
-      if !is_valid_property_value?(value, style)
-        raise Invalid_Property_Value.new("#{value} (property name #{style.inspect})")
-      end
+      value = clean_property!(style, value)
+      value = replace_css_funcs(style, value)
 
       value = value.gsub(";", "")
       io << "\n"
@@ -520,7 +514,7 @@ module DA_STYLE
       current
     end # === def replace
 
-    def replace_css_funcs(raw : String, property_name : String)
+    def replace_css_funcs(property_name : String, raw : String)
       raw.gsub(/([^\(]+)\(\ *(.+)\ *\)/) do |match|
         func_name = $1
         args      = $2
