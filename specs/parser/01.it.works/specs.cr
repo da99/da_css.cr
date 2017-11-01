@@ -33,7 +33,7 @@ describe DA_STYLE::Parser do
           #{ css }
         }
       ]
-      actual = SPEC_PARSER.new(input, __DIR__, :css).to_css
+      actual = SPEC_PARSER.new(input, __DIR__).to_css
       should_eq actual["{{name}}: "], "{{name}}: "
     end # === it "renders "
   {% end %}

@@ -20,12 +20,11 @@ module DA_STYLE
           raise Exception.new("Invalid number of arguments for #{@name}: #{args.inspect}")
         end
 
-        vars = parent.vars.dup
+        new_scope = parent.class.new(@body, parent)
         args.each_with_index do |x, i|
-          vars.update!(@vars[i], x)
+          new_scope.vars.update!(@vars[i], x)
         end
-
-        parent.class.new(@body, vars, parent).run
+        new_scope.run
         parent.io << "\n"
       end # === def run
 

@@ -11,7 +11,7 @@ describe "Parser invalid property values" do
       ]
 
       expect_raises(DA_STYLE::Parser::Invalid_Property_Value) {
-        SPEC_PARSER.new(input, __DIR__, :css).to_css
+        SPEC_PARSER.new(input, __DIR__).to_css
       }
     end # === it "raises Invalid_Property_Value for invalid input: "
   {% end %}
@@ -27,7 +27,7 @@ describe "Parser invalid property values" do
           input = %[ div.white { #{line} } ]
 
           expect_raises(DA_STYLE::Parser::Invalid_Property_Value) {
-            SPEC_PARSER.new(input, __DIR__, :css).to_css
+            SPEC_PARSER.new(input, __DIR__).to_css
           }
         end # === it "raises Invalid_Property_Value for invalid input: "
       }

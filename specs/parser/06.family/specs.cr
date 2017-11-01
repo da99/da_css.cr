@@ -21,7 +21,7 @@ describe "Parser property family" do
         outline-style: dashed;
       }
     ]
-    should_eq SPEC_PARSER.new(input, __DIR__, :css).to_css, expected
+    should_eq SPEC_PARSER.new(input, __DIR__).to_css, expected
   end # === it "combines them to a single line"
 
   it "combines deeply nested values" do
@@ -41,7 +41,7 @@ describe "Parser property family" do
         border-bottom-style: dashed;
       }
     ]
-    should_eq SPEC_PARSER.new(input, __DIR__, :css).to_css, expected
+    should_eq SPEC_PARSER.new(input, __DIR__).to_css, expected
   end # === it "combines deeply nested values"
 
 end # === desc "Parser property family"

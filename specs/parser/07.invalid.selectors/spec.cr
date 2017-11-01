@@ -8,7 +8,7 @@ describe "Parser invalid selectors" do
     ]
 
     expect_raises(DA_STYLE::Parser::Invalid_Selector) {
-      SPEC_PARSER.new(input, __DIR__, :css).to_css
+      SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
 
@@ -18,7 +18,7 @@ describe "Parser invalid selectors" do
     ]
 
     expect_raises(DA_STYLE::Parser::Invalid_Selector) {
-      SPEC_PARSER.new(input, __DIR__, :css).to_css
+      SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
 
@@ -28,7 +28,7 @@ describe "Parser invalid selectors" do
     ]
 
     expect_raises(DA_STYLE::Parser::Invalid_Selector) {
-      SPEC_PARSER.new(input, __DIR__, :css).to_css
+      SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
 
@@ -38,7 +38,7 @@ describe "Parser invalid selectors" do
         {{x.id}} { background-image: url('/local.png'); }
       ]
       expect_raises(DA_STYLE::Parser::Invalid_Selector) {
-        SPEC_PARSER.new(input, __DIR__, :css).to_css
+        SPEC_PARSER.new(input, __DIR__).to_css
       }
     end # === it "does not allow single character selectors: * { } a { } "
   {% end %}

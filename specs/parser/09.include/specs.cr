@@ -4,7 +4,7 @@ describe "Parser: include" do
   it "runs the code of the target file" do
     file     = File.read(__DIR__ + "/01.file1.css")
     expected = File.read(__DIR__ + "/01.expected.css")
-    actual   = SPEC_PARSER.new(file, __DIR__, :css).to_css
+    actual   = SPEC_PARSER.new(file, __DIR__).to_css
     should_eq expected, actual
   end # === it "runs the code of the target file"
 
@@ -22,7 +22,7 @@ describe "Parser: include" do
         color: #ffffff;
       }
     )
-    actual = SPEC_PARSER.new(input, __DIR__, :css).to_css
+    actual = SPEC_PARSER.new(input, __DIR__).to_css
     should_eq actual, expected
   end # === it "runs the included code in the same scope"
 

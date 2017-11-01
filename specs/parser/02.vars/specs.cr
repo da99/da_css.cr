@@ -7,7 +7,7 @@ describe "Parser vars" do
     ]
 
     expect_raises(DA_STYLE::Parser::Invalid_Property_Value) {
-      SPEC_PARSER.new(input, __DIR__, :css).to_css
+      SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow invalid characters in final replacement"
 end # === desc "Parser vars"

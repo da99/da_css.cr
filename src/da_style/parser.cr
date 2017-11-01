@@ -45,70 +45,37 @@ module DA_STYLE
       str.split(/[[:cntrl:]\ \s]+/)
     end # === def self.split
 
-    def initialize(raw : String, @file_dir : String, string_type = :css)
-      origin = case string_type
-                when :css
-                  raw
-                else
-                  DA_STYLE.file_read!(raw, @file_dir)
-                end
-      @stack  = Parser::Stack.new(origin)
+    # === Most common `initialize`. Creates a new scope.
+    def initialize(raw : String, @file_dir : String)
+      raw = raw.strip
+      if !raw.index("\n")
+        if raw.index(".css") == (raw.size - 4)
+          raw = DA_STYLE.file_read!(raw, @file_dir)
+        end
+      end
+
+      @stack  = Parser::Stack.new(raw)
       @def_funcs = {} of String => Hash(Int32, Def_Func)
       @open_family = [] of String
-    end
-
-    def initialize(tokens : Array(String), raw_vars : Hash(String, String), @file_dir)
-      @vars        = Vars.new(raw_vars)
-      @stack       = Parser::Stack.new(tokens)
-      @def_funcs   = {} of String => Hash(Int32, Def_Func)
-      @open_family = [] of String
     end # === def initialize
 
-    def initialize(tokens : Array(String), @vars, @file_dir)
-      @stack       = Parser::Stack.new(tokens)
-      @def_funcs   = {} of String => Hash(Int32, Def_Func)
-      @open_family = [] of String
-    end # === def initialize
-
+    # === Creates a copy of parent scope. Used by Def_Funcs:
     def initialize(tokens : Array(String), parent : Parser)
-      @scope_count = parent.scope_count + 1
-      @io       = parent.io
-      @file_dir = parent.file_dir
-      @vars     = parent.vars.dup
-      @stack    = Parser::Stack.new(tokens)
-      @def_funcs = parent.def_funcs.dup
-      @open_family = parent.open_family.dup
+      @file_dir     = parent.file_dir
+      @io           = parent.io
+      @stack        = Parser::Stack.new(tokens)
+      @def_funcs    = parent.def_funcs.dup
+      @vars         = parent.vars.dup
+      @private_vars = parent.private_vars.dup
+      @open_family  = parent.open_family.dup
     end # === def initialize
 
-    def initialize(raw : String, parent : Parser, string_type = :css)
+    # === Used by `include(file)` to run tokens in the same scope.
+    def initialize(origin : String | Array(String), @def_funcs, @open_family, @private_vars, @vars, parent : Parser)
+      @file_dir    = parent.file_dir
       @scope_count = parent.scope_count + 1
-      origin = case string_type
-                when :css
-                  raw
-                else
-                  DA_STYLE.file_read!(raw, parent.file_dir)
-                end
-      @file_dir = parent.file_dir
-      @io       = parent.io
-      @vars     = parent.vars.dup
-      @stack    = Parser::Stack.new(origin)
-      @def_funcs = parent.def_funcs.dup
-      @open_family = parent.open_family.dup
-    end # === def initialize
-
-    def initialize(tokens : Array(String), @vars, parent : Parser)
-      @file_dir  = parent.file_dir
-      @io        = parent.io
-      @stack     = Parser::Stack.new(tokens)
-      @def_funcs = parent.def_funcs.dup
-      @open_family = parent.open_family.dup
-    end # === def initialize
-
-    # Used by `include(file)` to run tokens in the same scope.
-    def initialize(origin : String | Array(String), @def_funcs, @file_dir, @open_family, @private_vars, @vars, parent : Parser)
-      @scope_count = parent.scope_count + 1
-      @stack  = Parser::Stack.new(origin)
-      @io = parent.io
+      @stack       = Parser::Stack.new(origin)
+      @io          = parent.io
     end # === def initialize
 
     def is_valid_selector?(raw : String)
@@ -273,7 +240,7 @@ module DA_STYLE
       when "include"
         io << "\n"
         code = DA_STYLE.file_read!(val, file_dir)
-        self.class.new(code, def_funcs, file_dir, open_family, private_vars, vars, self).run
+        self.class.new(code, def_funcs, open_family, private_vars, vars, self).run
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
