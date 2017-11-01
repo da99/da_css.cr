@@ -1,7 +1,7 @@
 
 class It_Works
 
-  include DA_STYLE
+  include DA_STYLE::DSL
   extend DA_STYLE::HEX
 
   BLUE  = hex("#E3E0CF")
