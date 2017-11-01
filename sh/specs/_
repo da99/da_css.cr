@@ -14,19 +14,27 @@ fi
 case "$ACTION" in
 
   watch)
+    mkdir -p tmp/in
     local +x CMD="da_style.cr specs run $@"
+    sh_color ORANGE "=== {{Running}}: $CMD"
     ${=CMD} || :
-    process watch "-r src -r specs -r bin -r sh" "$CMD"
+    process watch "-r src -r specs -r bin -r sh -r tmp/in" "$CMD"
     ;;
 
   run)
     export DEV_BUILD=yes
     mkdir -p tmp/out
-    sh_color ORANGE "=== {{Compiling}}..."
-    my_crystal __ build specs/specs.cr -o tmp/out/specs
+    case "${CHANGED_FILE:-}" in
+      *"in/arg"*|*".css") : ;;
+      *)
+        sh_color ORANGE "=== {{Compiling}}..."
+        my_crystal __ build specs/specs.cr -o tmp/out/specs
+        ;;
+    esac
+
     reset
     sh_color ORANGE "=== {{Running}}..."
-    tmp/out/specs $@
+    tmp/out/specs $(cat tmp/in/args tmp/in/arg 2>/dev/null || :) $@
     sh_color GREEN "=== {{DONE}} ==="
     ;;
 

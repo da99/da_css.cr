@@ -11,22 +11,13 @@ module DA_STYLE
     {% system("touch tmp/da_style.def_property.tmp") %}
 
     macro def_property(raw_name, r)
-      {% if r.is_a?(Path) %}
-        {% unsafe = r.resolve.source.stringify %}
-      {% else %}
-        {% unsafe = r.source.stringify %}
-      {% end %}
+      # === A performance boost if we save the new regex into a CONSTANT
+      #     and re-use it.
+      {% const_name = "CSS_PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}_REGEX".id %}
+      {{const_name}} = /^(#{{{r}}})$/
 
-      {% str = unsafe.gsub(/^"\^/, "\"^(").gsub(/\$"$/, "") + ")$\"" %}
-      {% const_name = "PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}".id %}
-      {{const_name}} = Regex.new({{str.id}})
-
-      {% if str.starts_with?("\"^") && str.ends_with?("$\"") %}
-        {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}".id %}
-        {% system("bash -c \"echo #{raw_name} #{meth_name} >> tmp/da_style.def_property.tmp\"") %}
-      {% else %}
-        {% raise("Regex not secure: must start with ^ and end with $: #{raw_name} -> #{str.id}") %}
-      {% end %}
+      {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}".id %}
+      {% system("bash -c \"echo #{raw_name} #{meth_name} >> tmp/da_style.def_property.tmp\"") %}
 
       def {{meth_name}}(raw : String)
         return raw if raw.match({{const_name}})
@@ -44,29 +35,29 @@ module DA_STYLE
     SEGMENT_STYLE        = /auto|none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset/
     SEGMENT_BORDER_STYLE = /#{SEGMENT_STYLE}|#{CSS_GLOBAL_VALUES}/
     SEGMENT_URL          = /url\('[\/a-zA-Z0-9\_\-\.]{3,100}'\)/
-    SEGMENT_COLOR        = /currentColor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\ \,0-9\.\%]{2,25}\)/
+    SEGMENT_COLOR        = /currentColor|transparent|[a-z]{3,15}|\#[a-z0-9A-Z]{3,8}|rgba?\([\/\ \,0-9\.\%]{2,25}\)/
     SEGMENT_WIDTH        = /none|thin|medium|thick|0|(\d\.)?[0-9]{1,2}[a-z]{2,4}|[0-9]{1,3}[a-z]{2,4}/
     LENGTH_PERCENT_0     = /#{SEGMENT_PERCENTAGE}|#{SEGMENT_LENGTH}|0/
 
-    PATTERN_COLOR        = /^#{SEGMENT_COLOR}|#{CSS_GLOBAL_VALUES}$/
-    PATTERN_BORDER_STYLE = /^(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES})$/
-    PATTERN_WIDTH        = /^#{SEGMENT_WIDTH}|#{CSS_GLOBAL_VALUES}$/
-    PATTERN_BORDER       = /^#{SEGMENT_WIDTH}\ +(#{SEGMENT_BORDER_STYLE})\ +(#{SEGMENT_COLOR})$/
-    PATTERN_RADIUS       = /^(\ *(#{LENGTH_PERCENT_0}|inherit)\ *){1,4}(\ *\/(\ *#{LENGTH_PERCENT_0}\ *){1,4})?$/
-    PATTERN_RADIUS_CORNER= /^(\ *(#{LENGTH_PERCENT_0})\ *){1,2}$/
+    PATTERN_COLOR        = /#{SEGMENT_COLOR}|#{CSS_GLOBAL_VALUES}/
+    PATTERN_BORDER_STYLE = /(none|hidden|dotted|dashed|solid|double|groove|ridge|inset|outset|#{CSS_GLOBAL_VALUES})/
+    PATTERN_WIDTH        = /#{SEGMENT_WIDTH}|#{CSS_GLOBAL_VALUES}/
+    PATTERN_BORDER       = /#{SEGMENT_WIDTH}\ +(#{SEGMENT_BORDER_STYLE})\ +(#{SEGMENT_COLOR})/
+    PATTERN_RADIUS       = /(\ *(#{LENGTH_PERCENT_0}|inherit)\ *){1,4}(\ *\/(\ *#{LENGTH_PERCENT_0}\ *){1,4})?/
+    PATTERN_RADIUS_CORNER= /(\ *(#{LENGTH_PERCENT_0})\ *){1,2}/
 
-    def_property "background-attachment", /^(scroll|fixed|local|#{CSS_GLOBAL_VALUES})$/
-    def_property "background-clip",       /^(border-box|padding-box|content-box|text|#{CSS_GLOBAL_VALUES})$/
+    def_property "background-attachment", /^(scroll|fixed|local|#{CSS_GLOBAL_VALUES})/
+    def_property "background-clip",       /^(border-box|padding-box|content-box|text|#{CSS_GLOBAL_VALUES})/
 
     def_property "background-color",      PATTERN_COLOR
 
-    def_property "background-image",      /^(\ *#{SEGMENT_URL}(\ *,\ *)?){1,10}|none|#{CSS_GLOBAL_VALUES}$/
+    def_property "background-image",      /(\ *#{SEGMENT_URL}(\ *,\ *)?){1,10}|none|#{CSS_GLOBAL_VALUES}/
 
-    def_property "background-position",   /^([\d\%\ chempx\,centertopbottomleftright]+|top|bottom|left|right|center){1,2}|#{CSS_GLOBAL_VALUES}$/
+    def_property "background-position",   /([\d\%\ chempx\,centertopbottomleftright]{1,50})|#{CSS_GLOBAL_VALUES}/
 
-    def_property "background-repeat",     /^(repeat-x|repeat-y|repeat|space|round|no-repeat|#{CSS_GLOBAL_VALUES}|\ ){1,50}$/
+    def_property "background-repeat",     /(repeat-x|repeat-y|repeat|space|round|no-repeat|#{CSS_GLOBAL_VALUES}|\ ){1,50}/
 
-    def_property "border",                /^[0-9a-z\ ]{3,40}$/
+    def_property "border",                /[0-9a-z\ ]{3,40}/
 
     def_property "border-bottom",         PATTERN_BORDER
 
@@ -76,9 +67,9 @@ module DA_STYLE
 
     def_property "border-bottom-width",   PATTERN_WIDTH
 
-    def_property "border-collapse",       /^(collapse|separate|#{CSS_GLOBAL_VALUES})$/
+    def_property "border-collapse",       /(collapse|separate|#{CSS_GLOBAL_VALUES})/
 
-    def_property "border-color",          PATTERN_COLOR
+    def_property "border-color",          /(#{PATTERN_COLOR}\ *){1,4}/
 
     def_property "border-left",           PATTERN_BORDER
 
@@ -116,7 +107,7 @@ module DA_STYLE
 
     def_property "border-top-width",      PATTERN_WIDTH
 
-    def_property "border-width",          PATTERN_WIDTH
+    def_property "border-width",          /(#{PATTERN_WIDTH}\ *){1,4}/
 
     def_property "bottom",                /^([0-9a-z\ \.\%]{2,50})|auto|#{CSS_GLOBAL_VALUES}$/
 
@@ -162,7 +153,7 @@ module DA_STYLE
 
     def_property "list-style-position",   /^inside|outside|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "list-style-type",       /^disc|circle|square|decimal|georgian|cjk-ideographic|kannada|-|none|#{CSS_GLOBAL_VALUES}$/
+    def_property "list-style-type",       /^'[\-\*\&\^\%\$\#\@\!\~\:\?\|]'|disc|circle|square|decimal|georgian|cjk-ideographic|kannada|-|none|#{CSS_GLOBAL_VALUES}$/
 
     def_property "margin",                /^(\ *(#{SEGMENT_MARGIN})\ *){1,4}$/
 
@@ -260,4 +251,5 @@ module DA_STYLE
   end # === module Parser
 
 end # === module DA_STYLE
+
 
