@@ -141,6 +141,7 @@ module DA_STYLE
 
     # Used by `include(file)` to run tokens in the same scope.
     def initialize(@def_funcs, @origin, @file_dir, @open_family, @private_vars, @vars, parent : Parser)
+      @scope_count = parent.scope_count + 1
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
       @io = parent.io
