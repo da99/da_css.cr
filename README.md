@@ -60,8 +60,15 @@ File `input.css`:
   BLACK = #000;
   LIGHT_BLACK = {{BLACK}}0011;
 
+  def border-radius(RADIUS1, RADIUS2 ) {
+    -webkit-border-radius: {{RADIUS1}};
+            border-radius: {{RADIUS2}};
+  }
+
   div { background-color: {{WHITE}}; }
+
   .empty {
+    border-radius(10px, 20px);
     background { color: {{BLACK}}; }
     font { size: 1em; }
     font-size: 2em;
@@ -90,6 +97,8 @@ Output:
     background-color: #FFF;
   }
   .empty {
+    -webkit-border-radius: 10px;
+    border-radius: 20px;
     background-color: #000;
       font-size: 1em;
         font-size: 2em;
@@ -107,3 +116,9 @@ Output:
     color: #0000011;
   }
 ```
+
+Performance:
+============
+I sacrificed some performance for security and stricter input.
+As of version 2.0.0, it runs the 983 test samples in ~200 milliseconds.
+
