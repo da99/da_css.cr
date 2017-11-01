@@ -3,7 +3,7 @@ module DA_STYLE
 
   module Parser
 
-    class Vars
+    struct Vars
 
       @vars = {} of String => String
 

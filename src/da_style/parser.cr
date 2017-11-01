@@ -4,38 +4,11 @@ require "./parser/vars"
 require "./parser/def_func"
 require "./parser/clean_url"
 require "./parser/properties"
+require "./parser/exception"
 
 module DA_STYLE
 
   module Parser
-
-    macro def_exception(name, prefix, &blok)
-      class {{name.id}} < Exception
-
-        def prefix_msg
-          {{prefix}}
-        end
-
-        def message
-          "#{prefix_msg} #{@message}"
-        end
-
-        {% if blok %}
-          {{blok.body}}
-        {% end %}
-      end # === class Invalid_Selector
-    end # === macro def_exception
-
-    def_exception Invalid_Property_Name, "Invalid property name: "
-    def_exception Invalid_Property_Value, "Invalid property value: "
-    def_exception Invalid_Selector, "Invalid selector: "
-    def_exception Invalid_URL, "Invalid url: "
-    def_exception Unknown_CSS_Function, "Unknown css function: "
-    def_exception Output_File_Size_Max_Reached, "CSS output too large: " do
-      def self.max_file_size
-        5_000
-      end
-    end
 
     @@SINGLE_LINE_FUNCS         = %w(include)
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
@@ -198,34 +171,6 @@ module DA_STYLE
         end
       {% end %}
     end # === def is_valid_property_name?
-
-    def is_valid_property_value?(raw : String, style)
-      case style
-      when "background-image"
-        return false if raw.bytesize > 120
-      else
-        return false if raw.bytesize > 60
-      end
-
-      if raw.empty?
-        raise Exception.new("Invalid property assignment: #{style}: [empty]")
-      end
-
-      invalid = raw.codepoints.find { |point|
-        case point
-        when ('a'.hash)..('z'.hash),
-          ('A'.hash)..('Z'.hash),
-          ('0'.hash)..('9'.hash),
-          '#'.hash, '-'.hash, '('.hash, ')'.hash, ' '.hash,
-          '%'.hash, '{'.hash, '}'.hash, '\''.hash, '/'.hash,
-          '.'.hash, ':'.hash, '_'.hash, ','.hash
-          false
-        else
-          point
-        end
-      }
-      !invalid
-    end # === def is_valid_property_value?
 
     def is_property_family?(raw : String)
       {% begin %}

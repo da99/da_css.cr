@@ -9,9 +9,9 @@ module DA_STYLE
       @origin : Array(String)
 
       getter index  : Int32 = 0
-      getter opens        = [] of Symbol
-      getter closes       = [] of Symbol
-      getter previous     = [] of String
+      getter opens          = [] of Symbol
+      getter closes         = [] of Symbol
+      getter previous       = [] of String
 
       def initialize(@origin)
         @len = @origin.size
