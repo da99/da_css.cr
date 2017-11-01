@@ -1,16 +1,27 @@
 
 da\_style.cr
-========
-
+============
 Instead of SASS or LESS, I am going to use
-my personal alternative to SASS/LESS/etc.
+my personal alternative
 that is implemented in Crystal.
 
 You probably won't be able to use it.
 But, maybe it will inspire you to create
-something more fun and secure than
-SASS/LESS.
+something better than SASS/LESS.
 
+The idea is to let uses use a subset + SASS-like
+features to upload their own CSS files
+while preventing CSS security vulnerabilities.
+
+
+Security links:
+===============
+* http://www.diaryofaninja.com/blog/2013/10/30/executing-javascript-inside-css-another-reason-to-whitelist-and-encode-user-input
+* https://www.curesec.com/blog/article/blog/Reading-Data-via-CSS-Injection-180.html
+
+
+Previous version of this shard:
+==============================
 Originally, I was going to use Crystal code +
 macros to generate CSS> BUt, that is not
 practical because of the compile times:
@@ -43,30 +54,33 @@ Example:
 File `input.css`:
 
 ```css
-    GREY  = rgb(1, 1, 1);
-    WHITE = #FFF;
-    BLACK = #000;
-    LIGHT_BLACK = {{BLACK}}0011;
+  /* Setup vars: */
+  GREY  = rgb(1, 1, 1);
+  WHITE = #FFF;
+  BLACK = #000;
+  LIGHT_BLACK = {{BLACK}}0011;
 
-    div { background-color: {{WHITE}}; }
-    .empty {
-      background { color: {{BLACK}}; }
-      font { size: 1em; }
-      font-size: 2em;
-    }
-    @media (max-width: 12450px, min-width: 1000px) {
-      body {
-        padding: 20px 0 0 10em;
-        background-color: {{BLACK}};
-        background {
-          color: {{GREY}};
-          repeat: no-repeat;
-        }
-        background-color: {{LIGHT_BLACK}};
+  div { background-color: {{WHITE}}; }
+  .empty {
+    background { color: {{BLACK}}; }
+    font { size: 1em; }
+    font-size: 2em;
+  }
+
+  @media (max-width: 12450px, min-width: 1000px) {
+    body {
+      padding: 20px 0 0 10em;
+      background-color: {{BLACK}};
+      background {
+        color: {{GREY}};
+        repeat: no-repeat;
       }
+      background-color: {{LIGHT_BLACK}};
     }
+  }
 
-    include("./file.css");
+  /* Insert CSS code from other files here: */
+  include("./file.css");
 ```
 
 Output:
@@ -93,9 +107,3 @@ Output:
     color: #0000011;
   }
 ```
-
-Security links:
-===============
-
-* http://www.diaryofaninja.com/blog/2013/10/30/executing-javascript-inside-css-another-reason-to-whitelist-and-encode-user-input
-* https://www.curesec.com/blog/article/blog/Reading-Data-via-CSS-Injection-180.html
