@@ -57,7 +57,6 @@ module DA_STYLE
       {% end %}
     end
 
-
     @is_fin = false
     getter def_funcs : Hash(String, Hash(Int32,Def_Func))
     getter origin : String
@@ -80,7 +79,7 @@ module DA_STYLE
                 when :css
                   raw
                 else
-                  File.read(File.expand_path(raw, @file_dir))
+                  DA_STYLE.file_read!(raw, @file_dir)
                 end
       @tokens = Parser.split(@origin)
       @stack  = Parser::Stack.new(@tokens)
@@ -120,7 +119,7 @@ module DA_STYLE
                 when :css
                   raw
                 else
-                  File.read File.expand_path(raw, parent.file_dir)
+                  DA_STYLE.file_read!(raw, parent.file_dir)
                 end
       @file_dir = parent.file_dir
       @io       = parent.io
@@ -138,6 +137,13 @@ module DA_STYLE
       @stack     = Parser::Stack.new(@tokens)
       @def_funcs = parent.def_funcs.dup
       @open_family = parent.open_family.dup
+    end # === def initialize
+
+    # Used by `include(file)` to run tokens in the same scope.
+    def initialize(@def_funcs, @origin, @file_dir, @open_family, @private_vars, @vars, parent : Parser)
+      @tokens = Parser.split(@origin)
+      @stack  = Parser::Stack.new(@tokens)
+      @io = parent.io
     end # === def initialize
 
     def is_valid_selector?(raw : String)
@@ -329,7 +335,8 @@ module DA_STYLE
       case name
       when "include"
         io << "\n"
-        self.class.new(val, self, :file).run
+        code = DA_STYLE.file_read!(val, file_dir)
+        self.class.new(def_funcs, code, file_dir, open_family, private_vars, vars, self).run
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
@@ -505,7 +512,7 @@ module DA_STYLE
         raise Exception.new("Missing closing } for: #{stack.open}")
       end
       @is_fin = true
-    end
+    end # === def run
 
     def to_css
       run unless @is_fin
