@@ -12,13 +12,14 @@ module DA_STYLE
 
     macro def_property(raw_name, r)
       {% if r.is_a?(Path) %}
-        {% str = r.resolve.source.stringify %}
-        {% const_name = r %}
+        {% unsafe = r.resolve.source.stringify %}
       {% else %}
-        {% str = r.source.stringify %}
-        {% const_name = "PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}".id %}
-        {{const_name}} = {{r}}
+        {% unsafe = r.source.stringify %}
       {% end %}
+
+      {% str = unsafe.gsub(/^"\^/, "\"^(").gsub(/\$"$/, "") + ")$\"" %}
+      {% const_name = "PROPERTY_#{raw_name.gsub(/-/, "_").upcase.id}".id %}
+      {{const_name}} = Regex.new({{str.id}})
 
       {% if str.starts_with?("\"^") && str.ends_with?("$\"") %}
         {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}".id %}
@@ -61,7 +62,7 @@ module DA_STYLE
 
     def_property "background-image",      /^(([,\ ]?url\('[\/a-zA-Z\.\_]+'\)[,\ ]?)+$)|none|#{CSS_GLOBAL_VALUES}$/
 
-    def_property "background-position",   /^[\d\%\ chempx\,centertopbottomleftright]+|top|bottom|left|right|center|#{CSS_GLOBAL_VALUES}$/
+    def_property "background-position",   /^([\d\%\ chempx\,centertopbottomleftright]+|top|bottom|left|right|center){1,2}|#{CSS_GLOBAL_VALUES}$/
 
     def_property "background-repeat",     /^(repeat-x|repeat-y|repeat|space|round|no-repeat|#{CSS_GLOBAL_VALUES}|\ ){1,50}$/
 
