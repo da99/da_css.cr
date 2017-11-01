@@ -13,6 +13,11 @@ module DA_STYLE
       getter closes         = [] of Symbol
       getter previous       = [] of String
 
+      def initialize(raw : String)
+        @origin = Parser.split(raw)
+        @len    = @origin.size
+      end # === def initialize
+
       def initialize(@origin)
         @len = @origin.size
       end # === def initialize
