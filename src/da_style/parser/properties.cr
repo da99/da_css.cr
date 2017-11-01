@@ -60,7 +60,7 @@ module DA_STYLE
 
     def_property "background-color",      PATTERN_COLOR
 
-    def_property "background-image",      /^(([,\ ]?url\('[\/a-zA-Z\.\_]+'\)[,\ ]?)+$)|none|#{CSS_GLOBAL_VALUES}$/
+    def_property "background-image",      /^(\ *#{SEGMENT_URL}(\ *,\ *)?){1,10}|none|#{CSS_GLOBAL_VALUES}$/
 
     def_property "background-position",   /^([\d\%\ chempx\,centertopbottomleftright]+|top|bottom|left|right|center){1,2}|#{CSS_GLOBAL_VALUES}$/
 
