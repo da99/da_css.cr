@@ -1,6 +1,6 @@
 ---
 name: da_style
-version: 2.0.0
+version: 2.1.0
 development_dependencies:
   da_uri:
     github: da99/da_uri.cr
