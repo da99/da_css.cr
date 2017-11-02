@@ -1,8 +1,12 @@
 
 
 module DA_STYLE
-  macro file_read!(raw, dir)
-    File.read(File.expand_path({{raw}}.gsub(/\.+/, ".").gsub(/[^a-z0-9\/\_\-\.]+/, "_"), {{dir}}))
+  macro file_read!(dir, raw)
+    File.read(
+      File.expand_path(
+        File.join({{dir}}, {{raw}}.gsub(/\.+/, ".").gsub(/[^a-z0-9\/\_\-\.]+/, "_"))
+      )
+    )
   end # === macro file_read!
 end # === module DA_STYLE
 

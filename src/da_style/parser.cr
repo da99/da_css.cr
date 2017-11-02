@@ -49,7 +49,7 @@ module DA_STYLE
     def initialize(raw : String, @file_dir : String)
       raw = raw.strip
       if !raw.index("\n") && raw.index(".css") == (raw.size - 4)
-        raw = DA_STYLE.file_read!(raw, @file_dir)
+        raw = DA_STYLE.file_read!(@file_dir, raw)
       end
 
       @stack       = Parser::Stack.new(raw)
@@ -228,7 +228,7 @@ module DA_STYLE
       case name
       when "include"
         io << "\n"
-        code = DA_STYLE.file_read!(val, file_dir)
+        code = DA_STYLE.file_read!(file_dir, val)
         run(Parser::Stack.new(code))
         io << "\n"
       else
