@@ -70,14 +70,6 @@ module DA_STYLE
       @open_family  = parent.open_family.dup
     end # === def initialize
 
-    # === Used by `include(file)` to run tokens in the same scope.
-    def initialize(origin : String | Array(String), @def_funcs, @open_family, @private_vars, @vars, parent : Parser)
-      @file_dir    = parent.file_dir
-      @scope_count = parent.scope_count + 1
-      @stack       = Parser::Stack.new(origin)
-      @io          = parent.io
-    end # === def initialize
-
     def is_valid_selector?(raw : String)
       codepoints = raw.codepoints
 
@@ -240,7 +232,7 @@ module DA_STYLE
       when "include"
         io << "\n"
         code = DA_STYLE.file_read!(val, file_dir)
-        self.class.new(code, def_funcs, open_family, private_vars, vars, self).run
+        run(Parser::Stack.new(code))
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
@@ -350,6 +342,13 @@ module DA_STYLE
       spaces(:selector)
       io << style << ": " << value << ";"
     end # === def run_property
+
+    def run(temp : Parser::Stack)
+      orig = @stack
+      @stack = temp
+      run
+      @stack = orig
+    end # === def run
 
     def run
       if @scope_count > 10
