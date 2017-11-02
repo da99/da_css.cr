@@ -31,7 +31,6 @@ module DA_STYLE
     end
 
     @is_fin = false
-    getter def_funcs : Hash(String, Hash(Int32,Def_Func))
     getter stack     : Parser::Stack
     getter file_dir  : String
 
@@ -40,6 +39,7 @@ module DA_STYLE
     getter vars         = Vars.new
     getter scope_count  = 0
     getter open_family  = [] of String
+    getter def_funcs    = {} of String => Hash(Int32, Def_Func)
 
     def self.split(str : String)
       str.split(/[[:cntrl:]\ \s]+/)
@@ -53,7 +53,7 @@ module DA_STYLE
       end
 
       @stack       = Parser::Stack.new(raw)
-      @def_funcs   = {} of String => Hash(Int32, Def_Func)
+      @def_funcs   
     end # === def initialize
 
     # === Creates a copy of parent scope. Used by Def_Funcs:
@@ -311,6 +311,58 @@ module DA_STYLE
       end
     end # === def replace_color
 
+    def replace_vars(raw : String)
+      prev = ""
+      current = raw
+      counter = 0
+      max = 4
+      while (prev != current && counter <= (max + 2))
+        prev = current
+        current = replace_var_assignments__(current)
+        counter += 1
+      end
+
+      if counter > max
+        raise Exception.new("Too many nested assignments.")
+      end
+
+      current
+    end # === def replace
+
+    def replace_css_funcs(property_name : String, raw : String)
+      raw.gsub(/([^\(]+)\(\ *(.+)\ *\)/) do |match|
+        func_name = $1
+        args      = $2
+        new_str = case
+                  when (property_name.index("-image") || 0) > 1 && func_name == "url"
+                    replace_url(property_name, func_name, args)
+
+                  when property_name.index("color") && func_name == "rgb"
+                    replace_rgb(property_name, func_name, args)
+
+                  when property_name.index("color") && func_name == "rgba"
+                    replace_rgba(property_name, func_name, args)
+
+                  when property_name == "clip" && func_name == "rect"
+                    replace_rect(property_name, func_name, args)
+
+                  end # === case
+
+        if !new_str.is_a?(String)
+          raise Unknown_CSS_Function.new("#{raw.inspect} can't be used with #{property_name.inspect}")
+        end
+        new_str
+      end # === gsub
+    end # === def replace_css_funcs
+
+    def replace_var_assignments__(raw : String)
+      raw.gsub(/\{\{\ *([^\}]+)\ *\}\}/) do |match|
+        key = $1.upcase
+        raise Exception.new("Variable not found: #{key}") unless vars.has?(key)
+        vars.get(key)
+      end
+    end # === def replace
+
     def run_property
       style = if stack.current == ":" && stack.previous.size == 1
                 stack.previous.pop
@@ -411,69 +463,21 @@ module DA_STYLE
       if stack.open?
         raise Exception.new("Missing closing } for: #{stack.open}")
       end
-      @is_fin = true
     end # === def run
 
     def to_css
-      run unless @is_fin
-      str = @io.to_s 
+      if !@is_fin
+        run
+        @is_fin = true
+      end
+
+      str = @io.to_s
+
       if str.bytesize > Output_File_Size_Max_Reached.max_file_size
         raise Output_File_Size_Max_Reached.new(str.bytesize.to_s)
       end
       str
     end # === def to_css
-
-    def replace_vars(raw : String)
-      prev = ""
-      current = raw
-      counter = 0
-      max = 4
-      while (prev != current && counter <= (max + 2))
-        prev = current
-        current = replace_var_assignments__(current)
-        counter += 1
-      end
-
-      if counter > max
-        raise Exception.new("Too many nested assignments.")
-      end
-
-      current
-    end # === def replace
-
-    def replace_css_funcs(property_name : String, raw : String)
-      raw.gsub(/([^\(]+)\(\ *(.+)\ *\)/) do |match|
-        func_name = $1
-        args      = $2
-        new_str = case
-                  when (property_name.index("-image") || 0) > 1 && func_name == "url"
-                    replace_url(property_name, func_name, args)
-
-                  when property_name.index("color") && func_name == "rgb"
-                    replace_rgb(property_name, func_name, args)
-
-                  when property_name.index("color") && func_name == "rgba"
-                    replace_rgba(property_name, func_name, args)
-
-                  when property_name == "clip" && func_name == "rect"
-                    replace_rect(property_name, func_name, args)
-
-                  end # === case
-
-        if !new_str.is_a?(String)
-          raise Unknown_CSS_Function.new("#{raw.inspect} can't be used with #{property_name.inspect}")
-        end
-        new_str
-      end # === gsub
-    end # === def replace_css_funcs
-
-    def replace_var_assignments__(raw : String)
-      raw.gsub(/\{\{\ *([^\}]+)\ *\}\}/) do |match|
-        key = $1.upcase
-        raise Exception.new("Variable not found: #{key}") unless vars.has?(key)
-        vars.get(key)
-      end
-    end # === def replace
 
   end # === module Parser
 
