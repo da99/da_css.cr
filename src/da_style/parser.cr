@@ -39,7 +39,7 @@ module DA_STYLE
     getter private_vars = Vars.new
     getter vars         = Vars.new
     getter scope_count  = 0
-    getter open_family  : Array(String)
+    getter open_family  = [] of String
 
     def self.split(str : String)
       str.split(/[[:cntrl:]\ \s]+/)
@@ -48,15 +48,12 @@ module DA_STYLE
     # === Most common `initialize`. Creates a new scope.
     def initialize(raw : String, @file_dir : String)
       raw = raw.strip
-      if !raw.index("\n")
-        if raw.index(".css") == (raw.size - 4)
-          raw = DA_STYLE.file_read!(raw, @file_dir)
-        end
+      if !raw.index("\n") && raw.index(".css") == (raw.size - 4)
+        raw = DA_STYLE.file_read!(raw, @file_dir)
       end
 
-      @stack  = Parser::Stack.new(raw)
-      @def_funcs = {} of String => Hash(Int32, Def_Func)
-      @open_family = [] of String
+      @stack       = Parser::Stack.new(raw)
+      @def_funcs   = {} of String => Hash(Int32, Def_Func)
     end # === def initialize
 
     # === Creates a copy of parent scope. Used by Def_Funcs:
