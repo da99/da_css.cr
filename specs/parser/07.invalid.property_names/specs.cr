@@ -7,7 +7,7 @@ describe "Parser invalid property names" do
       }
     ]
 
-    expect_raises(DA_CSS::Parser::Invalid_Property_Name) {
+    expect_raises(DA_CSS::Invalid_Property_Name) {
       SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow: behaviour"
@@ -18,7 +18,7 @@ describe "Parser invalid property names" do
         input = %[
           div { {{x.id}}: none; }
         ]
-        expect_raises(DA_CSS::Parser::Invalid_Property_Name) {
+        expect_raises(DA_CSS::Invalid_Property_Name) {
           SPEC_PARSER.new(input, __DIR__).to_css
         }
       end # === it "does not allow family names as property names:"

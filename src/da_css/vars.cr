@@ -1,8 +1,6 @@
 
 module DA_CSS
 
-  module Parser
-
     struct Vars
 
       @vars = {} of String => String
@@ -57,7 +55,5 @@ module DA_CSS
       end # === def self.is_valid_key?
 
     end # === class Vars
-
-  end # === module Parser
 
 end # === module DA_CSS

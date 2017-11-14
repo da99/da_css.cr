@@ -1,5 +1,5 @@
 
-describe DA_CSS::Parser do
+describe DA_CSS::Printer do
 
   it "prints css" do
     should_eq actual!, expected!
@@ -38,4 +38,4 @@ describe DA_CSS::Parser do
     end # === it "renders "
   {% end %}
 
-end # === desc "DA_CSS::Parser"
+end # === desc "DA_CSS::Printer"

@@ -1,7 +1,6 @@
 
 module DA_CSS
 
-  module Parser
 
     macro def_exception(name, prefix, &blok)
       class {{name.id}} < Exception
@@ -31,6 +30,5 @@ module DA_CSS
       end
     end
 
-  end # === module Parser
 
 end # === module DA_CSS

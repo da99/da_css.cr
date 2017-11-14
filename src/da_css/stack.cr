@@ -1,8 +1,6 @@
 
 module DA_CSS
 
-  module Parser
-
     class Stack
 
       @len    : Int32
@@ -14,7 +12,7 @@ module DA_CSS
       getter previous       = [] of String
 
       def initialize(raw : String)
-        @origin = Parser.split(raw)
+        @origin = Printer.split(raw)
         @len    = @origin.size
       end # === def initialize
 
@@ -151,7 +149,5 @@ module DA_CSS
       end # === def grab_until_token_is
 
     end # === class Stack
-
-  end # === module Parser
 
 end # === module DA_CSS

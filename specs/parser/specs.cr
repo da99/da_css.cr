@@ -1,10 +1,10 @@
 
-require "../../src/da_css/parser"
+require "../../src/da_css/printer"
 
 class SPEC_PARSER
-  include DA_CSS::Parser
-
+  include DA_CSS::Printer
 end # === class SPEC_PARSER
+
 macro expected!
   File.read("#{__DIR__}/expected.css")
 end # === macro expected!
@@ -16,3 +16,4 @@ end # === macro actual!
 {% for x in `find #{__DIR__} -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
   require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
 {% end %}
+require "../../examples/*"

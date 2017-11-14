@@ -1,14 +1,14 @@
 
-require "./parser/stack"
-require "./parser/vars"
-require "./parser/def_func"
-require "./parser/clean_url"
-require "./parser/properties"
-require "./parser/exception"
+require "./stack"
+require "./vars"
+require "./def_func"
+require "./clean_url"
+require "./properties"
+require "./exception"
 
 module DA_CSS
 
-  module Parser
+  module Printer
 
     @@SINGLE_LINE_FUNCS         = %w(include)
     @@SINGLE_LINE_FUNCS_PATTERN = /^#{@@SINGLE_LINE_FUNCS.join("|")}\(/
@@ -31,7 +31,7 @@ module DA_CSS
     end
 
     @is_fin = false
-    getter stack     : Parser::Stack
+    getter stack     : Stack
     getter file_dir  : String
 
     getter io           = IO::Memory.new
@@ -52,15 +52,14 @@ module DA_CSS
         raw = DA_CSS.file_read!(@file_dir, raw)
       end
 
-      @stack       = Parser::Stack.new(raw)
-      @def_funcs   
+      @stack = Stack.new(raw)
     end # === def initialize
 
     # === Creates a copy of parent scope. Used by Def_Funcs:
-    def initialize(tokens : Array(String), parent : Parser)
+    def initialize(tokens : Array(String), parent : Printer)
       @file_dir     = parent.file_dir
       @io           = parent.io
-      @stack        = Parser::Stack.new(tokens)
+      @stack        = Stack.new(tokens)
       @def_funcs    = parent.def_funcs.dup
       @vars         = parent.vars.dup
       @private_vars = parent.private_vars.dup
@@ -229,7 +228,7 @@ module DA_CSS
       when "include"
         io << "\n"
         code = DA_CSS.file_read!(file_dir, val)
-        run(Parser::Stack.new(code))
+        run(Stack.new(code))
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
@@ -392,7 +391,7 @@ module DA_CSS
       io << style << ": " << value << ";"
     end # === def run_property
 
-    def run(temp : Parser::Stack)
+    def run(temp : Stack)
       orig = @stack
       @stack = temp
       run
@@ -479,7 +478,7 @@ module DA_CSS
       str
     end # === def to_css
 
-  end # === module Parser
+  end # === module Printer
 
 end # === module DA_CSS
 

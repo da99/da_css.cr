@@ -1,6 +1,5 @@
 
 module DA_CSS
-  module Parser
     struct Def_Func
 
       @name : String
@@ -10,7 +9,7 @@ module DA_CSS
       def initialize(@name, @vars, @body)
       end # === def initialize
 
-      def run(def_call : String, parent : Parser)
+      def run(def_call : String, parent : Printer)
         if !def_call.match(/^\ *[^\(]+\((.+)\);?$/)
           raise Exception.new("Invalid function call: #{def_call.inspect}")
         end
@@ -29,5 +28,4 @@ module DA_CSS
       end # === def run
 
     end # === struct Def_Func
-  end # === module Parser
 end # === module DA_CSS

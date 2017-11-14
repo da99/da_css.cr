@@ -2,8 +2,6 @@
 require "da_uri"
 module DA_CSS
 
-  module Parser
-
     module Clean_Url
 
       extend DA_URI
@@ -14,7 +12,5 @@ module DA_CSS
       end
 
     end # === class Clean_Url
-
-  end # === module Parser
 
 end # === module DA_CSS
