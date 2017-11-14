@@ -14,9 +14,9 @@ else
   local +x ACTION=$1; shift
 fi
 
-local +x LIST_TXT=src/da_style/list.txt
-local +x LIST_FAMILY=src/da_style/list.family.txt
-local +x LIST_NON_STANDARD=src/da_style/list.non.standard.txt
+local +x LIST_TXT=src/da_css/list.txt
+local +x LIST_FAMILY=src/da_css/list.family.txt
+local +x LIST_NON_STANDARD=src/da_css/list.non.standard.txt
 
 case "$ACTION" in
 
@@ -92,7 +92,7 @@ case "$ACTION" in
         ;;
     esac
 
-    for name in $(da_style.cr property used) ; do
+    for name in $(da_css.cr property used) ; do
       if [[ ! -z "$continue" && "$name" < "$continue" ]]; then
         echo "=== skipping: $name" >&2
         continue
@@ -118,7 +118,7 @@ case "$ACTION" in
   diff)
     local +x TMP_FILE_1="$(mktemp)"
     local +x TMP_FILE_2="$(mktemp)"
-    da_style.cr property-list latest > "$TMP_FILE_1"
+    da_css.cr property-list latest > "$TMP_FILE_1"
     cat "$LIST_TXT" | sort | uniq  > "$TMP_FILE_2"
     diff --ignore-all-space "$TMP_FILE_1" "$TMP_FILE_2"
     rm -f "$TMP_FILE_1" "$TMP_FILE_2"
@@ -139,7 +139,7 @@ case "$ACTION" in
     ;;
 
   used)
-    cat src/da_style/parser/properties.cr | grep -P '^\ *def_property' | cut -d'"' -f2 | sort
+    cat src/da_css/parser/properties.cr | grep -P '^\ *def_property' | cut -d'"' -f2 | sort
     ;;
 
   w3)

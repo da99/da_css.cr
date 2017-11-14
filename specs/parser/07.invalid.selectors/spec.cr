@@ -7,7 +7,7 @@ describe "Parser invalid selectors" do
        #form2 input[value^='a'] { background-image: url(http://localhost/log.php/a); }
     ]
 
-    expect_raises(DA_STYLE::Parser::Invalid_Selector) {
+    expect_raises(DA_CSS::Parser::Invalid_Selector) {
       SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
@@ -17,7 +17,7 @@ describe "Parser invalid selectors" do
        #form2 =a { background-image: url('/a'); }
     ]
 
-    expect_raises(DA_STYLE::Parser::Invalid_Selector) {
+    expect_raises(DA_CSS::Parser::Invalid_Selector) {
       SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
@@ -27,7 +27,7 @@ describe "Parser invalid selectors" do
        #form2 * div { background-image: url('/a.png'); }
     ]
 
-    expect_raises(DA_STYLE::Parser::Invalid_Selector) {
+    expect_raises(DA_CSS::Parser::Invalid_Selector) {
       SPEC_PARSER.new(input, __DIR__).to_css
     }
   end # === it "does not allow [ or ] in the selector"
@@ -37,7 +37,7 @@ describe "Parser invalid selectors" do
       input = %[
         {{x.id}} { background-image: url('/local.png'); }
       ]
-      expect_raises(DA_STYLE::Parser::Invalid_Selector) {
+      expect_raises(DA_CSS::Parser::Invalid_Selector) {
         SPEC_PARSER.new(input, __DIR__).to_css
       }
     end # === it "does not allow single character selectors: * { } a { } "

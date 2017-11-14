@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module PX
 
     def px(v)
-      DA_STYLE::PX::VALUE.new(v)
+      DA_CSS::PX::VALUE.new(v)
     end # === def px
 
     struct VALUE
@@ -21,4 +21,4 @@ module DA_STYLE
 
   end # === module PX
 
-end # === module DA_STYLE
+end # === module DA_CSS

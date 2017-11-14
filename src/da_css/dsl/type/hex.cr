@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module HEX
 
     def hex(s)
-      DA_STYLE::HEX::VALUE.new(s)
+      DA_CSS::HEX::VALUE.new(s)
     end
 
     struct VALUE
@@ -46,4 +46,4 @@ module DA_STYLE
   end # === module HEX_COLOR
 
 
-end # === module DA_STYLE
+end # === module DA_CSS

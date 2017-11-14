@@ -1,6 +1,6 @@
 
 require "spec"
-require "../src/da_style"
+require "../src/da_css"
 
 macro should_eq(a, e)
   strip_each_line({{a}}).should eq(strip_each_line({{e}}))
@@ -10,9 +10,8 @@ macro strip_each_line(s)
   {{s}}.split("\n").map { |s| s.strip }.reject { |s| s.empty? }.join("\n")
 end # === macro strip_each_line
 
-{% if !env("DA_STYLE_PARSER") %}
-  require "../src/da_style/dsl"
-  require "./dsl/*"
+{% if !env("DA_CSS_PARSER") %}
+  require "../src/da_css/dsl"
 {% end %}
 require "./parser/specs"
 

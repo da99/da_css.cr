@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   module URL
 
@@ -31,4 +31,4 @@ module DA_STYLE
 
   end # === module URL
 
-end # === module DA_STYLE
+end # === module DA_CSS

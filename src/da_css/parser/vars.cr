@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   module Parser
 
@@ -60,4 +60,4 @@ module DA_STYLE
 
   end # === module Parser
 
-end # === module DA_STYLE
+end # === module DA_CSS

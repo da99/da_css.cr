@@ -6,7 +6,7 @@ require "./parser/clean_url"
 require "./parser/properties"
 require "./parser/exception"
 
-module DA_STYLE
+module DA_CSS
 
   module Parser
 
@@ -49,7 +49,7 @@ module DA_STYLE
     def initialize(raw : String, @file_dir : String)
       raw = raw.strip
       if !raw.index("\n") && raw.index(".css") == (raw.size - 4)
-        raw = DA_STYLE.file_read!(@file_dir, raw)
+        raw = DA_CSS.file_read!(@file_dir, raw)
       end
 
       @stack       = Parser::Stack.new(raw)
@@ -228,7 +228,7 @@ module DA_STYLE
       case name
       when "include"
         io << "\n"
-        code = DA_STYLE.file_read!(file_dir, val)
+        code = DA_CSS.file_read!(file_dir, val)
         run(Parser::Stack.new(code))
         io << "\n"
       else
@@ -481,5 +481,5 @@ module DA_STYLE
 
   end # === module Parser
 
-end # === module DA_STYLE
+end # === module DA_CSS
 

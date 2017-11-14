@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   struct RGB_Level
 
@@ -22,4 +22,4 @@ module DA_STYLE
 
   end # === struct RGB_Level
 
-end # === module DA_STYLE
+end # === module DA_CSS

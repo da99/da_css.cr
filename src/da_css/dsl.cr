@@ -2,18 +2,18 @@
 require "./dsl/keyword/*"
 require "./dsl/type/*"
 
-module DA_STYLE
+module DA_CSS
 
   module DSL
 
     module BASE
-      include DA_STYLE::KEYWORD
-      include DA_STYLE::PX
-      include DA_STYLE::EM
-      include DA_STYLE::PERCENT
-      include DA_STYLE::URL
-      include DA_STYLE::HEX
-      include DA_STYLE::DEG
+      include DA_CSS::KEYWORD
+      include DA_CSS::PX
+      include DA_CSS::EM
+      include DA_CSS::PERCENT
+      include DA_CSS::URL
+      include DA_CSS::HEX
+      include DA_CSS::DEG
     end # === module BASE
 
     include BASE
@@ -47,9 +47,9 @@ module DA_STYLE
 
       struct {{klass.id}}
 
-        include DA_STYLE::DSL::BASE
+        include DA_CSS::DSL::BASE
 
-        getter io : DA_STYLE::DSL::INPUT_OUTPUT
+        getter io : DA_CSS::DSL::INPUT_OUTPUT
         def initialize(@io)
         end # === def initialize
 
@@ -140,7 +140,7 @@ module DA_STYLE
       with i yield
     end
 
-    getter io = DA_STYLE::DSL::INPUT_OUTPUT.new
+    getter io = DA_CSS::DSL::INPUT_OUTPUT.new
     @in_nest = false
 
     def io
@@ -153,4 +153,4 @@ module DA_STYLE
 
   end # === module DSL
 
-end # === module DA_STYLE
+end # === module DA_CSS

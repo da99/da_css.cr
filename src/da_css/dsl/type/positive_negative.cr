@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   module Positive_Negative
 
@@ -19,4 +19,4 @@ module DA_STYLE
 
   end # === module Positive_Negative
 
-end # === module DA_STYLE
+end # === module DA_CSS

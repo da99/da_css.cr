@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module ALPHA
 
     def alpha(i)
-      DA_STYLE::ALPHA::VALUE.new(i)
+      DA_CSS::ALPHA::VALUE.new(i)
     end # === def alphaalpha
 
     struct VALUE
@@ -29,4 +29,4 @@ module DA_STYLE
   end # === module ALPHA
 
 
-end # === module DA_STYLE
+end # === module DA_CSS

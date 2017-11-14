@@ -1,6 +1,6 @@
 
 class Create_Property
-  include DA_STYLE::DSL
+  include DA_CSS::DSL
   create_property "my-prop"
 end # === class Create_Property
 

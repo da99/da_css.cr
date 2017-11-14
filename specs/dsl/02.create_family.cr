@@ -1,6 +1,6 @@
 
 class Create_Family
-  include DA_STYLE::DSL
+  include DA_CSS::DSL
   create_family "background", "color", "width"
 end # === class Create_Family
 

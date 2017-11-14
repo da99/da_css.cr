@@ -1,8 +1,8 @@
 
-require "../../src/da_style/parser"
+require "../../src/da_css/parser"
 
 class SPEC_PARSER
-  include DA_STYLE::Parser
+  include DA_CSS::Parser
 
 end # === class SPEC_PARSER
 macro expected!

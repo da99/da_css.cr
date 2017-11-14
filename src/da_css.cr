@@ -1,6 +1,6 @@
 
 
-module DA_STYLE
+module DA_CSS
   macro file_read!(dir, raw)
     File.read(
       File.expand_path(
@@ -8,7 +8,7 @@ module DA_STYLE
       )
     )
   end # === macro file_read!
-end # === module DA_STYLE
+end # === module DA_CSS
 
 {% if env("DEV_BUILD") %}
   macro inspect!(*args)

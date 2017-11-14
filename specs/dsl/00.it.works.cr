@@ -1,8 +1,8 @@
 
 class It_Works
 
-  include DA_STYLE::DSL
-  extend DA_STYLE::HEX
+  include DA_CSS::DSL
+  extend DA_CSS::HEX
 
   BLUE  = hex("#E3E0CF")
   GREY  = hex("#908E8E")
@@ -61,7 +61,7 @@ class It_Works
     s("div") {
       border px(10), dotted, hex("white")
       border em(10)
-      border_style dotted
+      border_css dotted
       border_color hex("black")
       border_width thick
 

@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module HUE
 
     def hue(s)
-      DA_STYLE::HUE::VALUE.new(s)
+      DA_CSS::HUE::VALUE.new(s)
     end # === def hue
 
     struct VALUE
@@ -30,4 +30,4 @@ module DA_STYLE
     end # === struct Hue
   end # === module HUE
 
-end # === module DA_STYLE
+end # === module DA_CSS

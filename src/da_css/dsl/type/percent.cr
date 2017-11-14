@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module PERCENT
 
     def percent(i)
-      DA_STYLE::PERCENT::VALUE.new(i)
+      DA_CSS::PERCENT::VALUE.new(i)
     end # === def percent
 
     struct VALUE
@@ -26,4 +26,4 @@ module DA_STYLE
 
   end # === module PERCENT
 
-end # === module DA_STYLE
+end # === module DA_CSS

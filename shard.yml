@@ -1,5 +1,5 @@
 ---
-name: da_style
+name: da_css
 version: 2.2.0
 development_dependencies:
   da_uri:

@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
   module Parser
     struct Def_Func
 
@@ -30,4 +30,4 @@ module DA_STYLE
 
     end # === struct Def_Func
   end # === module Parser
-end # === module DA_STYLE
+end # === module DA_CSS

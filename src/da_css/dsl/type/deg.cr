@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   module DEG
 
@@ -7,7 +7,7 @@ module DA_STYLE
       if num == 0
         Zero.new
       else
-        DA_STYLE::DEG::VALUE.new(num)
+        DA_CSS::DEG::VALUE.new(num)
       end
     end # === def deg
 
@@ -28,4 +28,4 @@ module DA_STYLE
 
   end # === module DEG
 
-end # === module DA_STYLE
+end # === module DA_CSS

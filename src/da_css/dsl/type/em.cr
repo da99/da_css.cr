@@ -1,10 +1,10 @@
 
 require "./positive_negative"
-module DA_STYLE
+module DA_CSS
 
   module EM
     def em(i : Int32 | Float64)
-      DA_STYLE::EM::VALUE.new(i)
+      DA_CSS::EM::VALUE.new(i)
     end # === def em
 
     struct VALUE
@@ -19,4 +19,4 @@ module DA_STYLE
     end # === struct VALUE
   end # === module EM
 
-end # === module DA_STYLE
+end # === module DA_CSS

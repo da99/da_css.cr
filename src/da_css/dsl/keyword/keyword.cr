@@ -1,6 +1,6 @@
 
 
-module DA_STYLE
+module DA_CSS
   module KEYWORD
 
     macro create_keyword(name)
@@ -9,7 +9,7 @@ module DA_STYLE
 
     macro create_keyword(name, val)
       def {{name.downcase.id}}
-        DA_STYLE::KEYWORD::VALUE.new({{name}}, {{val}})
+        DA_CSS::KEYWORD::VALUE.new({{name}}, {{val}})
       end
     end # === macro create_keyword
 
@@ -59,6 +59,6 @@ module DA_STYLE
     create_keyword "Unset"
 
   end # === module KEYWORD
-end # === module DA_STYLE
+end # === module DA_CSS
 
 

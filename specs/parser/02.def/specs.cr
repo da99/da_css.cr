@@ -1,5 +1,5 @@
 
-describe "DA_STYLE::Parser def" do
+describe "DA_CSS::Parser def" do
 
   it "renders the block of css code" do
     should_eq actual!, expected!
@@ -23,4 +23,4 @@ describe "DA_STYLE::Parser def" do
     should_eq SPEC_PARSER.new(input, __DIR__).to_css, expected
   end
 
-end # === desc "DA_STYLE::Parser"
+end # === desc "DA_CSS::Parser"

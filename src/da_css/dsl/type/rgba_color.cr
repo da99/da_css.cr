@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module RGBA
 
     def rgba(*args)
-      DA_STYLE::RGBA::VALUE.new(*args)
+      DA_CSS::RGBA::VALUE.new(*args)
     end # === def rgb
 
     struct VALUE
@@ -12,13 +12,13 @@ module DA_STYLE
       @first  : Int32
       @second : Int32
       @third  : Int32
-      @alpha  : DA_STYLE::ALPHA::VALUE
+      @alpha  : DA_CSS::ALPHA::VALUE
 
       def initialize(@first, @second, @third, @alpha)
       end # === def initialize
 
       def initialize(@first, @second, @third, alpha)
-        @alpha  = DA_STYLE::ALPHA::VALUE.new(alpha)
+        @alpha  = DA_CSS::ALPHA::VALUE.new(alpha)
       end # === def initialize
 
       def write_to(io)
@@ -29,4 +29,4 @@ module DA_STYLE
 
   end # === module RGBA
 
-end # === module DA_STYLE
+end # === module DA_CSS

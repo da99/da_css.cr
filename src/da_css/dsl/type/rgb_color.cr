@@ -1,10 +1,10 @@
 
-module DA_STYLE
+module DA_CSS
 
   module RGB
 
     def rgb(*args)
-      DA_STYLE::RGB::VALUE.new(*args)
+      DA_CSS::RGB::VALUE.new(*args)
     end # === def rgb
 
     struct VALUE
@@ -24,4 +24,4 @@ module DA_STYLE
 
   end # === module RGB
 
-end # === module DA_STYLE
+end # === module DA_CSS

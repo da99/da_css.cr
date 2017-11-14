@@ -1,5 +1,5 @@
 
-module DA_STYLE
+module DA_CSS
 
   struct Allowed
 
@@ -14,4 +14,4 @@ module DA_STYLE
 
   end # === struct Allowed
 
-end # === module DA_STYLE
+end # === module DA_CSS

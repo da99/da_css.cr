@@ -2,13 +2,13 @@
 # background (complexity)
 # text-decoration (complexity)
 
-module DA_STYLE
+module DA_CSS
 
   module Parser
 
     {% system("mkdir -p tmp") %}
-    {% system("rm -f tmp/da_style.def_property.tmp") %}
-    {% system("touch tmp/da_style.def_property.tmp") %}
+    {% system("rm -f tmp/da_css.def_property.tmp") %}
+    {% system("touch tmp/da_css.def_property.tmp") %}
 
     macro def_property(raw_name, r)
       # === A performance boost if we save the new regex into a CONSTANT
@@ -17,7 +17,7 @@ module DA_STYLE
       {{const_name}} = /^(#{{{r}}})$/
 
       {% meth_name = "clean_#{raw_name.gsub(/-/, "_").id}".id %}
-      {% system("bash -c \"echo #{raw_name} #{meth_name} >> tmp/da_style.def_property.tmp\"") %}
+      {% system("bash -c \"echo #{raw_name} #{meth_name} >> tmp/da_css.def_property.tmp\"") %}
 
       def {{meth_name}}(raw : String)
         return raw if raw.match({{const_name}})
@@ -235,7 +235,7 @@ module DA_STYLE
     def clean_property(raw_name : String, raw_value : String)
       {% begin %}
         case raw_name
-          {% for x in system("cat tmp/da_style.def_property.tmp").split("\n").reject { |x| x.strip.empty? } %}
+          {% for x in system("cat tmp/da_css.def_property.tmp").split("\n").reject { |x| x.strip.empty? } %}
             {% css_name = x.split.first.id %}
             {% meth_name = x.split.last.id %}
           when "{{css_name}}"
@@ -250,6 +250,6 @@ module DA_STYLE
 
   end # === module Parser
 
-end # === module DA_STYLE
+end # === module DA_CSS
 
 

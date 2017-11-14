@@ -15,7 +15,7 @@ case "$ACTION" in
 
   watch)
     mkdir -p tmp/in
-    local +x CMD="da_style.cr specs run $@"
+    local +x CMD="da_css.cr specs run $@"
     sh_color ORANGE "=== {{Running}}: $CMD"
     ${=CMD} || :
     process watch "-r src -r specs -r bin -r sh -r tmp/in" "$CMD"
