@@ -1,5 +1,5 @@
 
-require "./stack"
+require "./parser"
 require "./vars"
 require "./def_func"
 require "./clean_url"
@@ -31,7 +31,7 @@ module DA_CSS
     end
 
     @is_fin = false
-    getter stack     : Stack
+    getter parser    : Parser
     getter file_dir  : String
 
     getter io           = IO::Memory.new
@@ -52,14 +52,14 @@ module DA_CSS
         raw = DA_CSS.file_read!(@file_dir, raw)
       end
 
-      @stack = Stack.new(raw)
+      @parser = Parser.new(raw)
     end # === def initialize
 
     # === Creates a copy of parent scope. Used by Def_Funcs:
     def initialize(tokens : Array(String), parent : Printer)
       @file_dir     = parent.file_dir
       @io           = parent.io
-      @stack        = Stack.new(tokens)
+      @parser        = Parser.new(tokens)
       @def_funcs    = parent.def_funcs.dup
       @vars         = parent.vars.dup
       @private_vars = parent.private_vars.dup
@@ -134,16 +134,16 @@ module DA_CSS
     end # === def in_family?
 
     def start_family
-      return false if stack.previous.size != 1
-      return false if !open_family? &&  !is_property_family?(stack.previous.last || "")
-      family = stack.previous.pop
+      return false if parser.previous.size != 1
+      return false if !open_family? &&  !is_property_family?(parser.previous.last || "")
+      family = parser.previous.pop
       open_family.push family
-      stack.open(:family)
+      parser.open(:family)
     end
 
     def start_def
-      raw = stack.previous.join(" ")
-      stack.previous.clear
+      raw = parser.previous.join(" ")
+      parser.previous.clear
 
       result = raw.match /^def\ +([a-zA-Z0-9\_\-]+)\(\ *([a-zA-Z0-9\_\-\,\ ]+)\ *\)$/
       if !result
@@ -158,7 +158,7 @@ module DA_CSS
         end
         new_x
       }
-      body = stack.grab_partial("{", "}", [] of String)
+      body = parser.grab_partial("{", "}", [] of String)
 
       if @def_funcs.has_key?(name) && @def_funcs[name].has_key?(var_names.size)
         raise Exception.new("Func already defined: #{name.inspect}")
@@ -174,32 +174,32 @@ module DA_CSS
     def start_selector
       return :family if start_family
 
-      if stack.previous.first == "def" && stack.previous.last.rindex(")") == (stack.previous.last.size - 1)
+      if parser.previous.first == "def" && parser.previous.last.rindex(")") == (parser.previous.last.size - 1)
         return start_def
       end
 
-      selector = stack.previous.join(" ")
+      selector = parser.previous.join(" ")
       private_vars.set("selector", selector)
 
       if !is_valid_selector?(selector)
         raise Invalid_Selector.new(selector.inspect)
       end
 
-      if !stack.closes.empty?
-        if stack.closes.last != :var
+      if !parser.closes.empty?
+        if parser.closes.last != :var
           io << "\n"
         end
       end
 
       spaces(:selector)
-      stack.open(:selector)
+      parser.open(:selector)
       io << private_vars.get("selector") << " {"
       private_vars.delete("selector")
-      stack.previous.clear
+      parser.previous.clear
     end
 
     def spaces(*args)
-      stack.opens.select { |x| args.includes?(x) }.size.times do |i|
+      parser.opens.select { |x| args.includes?(x) }.size.times do |i|
         io << "  "
       end
       io
@@ -208,9 +208,9 @@ module DA_CSS
     def finish_selector
       if open_family?
         open_family.pop
-        return stack.close(:family)
+        return parser.close(:family)
       end
-      stack.close(:selector)
+      parser.close(:selector)
       io << "\n"
       spaces(:selector)
       io << "}"
@@ -228,7 +228,7 @@ module DA_CSS
       when "include"
         io << "\n"
         code = DA_CSS.file_read!(file_dir, val)
-        run(Stack.new(code))
+        run(Parser.new(code))
         io << "\n"
       else
         raise Exception.new("Unknown function call #{name.inspect}: #{combined.inspect}");
@@ -236,16 +236,16 @@ module DA_CSS
     end
 
     def run_var_assignment
-      stack.move
-      next_value = stack.grab_through(";", [] of String).join(" ");
-      key        = (stack.previous.size > 0) ? stack.previous.pop : ""
+      parser.move
+      next_value = parser.grab_through(";", [] of String).join(" ");
+      key        = (parser.previous.size > 0) ? parser.previous.pop : ""
 
       if key.empty?
         raise Exception.new("Invalid assignment: [empty] = #{next_value.inspect}")
       end
 
       if next_value.empty?
-        raise Exception.new("Invalid assignment: #{stack.previous.join(" ")} = [empty]")
+        raise Exception.new("Invalid assignment: #{parser.previous.join(" ")} = [empty]")
       end
 
       if !Vars.is_valid_key?(key)
@@ -253,8 +253,8 @@ module DA_CSS
       end
 
       vars.set(key, next_value)
-      stack.previous.clear
-      stack.closes << :var
+      parser.previous.clear
+      parser.closes << :var
     end # === def run_assignment
 
     def replace_url(property_name : String, func_name : String, arg : String)
@@ -363,14 +363,14 @@ module DA_CSS
     end # === def replace
 
     def run_property
-      style = if stack.current == ":" && stack.previous.size == 1
-                stack.previous.pop
+      style = if parser.current == ":" && parser.previous.size == 1
+                parser.previous.pop
               else
-                stack.current.rstrip(":")
+                parser.current.rstrip(":")
               end
 
-      stack.move
-      value = stack.grab_through(";", [] of String).join(" ")
+      parser.move
+      value = parser.grab_through(";", [] of String).join(" ")
 
       if style.empty?
         raise Exception.new("Invalid property name: [empty]: #{value}")
@@ -391,11 +391,11 @@ module DA_CSS
       io << style << ": " << value << ";"
     end # === def run_property
 
-    def run(temp : Stack)
-      orig = @stack
-      @stack = temp
+    def run(temp : Parser)
+      orig = @parser
+      @parser = temp
       run
-      @stack = orig
+      @parser = orig
     end # === def run
 
     def run
@@ -403,8 +403,8 @@ module DA_CSS
         raise Exception.new("Too many nested scopes: #{@scope_count}")
       end
 
-      while !stack.fin?
-        t = stack.current
+      while !parser.fin?
+        t = parser.current
 
         case
 
@@ -424,23 +424,23 @@ module DA_CSS
           run_property
 
         when t.index("@") == 0
-          stack.grab_until_token_is("{")
+          parser.grab_until_token_is("{")
           start_selector
 
         when t.index("/*") == 0
-          stack.erase_through("*/")
+          parser.erase_through("*/")
 
         when t.index(@@SINGLE_LINE_FUNCS_PATTERN) == 0
-          css_call = stack.grab_through(";", [] of String)
+          css_call = parser.grab_through(";", [] of String)
           run_css_call(css_call)
 
-        when stack.previous.empty? && (t.index("(") || 0) > 1
+        when parser.previous.empty? && (t.index("(") || 0) > 1
           name = t.split("(").first.upcase
           if !@def_funcs.has_key?(name)
             raise Exception.new("Function call not found with name: #{name.inspect} (Available: #{@def_funcs.keys.join ", "})")
           end
 
-          css_call = stack.grab_through(";", [] of String).join(" ")
+          css_call = parser.grab_through(";", [] of String).join(" ")
           arg_size = css_call.count { |x| x == ',' } + 1
 
           if !@def_funcs[name].has_key?(arg_size)
@@ -449,18 +449,18 @@ module DA_CSS
           @def_funcs[name][arg_size].run(css_call, self)
 
         else
-          stack.previous.push t
+          parser.previous.push t
         end
 
-        stack.move
+        parser.move
       end
 
-      if !stack.previous.empty?
-        raise Exception.new("Unknown values: #{stack.previous.join(" ").inspect}")
+      if !parser.previous.empty?
+        raise Exception.new("Unknown values: #{parser.previous.join(" ").inspect}")
       end
 
-      if stack.open?
-        raise Exception.new("Missing closing } for: #{stack.open}")
+      if parser.open?
+        raise Exception.new("Missing closing } for: #{parser.open}")
       end
     end # === def run
 

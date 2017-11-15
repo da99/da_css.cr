@@ -1,7 +1,7 @@
 
 module DA_CSS
 
-    class Stack
+    class Parser
 
       @len    : Int32
       @origin : Array(String)
@@ -148,6 +148,6 @@ module DA_CSS
         return previous
       end # === def grab_until_token_is
 
-    end # === class Stack
+    end # === class Parser
 
 end # === module DA_CSS
