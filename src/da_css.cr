@@ -10,6 +10,8 @@ module DA_CSS
   end # === macro file_read!
 end # === module DA_CSS
 
+require "./da_css/printer"
+
 {% if env("DEV_BUILD") %}
   macro inspect!(*args)
     puts \{{*args}}
