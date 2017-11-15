@@ -2,8 +2,8 @@
 da\_css.cr
 ============
 
-The idea is to let uses use a subset + SASS-like
-features to upload their own CSS files
+The idea is to let users use a subset of CSS (with a few SASS-like
+features) to upload their own CSS files
 while preventing CSS security vulnerabilities.
 
 
