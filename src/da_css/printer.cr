@@ -62,7 +62,7 @@ module DA_CSS
       self
     end # === def write_property
 
-    def write(x : Node::Selector)
+    def write(x : Node::Selector_With_Body)
       io_css.indent
       x.head.each { |x| io_css.raw! x.chr }
       io_css.raw! " {\n"

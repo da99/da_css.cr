@@ -7,6 +7,7 @@ require "./node.unknown"
 require "./node.empty_array"
 require "./node.assignment"
 require "./node.selector"
+require "./node.selector_with_body"
 require "./node.comment"
 require "./node.property"
 require "./node.statement"
@@ -48,6 +49,124 @@ module DA_CSS
       @codepoints = Codepoints.new(raw)
       @size = @codepoints.size
     end # === def initialize
+
+    def parse
+      raise Exception.new("Already parsed.") if done?
+
+      last_chr = false
+      while current? && !done?
+        last_chr = true if @final_char && @final_char == current
+        parse(grab)
+        break if last_chr
+      end
+
+      fin_chr = @final_char
+      if fin_chr && !last_chr
+        raise Exception.new("Missing char: #{fin_chr.chr}")
+      end
+
+      if !@cache.empty?
+        raise Exception.new("Invalid characters: #{@cache.to_s.inspect}")
+      end
+
+      if !@caches.empty?
+        raise Exception.new("Invalid characters: #{@caches.join.to_s.inspect}")
+      end
+
+      return doc
+    end # === def parse
+
+    def parse(i : Int32)
+      case
+
+      when Codepoints.whitespace?(i)
+        if !@cache.empty?
+          save_cache
+        end
+
+      # PARSE: comment
+      when i == ('/').hash && current == ('*').hash
+        if !@cache.empty?
+          raise Exception.new("You can't put a comment while defining something else.")
+        end
+
+        grab # asterisk
+        comment = Codepoints.new
+        was_closed = false
+        loop do
+          grab_slice(comment, '/'.hash)
+          break if !current?
+
+          if prev(2).chr == '*'
+            comment.pop
+            was_closed = true
+            break
+          end
+        end # loop
+
+        if was_closed
+          doc.push(Node::Comment.new(comment))
+        else
+          raise Exception.new("Comment was not closed.")
+        end
+
+      # PARSE: string '
+      # PARSE: string "
+      when i == ('\'').hash || i == ('"').hash
+        @cache.push i
+        grab_slice(@cache, i)
+        @cache.push i
+
+      when i == ('{').hash
+        save_cache unless @cache.empty?
+        raise Exception.new("Block must have a selector.") if @caches.empty?
+        body = Parser.new(self).parse
+        doc.push Node::Selector_With_Body.new(grab_caches, body)
+
+      when i == '}'.hash
+        if @parent_count == 0
+          if next?
+            raise Exception.new("Missing opening {")
+          end
+        else
+          done!
+        end
+
+      when i == ':'.hash
+        save_cache unless @cache.empty?
+        raise Exception.new("Property being defined with a key") if @caches.empty?
+        key = grab_caches.join
+        value = Parser.new(self, ';'.hash).parse
+
+        if value.empty?
+          raise Exception.new("Missing value for key: #{key.to_s}")
+        end
+
+        doc.push Node::Property.new(key, value)
+
+      when i == ';'.hash
+        save_cache unless @cache.empty?
+        raise Exception.new("Statement is empty.") if @caches.empty?
+        doc.push Node::Statement.new(grab_caches)
+
+      when i == '='.hash
+        save_cache unless @cache.empty?
+        raise Exception.new("'=' not allowed here.") unless @caches.size == 1
+        var_name = grab_caches.join
+
+        value = Parser.new(self, ';'.hash).parse.first_and_only("Missing assignment value for: #{@cache.to_s}")
+        if value.is_a?(Node::Statement)
+          doc.push Node::Assignment.new(var_name, value.raw)
+        else
+          raise Exception.new("Missing value for assignment of: #{@cache.to_s}")
+        end
+
+      else
+        @cache.push i
+
+      end # === while
+    end # === def parse
+
 
     def origin?
       @origin.is_a?(Parser)
@@ -205,123 +324,6 @@ module DA_CSS
 
       return codes
     end # === def grab_between
-
-    def parse
-      raise Exception.new("Already parsed.") if done?
-
-      last_chr = false
-      while current? && !done?
-        last_chr = true if @final_char && @final_char == current
-        parse(grab)
-        break if last_chr
-      end
-
-      fin_chr = @final_char
-      if fin_chr && !last_chr
-        raise Exception.new("Missing char: #{fin_chr.chr}")
-      end
-
-      if !@cache.empty?
-        raise Exception.new("Invalid characters: #{@cache.to_s.inspect}")
-      end
-
-      if !@caches.empty?
-        raise Exception.new("Invalid characters: #{@caches.join.to_s.inspect}")
-      end
-
-      return doc
-    end # === def parse
-
-    def parse(i : Int32)
-      case
-
-      when Codepoints.whitespace?(i)
-        if !@cache.empty?
-          save_cache
-        end
-
-      # PARSE: comment
-      when i == ('/').hash && current == ('*').hash
-        if !@cache.empty?
-          raise Exception.new("You can't put a comment while defining something else.")
-        end
-
-        grab # asterisk
-        comment = Codepoints.new
-        was_closed = false
-        loop do
-          grab_slice(comment, '/'.hash)
-          break if !current?
-
-          if prev(2).chr == '*'
-            comment.pop
-            was_closed = true
-            break
-          end
-        end # loop
-
-        if was_closed
-          doc.push(Node::Comment.new(comment))
-        else
-          raise Exception.new("Comment was not closed.")
-        end
-
-      # PARSE: string '
-      # PARSE: string "
-      when i == ('\'').hash || i == ('"').hash
-        @cache.push i
-        grab_slice(@cache, i)
-        @cache.push i
-
-      when i == ('{').hash
-        save_cache unless @cache.empty?
-        raise Exception.new("Block must have a selector.") if @caches.empty?
-        body = Parser.new(self).parse
-        doc.push Node::Selector.new(grab_caches, body)
-
-      when i == '}'.hash
-        if @parent_count == 0
-          if next?
-            raise Exception.new("Missing opening {")
-          end
-        else
-          done!
-        end
-
-      when i == ':'.hash
-        save_cache unless @cache.empty?
-        raise Exception.new("Property being defined with a key") if @caches.empty?
-        key = grab_caches.join
-        value = Parser.new(self, ';'.hash).parse
-
-        if value.empty?
-          raise Exception.new("Missing value for key: #{key.to_s}")
-        end
-
-        doc.push Node::Property.new(key, value)
-
-      when i == ';'.hash
-        save_cache unless @cache.empty?
-        raise Exception.new("Statement is empty.") if @caches.empty?
-        doc.push Node::Statement.new(grab_caches)
-
-      when i == '='.hash
-        save_cache unless @cache.empty?
-        raise Exception.new("'=' not allowed here.") unless @caches.size == 1
-        var_name = grab_caches.join
-
-        value = Parser.new(self, ';'.hash).parse.first_and_only("Missing assignment value for: #{@cache.to_s}")
-        if value.is_a?(Node::Statement)
-          doc.push Node::Assignment.new(var_name, value.raw)
-        else
-          raise Exception.new("Missing value for assignment of: #{@cache.to_s}")
-        end
-
-      else
-        @cache.push i
-
-      end # === while
-    end # === def parse
 
     def save_cache
       raise Exception.new("CHAR cache is empty. Can't save.") if @cache.empty?

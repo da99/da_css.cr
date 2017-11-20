@@ -3,7 +3,7 @@ module DA_CSS
 
   struct Doc
 
-    getter nodes = [] of Node::Statement | Node::Assignment | Node::Selector | Node::Comment | Node::Property
+    getter nodes = [] of Node::Statement | Node::Assignment | Node::Selector_With_Body | Node::Comment | Node::Property
 
     def each
       nodes.each { |x| yield x }
