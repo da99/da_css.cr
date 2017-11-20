@@ -1,157 +1,329 @@
 
-module DA_CSS
+class Parser
 
-  class Parser
+  getter codepoints : Codepoints
+  protected getter origin : Parser | Nil = nil
+  getter parent : Parser | Nil = nil
+  getter parent_count = 0
+  getter doc = Doc.new
 
-    @len    : Int32
-    @origin : Array(String)
+  @is_done                  = false
+  @final_char : Int32 | Nil = nil
+  @caches                   = Codepoints::Array.new
+  @cache                    = Codepoints.new
+  getter index = 0
+  getter size = 0
 
-    getter index  : Int32 = 0
-    getter opens          = [] of Symbol
-    getter closes         = [] of Symbol
-    getter previous       = [] of String
+  def initialize(@parent, @final_char)
+    @parent_count = parent.parent_count + 1
+    @codepoints   = parent.codepoints
+    @origin       = parent.origin || parent
+  end # === def initialize
 
-    def self.split(str : String)
-      str.split(/[[:cntrl:]\ \s]+/)
-    end # === def self.split
+  def initialize(@parent)
+    @parent_count = parent.parent_count + 1
+    @codepoints   = parent.codepoints
+    @origin       = parent.origin || parent
+  end # === def initialize
 
-    def initialize(raw : String)
-      @origin = Parser.split(raw)
-      @len    = @origin.size
-    end # === def initialize
+  def initialize(raw : String)
+    @codepoints = Codepoints.new(raw)
+    @size = @codepoints.size
+  end # === def initialize
 
-    def initialize(@origin)
-      @len = @origin.size
-    end # === def initialize
+  def origin?
+    @origin.is_a?(Parser)
+  end
 
-    def unshift(arr : Array(String))
-      @origin[@index + 1, 0] = arr
-      @len = @len + arr.size
-    end # === def unshift
+  def parent?
+    @parent.is_a?(Parser)
+  end
 
-    def size
-      @origin.size
+  def origin
+    @origin
+  end
+
+  def done?
+    return true if @is_done || !next?
+
+    p = @parent
+    return true if p.is_a?(Parser) && p.done?
+    false
+  end
+
+  def done!
+    @is_done = true
+    self
+  end
+
+  def current?
+    o = origin
+    if o
+      o.index < o.size
+    else
+      @index < @size
+    end
+  end
+
+  def current?(i : Int32)
+    current? && current == i
+  end # === def current?
+
+  def current
+    o = origin
+    if o
+      o.current
+    else
+      @codepoints[@index]
+    end
+  end
+
+  def prev(i : Int32 = 1)
+    o = origin
+    if o
+      o.prev(i)
+    else
+      @codepoints[@index - i]
+    end
+  end
+
+  def next?
+    o = origin
+    if o
+      o.next?
+    else
+      @index < (@size - 2)
+    end
+  end
+
+  def peek
+    o = origin
+    return o.peek if o
+    @codepoints[@index + 1]
+  end
+
+  def put_back
+    o = origin
+    return o.put_back if o
+
+    @index -= 1
+    self
+  end # === def put_back
+
+  def grab
+    o = origin
+    return o.grab if o
+    v = current
+    @index += 1
+    v
+  end
+
+  def skip_to(i : Int32)
+    if current? && !whitespace?(current) && next? && whitespace?(peek)
+      grab
     end
 
-    def open?
-      !@opens.empty?
+    while current? && whitespace?(current)
+      grab
     end
 
-    def open
-      @opens.last
-    end
+    return self if current? && current == i
+    raise Exception.new("Not found: #{i.chr}")
+  end # === def skip_to
 
-    def open(name : Symbol)
-      @opens << name
-    end
+  def grab_slice(i : Int32)
+    grab_slice(Codepoints.new, i)
+  end # === def grab_slice
 
-    def close
-      val = @opens.pop
-      @closes << val
-      val
-    end # === def close
+  def grab_slice(dest : Codepoints, i : Int32)
+    grab_slice(i) { |x|
+      dest.push x
+    }
+    dest
+  end # === def grab_slice
 
-    def close(expected : Symbol)
-      actual = close
-      if actual != expected
-        raise Exception.new("Expecting to close #{expected}, but instead closing #{actual}")
+  # Example: "a b c;" -> grab_slice(';'.hash)
+  # Note: ';' here will be grabbed, but not yield-ed
+  #   to the block.
+  def grab_slice(i : Int32)
+    while current?
+      case current
+      when i
+        grab
+        return self
+      else
+        yield grab
       end
-      actual
+    end
+  end # === def grab_slice
+
+  def grab_between(open : Int32, close : Int32)
+    if current != open
+      raise Exception.new(":grab_between: Not on a '#{open.chr}' char.")
     end
 
-    def fin?
-      @index >= (@len)
+    grab
+    count = 1
+    codes = Codepoints.new
+    while current? && count > 0
+      case current
+      when open
+        count += 1
+        grab
+      when close
+        count -= 1
+        grab
+      else
+        codes.push grab
+      end
+    end # === while
+
+    if count > 0
+      raise Exception.new("Missing closing chars: '#{close.chr}'")
+    end
+    if count < 0
+      raise Exception.new("Missing open chars: '#{open.chr}'")
     end
 
-    def move
-      raise Exception.new("Can't move to next item. Finished.") if fin?
-      @index += 1
-      current unless fin?
+    return codes
+  end # === def grab_between
+
+  def parse
+    raise Exception.new("Already parsed.") if done?
+
+    last_chr = false
+    while current? && !done?
+      last_chr = true if @final_char && @final_char == current
+      parse(grab)
+      break if last_chr
     end
 
-    def current
-      @origin[@index]
+    fin_chr = @final_char
+    if fin_chr && !last_chr
+      raise Exception.new("Missing char: #{fin_chr.chr}")
     end
 
-    def grab_partial(open : String, close : String, partial : Array(String))
-      temp_opens = [] of String
-      if current != open
-        raise Exception.new("Can't grab partial to #{close.inspect} when not on #{open.inspect}")
+    if !@cache.empty?
+      raise Exception.new("Invalid characters: #{@cache.to_s.inspect}")
+    end
+
+    if !@caches.empty?
+      raise Exception.new("Invalid characters: #{@caches.join.to_s.inspect}")
+    end
+
+    return doc
+  end # === def parse
+
+  def parse(i : Int32)
+    case
+
+    when Codepoints.whitespace?(i)
+      if !@cache.empty?
+        save_cache
       end
 
+    # PARSE: comment
+    when i == ('/').hash && current == ('*').hash
+      if !@cache.empty?
+        raise Exception.new("You can't put a comment while defining something else.")
+      end
+
+      grab # asterisk
+      comment = Codepoints.new
+      was_closed = false
       loop do
-        case current
-        when open
-          if !temp_opens.empty?
-            partial << current
-          end
-          temp_opens << current
-        when close
-          temp_opens.pop
-          if !temp_opens.empty?
-            partial << current
-          end
-          break if temp_opens.empty?
-        else
-          partial << current
+        grab_slice(comment, '/'.hash)
+        break if !current?
+
+        if prev(2).chr == '*'
+          comment.pop
+          was_closed = true
+          break
         end
+      end # loop
 
-        break if fin?
-        move
+      if was_closed
+        doc.push(Node::Comment.new(comment))
+      else
+        raise Exception.new("Comment was not closed.")
       end
 
-      if !temp_opens.empty?
-        raise Exception.new("Missing closing #{close.inspect}")
+    # PARSE: string '
+    # PARSE: string "
+    when i == ('\'').hash || i == ('"').hash
+      @cache.push i
+      grab_slice(@cache, i)
+      @cache.push i
+
+    when i == ('{').hash
+      save_cache unless @cache.empty?
+      raise Exception.new("Block must have a selector.") if @caches.empty?
+      body = Parser.new(self).parse
+      doc.push Node::Selector.new(grab_caches, body)
+
+    when i == '}'.hash
+      if @parent_count == 0
+        if next?
+          raise Exception.new("Missing opening {")
+        end
+      else
+        done!
       end
 
-      return partial
-    end # === def grab_partial
+    when i == ':'.hash
+      save_cache unless @cache.empty?
+      raise Exception.new("Property being defined with a key") if @caches.empty?
+      key = grab_caches.join
+      value = Parser.new(self, ';'.hash).parse
 
-    def erase_through(str : String)
-      while !fin? && current.index(str) == nil
-        move
+      if value.empty?
+        raise Exception.new("Missing value for key: #{key.to_s}")
       end
 
-      if current == str
-        return( true )
+      doc.push Node::Property.new(key, value)
+
+    when i == ';'.hash
+      save_cache unless @cache.empty?
+      raise Exception.new("Statement is empty.") if @caches.empty?
+      doc.push Node::Statement.new(grab_caches)
+
+    when i == '='.hash
+      save_cache unless @cache.empty?
+      raise Exception.new("'=' not allowed here.") unless @caches.size == 1
+      var_name = grab_caches.join
+
+      value = Parser.new(self, ';'.hash).parse.first_and_only("Missing assignment value for: #{@cache.to_s}")
+      if value.is_a?(Node::Statement)
+        doc.push Node::Assignment.new(var_name, value.raw)
+      else
+        raise Exception.new("Missing value for assignment of: #{@cache.to_s}")
       end
 
-      if current.index(str) != nil
-        return( true )
-      end
+    else
+      @cache.push i
 
-      raise Exception.new("Missing token: #{str}")
-    end
+    end # === while
+  end # === def parse
 
-    def grab_through(str : String, arr : Array(String))
-      while !fin? && current.index(str) == nil
-        arr.push(current)
-        move
-      end
+  def save_cache
+    raise Exception.new("CHAR cache is empty. Can't save.") if @cache.empty?
+    c = grab_cache
+    @caches.push c
+    c
+  end # === def save_cache
 
-      if current == str
-        return( arr )
-      end
+  def grab_cache
+    raise Exception.new("CHAR cache is empty. Can't grab.") if @cache.empty?
+    c = @cache
+    @cache = Codepoints.new
+    c
+  end # === def grab_cache
 
-      if current.index(str) != nil
-        arr.push(current.rstrip(str))
-        return( arr )
-      end
+  def grab_caches
+    raise Exception.new("No saved cache. Can't grab caches.") if @caches.empty?
+    arr = @caches
+    @caches = Codepoints::Array.new
+    return arr
+  end # === def grab_unknowns
 
-      raise Exception.new("Missing token: #{str}")
-    end # === def grab_through
-
-    def grab_until_token_is(token : String)
-      while !fin? && current != token
-        previous.push(current)
-        move
-      end
-      if current != token
-        raise Exception.new("Missing token: #{token}")
-      end
-      return previous
-    end # === def grab_until_token_is
-
-  end # === class Parser
-
-end # === module DA_CSS
+end # === class Parser
