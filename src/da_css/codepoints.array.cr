@@ -1,44 +1,48 @@
 
-struct Codepoints
+module DA_CSS
 
-  class Array
+  struct Codepoints
 
-    include Enumerable(Codepoints)
+    class Array
 
-    getter raw : ::Array(Codepoints) = [] of Codepoints
+      include Enumerable(Codepoints)
 
-    def initialize
-    end # === def initialize
+      getter raw : ::Array(Codepoints) = [] of Codepoints
 
-    def initialize(@raw)
-    end # === def initialize
+      def initialize
+      end # === def initialize
 
-    def join(delim = SPACE)
-      @raw.reduce(Codepoints.new) { |acc, x|
-        acc.push delim unless acc.empty?
-        x.each { |i|
-          acc.push i
+      def initialize(@raw)
+      end # === def initialize
+
+      def join(delim = SPACE)
+        @raw.reduce(Codepoints.new) { |acc, x|
+          acc.push delim unless acc.empty?
+          x.each { |i|
+            acc.push i
+          }
+          acc
         }
-        acc
-      }
-    end
+      end
 
-    def push(x : Codepoints)
-      @raw.push x
-    end # === def push
+      def push(x : Codepoints)
+        @raw.push x
+      end # === def push
 
-    def empty?
-      @raw.empty?
-    end # === def empty?
+      def empty?
+        @raw.empty?
+      end # === def empty?
 
-    def size
-      @raw.size
-    end # === def size
+      def size
+        @raw.size
+      end # === def size
 
-    def each
-      @raw.each { |c| yield c }
-    end
+      def each
+        @raw.each { |c| yield c }
+      end
 
-  end # === class Array
+    end # === class Array
 
-end # === class Codepoints
+  end # === class Codepoints
+
+end # === module DA_CSS

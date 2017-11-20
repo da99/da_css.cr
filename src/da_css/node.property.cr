@@ -1,14 +1,18 @@
 
-module Node
+module DA_CSS
 
-  struct Property
+  module Node
 
-    getter key   : Codepoints
-    getter value : Doc
+    struct Property
 
-    def initialize(@key, @value)
-    end # === def initialize
+      getter key   : Codepoints
+      getter value : Doc
 
-  end # === struct Property
+      def initialize(@key, @value)
+      end # === def initialize
 
-end # === module Node
+    end # === struct Property
+
+  end # === module Node
+
+end # === module DA_CSS

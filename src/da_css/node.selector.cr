@@ -1,15 +1,19 @@
 
-module Node
+module DA_CSS
 
-  struct Selector
+  module Node
 
-    getter head : Codepoints
-    getter body : Doc
+    struct Selector
 
-    def initialize(arr : Codepoints::Array, @body)
-      @head = arr.join
-    end # === def initialize
+      getter head : Codepoints
+      getter body : Doc
 
-  end # === struct Selector
+      def initialize(arr : Codepoints::Array, @body)
+        @head = arr.join
+      end # === def initialize
 
-end # === module Node
+    end # === struct Selector
+
+  end # === module Node
+
+end # === module DA_CSS

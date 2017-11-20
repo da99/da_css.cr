@@ -1,17 +1,21 @@
 
-module Node
+module DA_CSS
 
-  struct Comment
+  module Node
 
-    getter raw : Codepoints
+    struct Comment
 
-    def initialize(@raw)
-    end # === def initialize
+      getter raw : Codepoints
 
-    def to_s
-      @raw.to_s
-    end # === def to_s
+      def initialize(@raw)
+      end # === def initialize
 
-  end # === struct Comment
+      def to_s
+        @raw.to_s
+      end # === def to_s
 
-end # === module Node
+    end # === struct Comment
+
+  end # === module Node
+
+end # === module DA_CSS

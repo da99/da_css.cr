@@ -1,28 +1,33 @@
-module Node
 
-  struct Assignment
+module DA_CSS
 
-    getter name  : Codepoints
-    getter value : Codepoints::Array
+  module Node
 
-    def initialize(@name, @value)
-    end # === def initialize
+    struct Assignment
 
-    def string_name
-      name.to_s
-    end # === def string_name
+      getter name  : Codepoints
+      getter value : Codepoints::Array
 
-    def string_value
-      io = IO::Memory.new
-      @value.each_with_index { |arr, i|
-        io << ' ' if i != 0
-        arr.each { |x|
-          io << x
+      def initialize(@name, @value)
+      end # === def initialize
+
+      def string_name
+        name.to_s
+      end # === def string_name
+
+      def string_value
+        io = IO::Memory.new
+        @value.each_with_index { |arr, i|
+          io << ' ' if i != 0
+          arr.each { |x|
+            io << x
+          }
         }
-      }
-      io.to_s
-    end # === def string_value
+        io.to_s
+      end # === def string_value
 
-  end # === struct Assignment
+    end # === struct Assignment
 
-end # === module Node
+  end # === module Node
+
+end # === module DA_CSS

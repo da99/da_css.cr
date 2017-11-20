@@ -1,16 +1,20 @@
 
-module Node
+module DA_CSS
 
-  struct Empty_Array
+  module Node
 
-    def empty?
-      true
-    end # === def empty?
+    struct Empty_Array
 
-    def each
-      0.times { |i| yield i }
-    end
+      def empty?
+        true
+      end # === def empty?
 
-  end # === struct Empty_Array
+      def each
+        0.times { |i| yield i }
+      end
 
-end # === module Node
+    end # === struct Empty_Array
+
+  end # === module Node
+
+end # === module DA_CSS

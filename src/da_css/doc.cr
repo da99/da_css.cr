@@ -1,40 +1,44 @@
 
-struct Doc
+module DA_CSS
 
-  getter nodes = [] of Node::Statement | Node::Assignment | Node::Selector | Node::Comment | Node::Property
+  struct Doc
 
-  def each
-    nodes.each { |x| yield x }
-  end # === def each
+    getter nodes = [] of Node::Statement | Node::Assignment | Node::Selector | Node::Comment | Node::Property
 
-  def push(node)
-    @nodes << node
-  end # === def push
+    def each
+      nodes.each { |x| yield x }
+    end # === def each
 
-  def inspect(io)
-    io << "Doc["
-    nodes.each_with_index { |x, i|
-      io << ", " unless i == 0
-      x.inspect(io)
-    }
-    "]"
-  end # === def inspect
+    def push(node)
+      @nodes << node
+    end # === def push
 
-  def first
-    @nodes.first
-  end # === def first
+    def inspect(io)
+      io << "Doc["
+      nodes.each_with_index { |x, i|
+        io << ", " unless i == 0
+        x.inspect(io)
+      }
+      "]"
+    end # === def inspect
 
-  def last
-    @nodes.last
-  end
+    def first
+      @nodes.first
+    end # === def first
 
-  def empty?
-    @nodes.empty?
-  end # === def empty?
+    def last
+      @nodes.last
+    end
 
-  def first_and_only(err_msg)
-    return first if @nodes.size == 1
-    raise Exception.new(err_msg)
-  end # === def first_and_only
+    def empty?
+      @nodes.empty?
+    end # === def empty?
 
-end # === struct Doc
+    def first_and_only(err_msg)
+      return first if @nodes.size == 1
+      raise Exception.new(err_msg)
+    end # === def first_and_only
+
+  end # === struct Doc
+
+end # === module DA_CSS
