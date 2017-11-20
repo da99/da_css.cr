@@ -24,7 +24,7 @@ macro actual!
   SPEC_PARSER.new("/input.css", __DIR__).to_css
 end # === macro actual!
 
-{% for x in `find #{__DIR__}/parser -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
+{% for x in `find #{__DIR__}/printer -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
   require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
 {% end %}
 require "../../examples/*"

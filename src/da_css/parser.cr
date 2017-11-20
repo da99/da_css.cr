@@ -11,8 +11,12 @@ module DA_CSS
     getter closes         = [] of Symbol
     getter previous       = [] of String
 
+    def self.split(str : String)
+      str.split(/[[:cntrl:]\ \s]+/)
+    end # === def self.split
+
     def initialize(raw : String)
-      @origin = Printer.split(raw)
+      @origin = Parser.split(raw)
       @len    = @origin.size
     end # === def initialize
 

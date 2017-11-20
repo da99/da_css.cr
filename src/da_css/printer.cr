@@ -41,10 +41,6 @@ module DA_CSS
     getter open_family  = [] of String
     getter def_funcs    = {} of String => Hash(Int32, Def_Func)
 
-    def self.split(str : String)
-      str.split(/[[:cntrl:]\ \s]+/)
-    end # === def self.split
-
     # === Most common `initialize`. Creates a new scope.
     def initialize(raw : String, @file_dir : String)
       raw = raw.strip

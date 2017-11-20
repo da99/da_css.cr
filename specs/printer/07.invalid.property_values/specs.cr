@@ -1,7 +1,7 @@
 
 describe "Parser invalid property values" do
 
-  {% for x in system("find specs/parser/sample-errors/ -maxdepth 1 -type f -iname *.css ").split("\n").map(&.strip).reject(&.empty?) %}
+  {% for x in system("find specs/printer/sample-errors/ -maxdepth 1 -type f -iname *.css ").split("\n").map(&.strip).reject(&.empty?) %}
     {% name = x.split("/").last.split(".css").first %}
     it "raises Invalid_Property_Value for invalid input: {{name.id}}" do
       input = %[
@@ -16,7 +16,7 @@ describe "Parser invalid property values" do
     end # === it "raises Invalid_Property_Value for invalid input: "
   {% end %}
 
-  {% for x in system("find specs/parser/samples/ -maxdepth 1 -type f -iname *.css ").split("\n").map(&.strip).reject(&.empty?) %}
+  {% for x in system("find specs/printer/samples/ -maxdepth 1 -type f -iname *.css ").split("\n").map(&.strip).reject(&.empty?) %}
     {% name = x.split("/").last.split(".css").first %}
       File.read("{{x.id}}").split("\n").map { |x|
         x.sub(/;/, " * % @ ;")

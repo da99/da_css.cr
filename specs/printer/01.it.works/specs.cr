@@ -5,7 +5,7 @@ describe DA_CSS::Printer do
     should_eq actual!, expected!
   end # === it "works"
 
-  {% for x in system("find specs/parser/samples -maxdepth 1 -type f -name *.css").split("\n").reject(&.empty?) %}
+  {% for x in system("find specs/printer/samples -maxdepth 1 -type f -name *.css").split("\n").reject(&.empty?) %}
     {% name = x.split("/").last.split(".").first.id %}
     it "renders: {{name}}" do
       css = begin
