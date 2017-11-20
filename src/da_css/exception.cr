@@ -31,8 +31,8 @@ module DA_CSS
 
   class Invalid_Char < Exception
 
-    def initialize(i : Int32)
-      @message = "Invalid character: #{i.chr}"
+    def initialize(i : Int32, prefix = "Invalid character: ")
+      @message = "#{prefix}#{i.chr}"
     end # === def initialize
 
     def initialize(codepoints : Codepoints, str)

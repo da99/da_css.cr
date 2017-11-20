@@ -28,6 +28,9 @@ module DA_CSS
         include Enumerable(Int32)
         @raw : Codepoints
         def initialize(@raw)
+          @raw.each { |i|
+            Selector.valid_char!(i)
+          }
         end
 
         def each
@@ -38,12 +41,13 @@ module DA_CSS
 
       end # === struct Partial
 
-      def self.valid_char?(i : Int32)
+      def self.valid_char!(i : Int32)
         case i
-        when ('a'.hash)..('z'.hash), ('0'.hash)..('9'.hash), '.'.hash, '-'.hash, '_'.hash
+        when ('a'.hash)..('z'.hash), ('0'.hash)..('9'.hash), '.'.hash, '-'.hash, '_'.hash,
+          '#'.hash
           true
         else
-          raise Invalid_Char.new(i)
+          raise Invalid_Char.new(i, "Invalid char for selector: ")
         end
       end # === def self.valid_char?
     end # === struct Selector
