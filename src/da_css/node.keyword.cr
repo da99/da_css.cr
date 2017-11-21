@@ -3,7 +3,7 @@ module DA_CSS
 
   module Node
 
-    struct Unknown
+    struct Keyword
 
       @raw : String
       def initialize(@raw)
@@ -13,7 +13,7 @@ module DA_CSS
         @raw
       end # === def to_s
 
-    end # === struct Unknown
+    end # === struct Keyword
 
   end # === module Node
 

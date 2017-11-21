@@ -1,0 +1,12 @@
+background
+border
+font
+list
+list-style
+margin
+outline
+padding
+page
+speak
+text
+text-decoration

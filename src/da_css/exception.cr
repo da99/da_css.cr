@@ -9,7 +9,7 @@ module DA_CSS
       end
 
       def message
-        "#{prefix_msg} #{@message}"
+        "#{prefix_msg.strip} #{@message}"
       end
 
       {% if blok %}

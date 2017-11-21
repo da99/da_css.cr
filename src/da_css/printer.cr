@@ -48,15 +48,10 @@ module DA_CSS
 
     def write(x : Node::Property)
       io_css.indent
-      x.key.each { |x| io_css.raw! x.chr }
+      io_css.raw! x.key.to_s
       io_css.raw! ": "
       x.value.each { |x|
-        case x
-        when Node::Statement
-          x.to_s(io_css)
-        else
-          raise Exception.new("Invalid value for property: #{x.inspect}")
-        end
+        io_css.raw! x
       }
       io_css.raw! ";\n"
       self

@@ -3,17 +3,17 @@ module DA_CSS
 
   module Node
 
-    struct Unknown
+    struct Percentage
 
-      @raw : String
+      @raw : Codepoints
       def initialize(@raw)
       end # === def initialize
 
       def to_s
-        @raw
+        @raw.to_s
       end # === def to_s
 
-    end # === struct Unknown
+    end # === struct Percentage
 
   end # === module Node
 

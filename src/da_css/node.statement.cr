@@ -13,6 +13,12 @@ module DA_CSS
         @raw.to_s
       end # === def to_s
 
+      def each
+        @raw.each { |codepoints|
+          yield codepoints
+        }
+      end # === def each
+
       def to_s(io_css : IO_CSS)
         @raw.each_with_index { |codepoints, i|
           io_css.raw! ' ' if i != 0

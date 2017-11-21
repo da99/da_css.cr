@@ -20,6 +20,19 @@ module DA_CSS
     def initialize(@raw : ::Array(Int32))
     end # === def initialize
 
+    def ints
+      arr = [] of Int32
+      @raw.each { |x|
+        case x
+        when ('0'.hash)..('9'.hash), '.'.hash, '-'.hash
+          arr << x
+        else
+          return arr
+        end
+      }
+      return arr
+    end # === def ints
+
     def each
       prev = nil
       @raw.each { |i|
@@ -55,7 +68,7 @@ module DA_CSS
         return self
       end
 
-      new_code = clean_codepoint!(i)
+      new_code = valid!(i)
 
       @raw.push new_code
     end # === def push
@@ -73,10 +86,10 @@ module DA_CSS
     end # === def empty?
 
     def [](i : Int32)
-      clean_codepoint!(@raw[i])
+      valid!(@raw[i])
     end
 
-    def valid_codepoint?(i : Int32)
+    def valid!(i : Int32)
       case i
       when (code('A')..code('Z')),
         (code('a')..code('z')),
@@ -86,17 +99,12 @@ module DA_CSS
         code('{'), code('}'),
         code('\''), code('"'),
         code('='), code(';'),
-        code('/'), code('*'), code('?')
-        true
+        code('/'), code('*'), code('?'), '#'.hash
+        i
       else
-        false
+        raise Invalid_Char.new(i)
       end
     end # === def valid_codepoint?
-
-    def clean_codepoint!(i : Int32)
-      raise Invalid_Char.new(i) unless valid_codepoint?(i)
-      i
-    end # === def clean_codepoint!
 
     def pop
       @raw.pop
@@ -125,3 +133,4 @@ module DA_CSS
   end # === class Codepoints
 
 end # === module DA_CSS
+
