@@ -43,19 +43,20 @@ module DA_CSS
           {% end %}
         end # === def self.valid!
 
-        def to_s
-          @name
+        def to_css(io : IO_CSS)
+          io.raw! @name
         end
 
       end # === struct Key
 
       struct Value
 
-        alias CSS_PROPERTY_VALUE = Size | Percentage | Keyword | Unknown | Color
-        @raw : Array(CSS_PROPERTY_VALUE)
+        alias Types = Size | Percentage | Keyword | Unknown | Color
+        @raw : Array(Types)
+        include Enumerable(Types)
 
         def initialize(doc : Doc)
-          @raw = [] of CSS_PROPERTY_VALUE
+          @raw = [] of Value::Types
           doc.each { |x|
             case x
             when Node::Statement
@@ -68,12 +69,31 @@ module DA_CSS
           }
         end # === def initialize
 
+        def size
+          @raw.size
+        end # === def size
+
         def each
-          @raw.each_with_index { |x, pos|
-            yield ' ' if pos != 0
-            yield x.to_s
-          }
+          @raw.each { |x| yield x }
         end # === def each
+
+        def all!(klass)
+          @raw.each { |x|
+            case
+            when klass
+              true
+            else
+              raise Invalid_Property_Value.new(x.to_s)
+            end
+          }
+        end # === def all!
+
+        def to_css(io : IO_CSS)
+          @raw.each_with_index { |x, pos|
+            io.raw! ' ' if pos != 0
+            io.raw! x.to_s
+          }
+        end
 
         def self.from_codepoints(c : Codepoints)
           first = c.first

@@ -48,11 +48,9 @@ module DA_CSS
 
     def write(x : Node::Property)
       io_css.indent
-      io_css.raw! x.key.to_s
+      x.key.to_css(io_css)
       io_css.raw! ": "
-      x.value.each { |x|
-        io_css.raw! x
-      }
+      x.value.to_css(io_css)
       io_css.raw! ";\n"
       self
     end # === def write_property
