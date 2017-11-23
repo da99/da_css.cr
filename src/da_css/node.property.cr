@@ -51,7 +51,7 @@ module DA_CSS
 
       struct Value
 
-        alias Types = Size | Percentage | Keyword | Unknown | Color
+        alias Types = Number_Unit | Number | Percentage | Keyword | Unknown | Color
         @raw : Array(Types)
         include Enumerable(Types)
 
@@ -99,13 +99,13 @@ module DA_CSS
           first = c.first
           last = c.last
           case
-          when first == '#'.hash
+          when Color.looks_like?(c)
             Color.new(c)
 
-          when (last != '%'.hash) && (first == '-'.hash || first == '.'.hash || (('0'.hash)..('9'.hash)).includes?(first))
-            Size.new(c)
+          when Number_Unit.looks_like?(c)
+            Number_Unit.new(c)
 
-          when last == '%'.hash && (('0'.hash)..('9'.hash)).includes?(first)
+          when Percentage.looks_like?(c)
             Percentage.new(c)
 
           else

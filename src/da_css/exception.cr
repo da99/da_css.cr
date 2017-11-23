@@ -53,5 +53,41 @@ module DA_CSS
 
   end # === class Invalid_Char
 
+  class Invalid_Unit < Exception
+
+    def initialize(str : String)
+      @message = "Invalid Unit: #{str.inspect}"
+    end # === def initialize
+
+    def initialize(cp : Codepoints)
+      @message = "Invalid Unit: #{cp.to_s.inspect}"
+    end # === def initialize
+
+  end # === class Invalid_Unit
+
+  class Invalid_Number < Exception
+
+    def initialize(str : String)
+      @message = "Invalid Number: #{str.inspect}"
+    end # === def initialize
+
+    def initialize(cp : Codepoints)
+      @message = "Invalid Number: #{cp.to_s.inspect}"
+    end # === def initialize
+
+  end # === class Invalid_Number
+
+  class Invalid_Color < Exception
+
+    def initialize(str : String)
+      @message = "Invalid Color: #{str.inspect}"
+    end # === def initialize
+
+    def initialize(cp : Codepoints)
+      @message = "Invalid Color: #{cp.to_s.inspect}"
+    end # === def initialize
+
+  end # === class Invalid_Color
+
 end # === module DA_CSS
 

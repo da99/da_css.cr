@@ -110,6 +110,12 @@ module DA_CSS
       @raw.pop
     end # === def pop
 
+    def all?(r : Range)
+      @raw.all? { |x|
+        r.includes?(x)
+      }
+    end # === def all?
+
     module Common
 
       macro code(char)
