@@ -30,12 +30,24 @@ module DA_CSS
               puts "Ignoring comment: #{x.to_s.inspect}"
             {% end %}
           {% end %}
+
         when Node::Statement
           raise Exception.new("Invalid expression: #{x.to_s}")
+
+        when Node::Text
+          raise Node::Invalid_Text.new(x.to_s.inspect)
+
         when Node::Assignment
           data[x.string_name] = x.string_value
-        else
+
+        when Node::Function_Call
+          raise Exception.new("Function can go here.")
+
+        when Node::Property, Node::Selector_With_Body
           write(x)
+
+        else
+          raise Exception.new("Invalid value: #{x.to_s.inspect}")
         end
       }
       @is_done = true

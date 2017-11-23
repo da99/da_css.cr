@@ -10,8 +10,11 @@ require "./node.selector"
 require "./node.selector_with_body"
 require "./node.comment"
 require "./node.color"
+require "./node.slash"
+require "./node.text"
 require "./node.number"
 require "./node.unit"
+require "./node.function_call"
 require "./node.number_unit"
 require "./node.percentage"
 require "./node.keyword"
@@ -119,12 +122,13 @@ module DA_CSS
       # PARSE: string '
       # PARSE: string "
       when i == ('\'').hash || i == ('"').hash
-        @cache.push i
-        grab_slice(@cache, i)
-        @cache.push i
+        if !@cache.empty?
+          raise Node::Invalid_Text.new("Can't start a quoted string here.")
+        end
+        doc.push Node::Text.new(grab_slice(Codepoints.new, i))
 
       when i == ('{').hash
-        save_cache unless @cache.empty?
+        save_cache
         raise Exception.new("Block must have a selector.") if @caches.empty?
         body = Parser.new(self).parse
         doc.push Node::Selector_With_Body.new(grab_caches, body)
@@ -139,33 +143,35 @@ module DA_CSS
         end
 
       when i == ':'.hash
-        save_cache unless @cache.empty?
+        save_cache
         raise Exception.new("Property being defined with a key") if @caches.empty?
         key = grab_caches.join
         value = Parser.new(self, ';'.hash).parse
-
-        if value.empty?
-          raise Exception.new("Missing value for key: #{key.to_s}")
-        end
-
         doc.push Node::Property.new(key, value)
 
       when i == ';'.hash
-        save_cache unless @cache.empty?
-        raise Exception.new("Statement is empty.") if @caches.empty?
-        doc.push Node::Statement.new(grab_caches)
+        save_cache
+        parse_caches unless @caches.empty?
 
       when i == '='.hash
-        save_cache unless @cache.empty?
+        save_cache
         raise Exception.new("'=' not allowed here.") unless @caches.size == 1
         var_name = grab_caches.join
 
-        value = Parser.new(self, ';'.hash).parse.first_and_only("Missing assignment value for: #{@cache.to_s}")
-        if value.is_a?(Node::Statement)
-          doc.push Node::Assignment.new(var_name, value.raw)
-        else
-          raise Exception.new("Missing value for assignment of: #{@cache.to_s}")
-        end
+        value = Parser.new(self, ';'.hash).parse
+        doc.push Node::Assignment.new(var_name, value)
+
+      when i == '('.hash
+        save_cache
+        key  = grab_caches.join
+        args = Parser.new(self, ')'.hash).parse
+        doc.push Node::Function_Call.new(key, args)
+
+      when i == ')'.hash
+        done!
+
+      when Codepoints.whitespace?(i)
+        save_cache
 
       else
         @cache.push i
@@ -332,6 +338,7 @@ module DA_CSS
     end # === def grab_between
 
     def save_cache
+      return false if @cache.empty?
       raise Exception.new("CHAR cache is empty. Can't save.") if @cache.empty?
       c = grab_cache
       @caches.push c
@@ -351,6 +358,12 @@ module DA_CSS
       @caches = Codepoints::Array.new
       return arr
     end # === def grab_unknowns
+
+    def parse_caches
+      grab_caches.each { |c|
+        doc.push Node.from_codepoints(c)
+      }
+    end # === def parse_caches
 
   end # === class Parser
 

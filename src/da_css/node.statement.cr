@@ -3,6 +3,14 @@ module DA_CSS
 
   module Node
 
+    class Invalid_Statement < Exception
+
+      def initialize(str : String)
+        @message = "Invalid statement: #{str}"
+      end # === def initialize
+
+    end # === class Invalid_Statement
+
     struct Statement
 
       getter raw : Codepoints::Array

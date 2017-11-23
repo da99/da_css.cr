@@ -6,7 +6,7 @@ module DA_CSS
     struct Assignment
 
       getter name  : Codepoints
-      getter value : Codepoints::Array
+      getter value : Doc
 
       def initialize(@name, @value)
       end # === def initialize
@@ -16,14 +16,7 @@ module DA_CSS
       end # === def string_name
 
       def string_value
-        io = IO::Memory.new
-        @value.each_with_index { |arr, i|
-          io << ' ' if i != 0
-          arr.each { |x|
-            io << x
-          }
-        }
-        io.to_s
+        @value.to_s
       end # === def string_value
 
     end # === struct Assignment

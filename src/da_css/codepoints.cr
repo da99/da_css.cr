@@ -99,7 +99,7 @@ module DA_CSS
         code('{'), code('}'),
         code('\''), code('"'),
         code('='), code(';'),
-        code('/'), code('*'), code('?'), '#'.hash
+        code('/'), code('*'), code('?'), '#'.hash, '.'
         i
       else
         raise Invalid_Char.new(i)

@@ -11,7 +11,7 @@ module DA_CSS
 
       def initialize(raw_key : Codepoints, raw_value : Doc)
         @key = Key.new(raw_key)
-        @value = Value.new(raw_value)
+        @value = Value.new(raw_key, raw_value)
       end # === def initialize
 
       struct Key
@@ -51,20 +51,21 @@ module DA_CSS
 
       struct Value
 
-        alias Types = Number_Unit | Number | Percentage | Keyword | Unknown | Color
+        alias Types = Number_Unit | Number | Percentage | Keyword | Slash | Unknown | Color | Function_Call
         @raw : Array(Types)
         include Enumerable(Types)
 
-        def initialize(doc : Doc)
+        def initialize(key, doc : Doc)
           @raw = [] of Value::Types
+          if doc.empty?
+            raise Invalid_Property_Value.new("Missing value: #{key.to_s}")
+          end
           doc.each { |x|
             case x
-            when Node::Statement
-              x.each { |codepoints|
-                @raw.push Value.from_codepoints(codepoints)
-              }
+            when Types
+              @raw.push x
             else
-              raise Exception.new("Invalid chars for property value: #{x.to_s.inspect}")
+              raise Invalid_Property_Value.new(x.to_s.inspect)
             end
           }
         end # === def initialize
@@ -95,32 +96,6 @@ module DA_CSS
           }
         end
 
-        def self.from_codepoints(c : Codepoints)
-          first = c.first
-          last = c.last
-          case
-          when Color.looks_like?(c)
-            Color.new(c)
-
-          when Number_Unit.looks_like?(c)
-            Number_Unit.new(c)
-
-          when Percentage.looks_like?(c)
-            Percentage.new(c)
-
-          else
-            word = c.to_s
-            {% begin %}
-            case word
-            when {{ system("cat \"#{__DIR__}/keywords.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
-              Keyword.new(word)
-            else
-              raise Invalid_Property_Value.new(word)
-            end
-            {% end %}
-
-          end
-        end # === def self.from_codepoints
 
       end # === struct Value
     end # === struct Property
