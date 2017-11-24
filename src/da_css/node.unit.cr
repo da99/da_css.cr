@@ -27,6 +27,11 @@ module DA_CSS
         @string
       end # === def to_s
 
+      def print(printer : Printer)
+        printer.raw! @string
+        self
+      end # === def print
+
       def self.looks_like?(cp : Codepoints)
         RANGE.includes?(cp.size) && cp.all?(LETTERS)
       end # === def self.looks_like?

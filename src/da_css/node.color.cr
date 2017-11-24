@@ -29,6 +29,11 @@ module DA_CSS
         @raw.to_s
       end # === def to_s
 
+      def print(printer : Printer)
+        @raw.print(printer)
+        self
+      end # === def print
+
       def self.looks_like?(cp : Codepoints)
         cp.first == '#'.hash
       end # === def self.looks_like?

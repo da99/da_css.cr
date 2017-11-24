@@ -25,6 +25,11 @@ module DA_CSS
         "/"
       end # === def to_s
 
+      def print(printer : Printer)
+        printer.raw! "/"
+        self
+      end # === def print
+
       def self.looks_like?(cp : Codepoints)
         cp.size == 1 && cp.first == SLASH
       end # === def self.looks_like?

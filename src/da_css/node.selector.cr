@@ -23,6 +23,14 @@ module DA_CSS
         }
       end # === def each
 
+      def print(printer : Printer)
+        @raw.each_with_index { |x, i|
+          printer.raw! " " if i != 0
+          x.print printer
+        }
+        self
+      end # === def print
+
       struct Partial
 
         include Enumerable(Int32)
@@ -38,6 +46,11 @@ module DA_CSS
             yield i
           }
         end # === def each
+
+        def print(printer : Printer)
+          @raw.print printer
+          self
+        end # === def print
 
       end # === struct Partial
 

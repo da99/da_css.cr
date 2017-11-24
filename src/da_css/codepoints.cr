@@ -11,27 +11,17 @@ module DA_CSS
     @raw : ::Array(Int32) = [] of Int32
 
     def initialize
+      @frozen = false
     end # === def initialize
 
     def initialize(raw : String)
       @raw = raw.codepoints
+      @frozen = true
     end # === def initialize
 
     def initialize(@raw : ::Array(Int32))
+      @frozen = true
     end # === def initialize
-
-    def ints
-      arr = [] of Int32
-      @raw.each { |x|
-        case x
-        when ('0'.hash)..('9'.hash), '.'.hash, '-'.hash
-          arr << x
-        else
-          return arr
-        end
-      }
-      return arr
-    end # === def ints
 
     def each
       prev = nil
@@ -60,7 +50,13 @@ module DA_CSS
       io << "]"
     end # === def inspect
 
+    def raise_if_frozen!
+      raise Exception.new("Codepoints (#{to_s.inspect}) is frozen.") if @frozen
+      false
+    end
+
     def push(i : Int32)
+      raise_if_frozen!
       if !empty? && whitespace?(last) && whitespace?(i)
         return self
       end
@@ -107,6 +103,7 @@ module DA_CSS
     end # === def valid_codepoint?
 
     def pop
+      raise_if_frozen!
       @raw.pop
     end # === def pop
 
@@ -115,6 +112,16 @@ module DA_CSS
         r.includes?(x)
       }
     end # === def all?
+
+    def freeze!
+      return self if @frozen
+      @frozen = true
+      return self
+    end
+
+    def print(printer : Printer)
+      each { |x| printer.raw! x.chr }
+    end # === def print
 
     module Common
 

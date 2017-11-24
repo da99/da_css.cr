@@ -20,6 +20,7 @@ case "$ACTION" in
     ;;
 
   run)
+    reset
     sh_color ORANGE "=== {{Compiling}}..."
     my_crystal __ build tmp/in/scratch.cr -o tmp/out/scratch
     sh_color ORANGE "=== {{Running}}..."

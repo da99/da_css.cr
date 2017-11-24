@@ -27,6 +27,13 @@ module DA_CSS
         "'#{@raw.to_s}'"
       end
 
+      def print(printer : Printer)
+        printer.raw! "'"
+        @raw.print printer
+        printer.raw! "'"
+        self
+      end # === def print
+
       def self.valid!(i : Int32)
         case i
         when '\''.hash, '"'.hash

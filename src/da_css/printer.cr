@@ -3,52 +3,49 @@ module DA_CSS
 
   class Printer
 
-    getter parent : Printer? = nil
-    getter doc : Doc
-    getter io_css : IO_CSS = IO_CSS.new
+    getter parent    : Printer? = nil
+    getter doc       : Doc
+    getter io_css    : IO_CSS = IO_CSS.new
+    getter validator : DA_CSS::Validator
+
     getter data = {} of String => String
     @is_done = false
     @parent_count = 0
 
-    def initialize(@doc)
+    def initialize(raw : String, @validator)
+      @doc = Parser.new(raw).parse
     end # === def initialize
 
-    def initialize(@parent : Printer, @doc)
-      @parent_count += 1
-      parent = @parent
-      if parent
-        @io_css = parent.io_css
-      end
+    def initialize(@doc, @validator)
     end # === def initialize
+
+    def initialize(parent : Printer, @doc)
+      @parent_count += 1
+      @parent    = parent
+      @validator = parent.validator
+      @io_css    = parent.io_css
+    end # === def initialize
+
+    def raw!(*args)
+      @io_css.raw! *args
+    end # === def raw!
+
+    def new_line
+      @io_css.raw! "\n" unless @io_css.empty?
+      self
+    end # === def new_line
 
     def run
-      doc.nodes.each { |x|
-        case x
-        when Node::Comment
-          {% begin %}
-            {% if env("IS_DEV") %}
-              puts "Ignoring comment: #{x.to_s.inspect}"
-            {% end %}
-          {% end %}
-
-        when Node::Statement
-          raise Exception.new("Invalid expression: #{x.to_s}")
-
-        when Node::Text
-          raise Node::Invalid_Text.new(x.to_s.inspect)
-
-        when Node::Assignment
-          data[x.string_name] = x.string_value
-
-        when Node::Function_Call
-          raise Exception.new("Function can go here.")
-
-        when Node::Property, Node::Selector_With_Body
-          write(x)
-
-        else
+      doc.nodes.each_with_index { |x, pos|
+        status = validator.allow(x)
+        case status
+        when false
           raise Exception.new("Invalid value: #{x.to_s.inspect}")
+        when :ignore
+          next
         end
+
+        x.print(self)
       }
       @is_done = true
     end # === def run

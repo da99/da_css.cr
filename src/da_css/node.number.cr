@@ -18,6 +18,10 @@ module DA_CSS
         @raw.to_s
       end # === def to_s
 
+      def print(printer : Printer)
+        @raw.print printer
+      end # === def print
+
       def self.looks_like?(codepoints : Codepoints)
         first = codepoints.first
         last  = codepoints.last

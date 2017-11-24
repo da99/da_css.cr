@@ -8,8 +8,15 @@ module DA_CSS
       )
     )
   end # === macro file_read!
+
+  module Validator
+
+    abstract def allow(x)
+
+  end # === module Validator
 end # === module DA_CSS
 
+require "./da_css/parser"
 require "./da_css/printer"
 
 {% if env("DEV_BUILD") %}

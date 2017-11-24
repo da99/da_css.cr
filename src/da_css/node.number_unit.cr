@@ -30,6 +30,12 @@ module DA_CSS
         "#{@number.to_s}#{@unit.to_s}"
       end # === def to_s
 
+      def print(printer : Printer)
+        @number.print(printer)
+        @unit.print(printer)
+        self
+      end # === def print
+
       def self.looks_like?(cp : Codepoints)
         first = cp.first
         last  = cp.last

@@ -14,6 +14,7 @@ module DA_CSS
       end # === def initialize
 
     end # === class Invalid_Function_Call
+
     struct Function_Call
 
       @name : String
@@ -27,6 +28,15 @@ module DA_CSS
       def to_s
         "#{@name}(#{@args.map(&.to_s).join(",")})"
       end # === def to_s
+
+      def print(printer : Printer)
+        printer.raw! @name, "("
+        @args.each_with_index { |x, i|
+          printer.raw!(", ") if i != 0
+          x.print(printer)
+        }
+        printer.raw! ")"
+      end # === def print
     end # === struct Function_Call
 
   end # === module Node

@@ -23,7 +23,6 @@ require "./node.statement"
 require "./doc"
 require "./parser"
 require "./io_css"
-require "./printer"
 
 module DA_CSS
 
@@ -347,7 +346,7 @@ module DA_CSS
 
     def grab_cache
       raise Exception.new("CHAR cache is empty. Can't grab.") if @cache.empty?
-      c = @cache
+      c = @cache.freeze!
       @cache = Codepoints.new
       c
     end # === def grab_cache
@@ -361,7 +360,7 @@ module DA_CSS
 
     def parse_caches
       grab_caches.each { |c|
-        doc.push Node.from_codepoints(c)
+        doc.push Node.from_codepoints(c.freeze!)
       }
     end # === def parse_caches
 

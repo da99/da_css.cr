@@ -14,6 +14,12 @@ module DA_CSS
         @raw.to_s
       end # === def to_s
 
+      def print(printer : Printer)
+        printer.raw! "\n/*\n"
+        @raw.print(printer)
+        printer.raw! "\n*/\n"
+      end # === def print
+
     end # === struct Comment
 
   end # === module Node

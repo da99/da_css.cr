@@ -4,7 +4,7 @@ module DA_CSS
   struct Doc
 
     alias TYPES =
-      Node::Text | Node::Statement | Node::Assignment |
+      Node::Text | Node::Assignment |
       Node::Selector_With_Body | Node::Comment |
       Node::Property | Node::Function_Call | Node::Color |
       Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |

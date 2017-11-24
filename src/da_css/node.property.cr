@@ -14,6 +14,15 @@ module DA_CSS
         @value = Value.new(raw_key, raw_value)
       end # === def initialize
 
+      def print(printer : Printer)
+        printer.new_line
+        key.print(printer)
+        printer.raw! ": "
+        value.print(printer)
+        printer.raw! ";"
+        self
+      end # === def print
+
       struct Key
 
         @name : String
@@ -43,6 +52,11 @@ module DA_CSS
           {% end %}
         end # === def self.valid!
 
+        def print(printer : Printer)
+          printer.raw! @name
+          self
+        end # === def print
+
         def to_css(io : IO_CSS)
           io.raw! @name
         end
@@ -69,6 +83,14 @@ module DA_CSS
             end
           }
         end # === def initialize
+
+        def print(printer : Printer)
+          @raw.each_with_index { |x, i|
+            printer.raw! " " if i != 0
+            x.print(printer)
+          }
+          self
+        end # === def print
 
         def size
           @raw.size
