@@ -3,9 +3,21 @@ module DA_CSS
 
   module Node
 
-    extend self
+    def parent_node?
+      !parent_node.is_a?(Nil)
+    end # === def parent_node?
 
-    def from_codepoints(c : Codepoints)
+    def parent_node
+      p = parent
+      case p
+      when Parser
+        p.parent_node
+      else
+        nil
+      end
+    end # === def parent_node
+
+    def self.from_codepoints(c : Codepoints)
       first = c.first
       last = c.last
       case

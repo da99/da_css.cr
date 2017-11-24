@@ -20,9 +20,10 @@ module DA_CSS
       @name : String
       @args : Doc
 
-      def initialize(raw_name : Codepoints, raw_args : Doc)
+      def initialize(raw_name : Codepoints, parent : Parser)
         @name = raw_name.to_s
-        @args = raw_args
+        @args = doc = Doc.new
+        Parser.new(parent, self, doc, ')'.hash).parse
       end # === def initialize
 
       def to_s

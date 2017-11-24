@@ -35,6 +35,14 @@ module DA_CSS
       self
     end # === def new_line
 
+    def new_line(parent : Parser)
+      @io_css.raw! "\n" unless @io_css.empty?
+      parent.parent_count.times do |i|
+        @io_css.raw! "  "
+      end
+      self
+    end # === def new_line
+
     def run
       doc.nodes.each_with_index { |x, pos|
         status = validator.allow(x)
@@ -48,6 +56,7 @@ module DA_CSS
         x.print(self)
       }
       @is_done = true
+      self
     end # === def run
 
     def to_css

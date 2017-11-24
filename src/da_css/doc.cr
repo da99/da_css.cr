@@ -30,6 +30,14 @@ module DA_CSS
       "]"
     end # === def inspect
 
+    def print(printer : Printer)
+      @nodes.each_with_index { |x, i|
+        printer.raw! " " if i != 0
+        x.print(printer)
+      }
+      self
+    end # === def print
+
     def first
       @nodes.first
     end # === def first

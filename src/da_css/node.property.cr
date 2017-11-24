@@ -6,16 +6,25 @@ module DA_CSS
 
     struct Property
 
-      getter key   : Key
-      getter value : Value
+      include Node
 
-      def initialize(raw_key : Codepoints, raw_value : Doc)
-        @key = Key.new(raw_key)
-        @value = Value.new(raw_key, raw_value)
+      getter key    : Key
+      getter value  : Doc
+      getter parent : Parser
+
+      def initialize(raw_key : Codepoints, parent : Parser)
+        raise Invalid_Property_Name.new("Property being defined with a key") if raw_key.empty?
+        @parent = parent
+        @key    = Key.new(raw_key)
+        @value  = doc = Doc.new
+        Parser.new(parent, self, doc, ';'.hash).parse
+        if doc.empty?
+          raise Invalid_Property_Value.new("Empty value for property: #{@key.to_s.inspect}")
+        end
       end # === def initialize
 
       def print(printer : Printer)
-        printer.new_line
+        printer.new_line(parent)
         key.print(printer)
         printer.raw! ": "
         value.print(printer)
@@ -51,6 +60,10 @@ module DA_CSS
           end
           {% end %}
         end # === def self.valid!
+
+        def to_s
+          @name
+        end # === def to_s
 
         def print(printer : Printer)
           printer.raw! @name

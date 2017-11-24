@@ -28,26 +28,28 @@ module DA_CSS
 
   class Parser
 
-    getter codepoints : Codepoints
+    alias PARENT_NODE = Nil | Node::Selector_With_Body | Node::Property | Node::Assignment | Node::Function_Call
     protected getter origin : Parser | Nil = nil
-    getter parent : Parser | Nil = nil
+    getter codepoints : Codepoints
+    getter parent     : Parser | Nil = nil
+    getter parent_node : PARENT_NODE = nil
     getter parent_count = 0
-    getter doc = Doc.new
+    getter doc          = Doc.new
+    getter index        = 0
+    getter size         = 0
 
     @is_done                  = false
     @final_char : Int32 | Nil = nil
     @caches                   = Codepoints::Array.new
     @cache                    = Codepoints.new
-    getter index = 0
-    getter size = 0
 
-    def initialize(@parent, @final_char)
+    def initialize(@parent, @parent_node, @doc, @final_char)
       @parent_count = parent.parent_count + 1
       @codepoints   = parent.codepoints
       @origin       = parent.origin || parent
     end # === def initialize
 
-    def initialize(@parent)
+    def initialize(@parent, @parent_node, @doc)
       @parent_count = parent.parent_count + 1
       @codepoints   = parent.codepoints
       @origin       = parent.origin || parent
@@ -88,9 +90,7 @@ module DA_CSS
       case
 
       when Codepoints.whitespace?(i)
-        if !@cache.empty?
-          save_cache
-        end
+        save_cache
 
       # PARSE: comment
       when i == ('/').hash && current == ('*').hash
@@ -129,8 +129,7 @@ module DA_CSS
       when i == ('{').hash
         save_cache
         raise Exception.new("Block must have a selector.") if @caches.empty?
-        body = Parser.new(self).parse
-        doc.push Node::Selector_With_Body.new(grab_caches, body)
+        doc.push Node::Selector_With_Body.new(grab_caches, self)
 
       when i == '}'.hash
         if @parent_count == 0
@@ -143,10 +142,7 @@ module DA_CSS
 
       when i == ':'.hash
         save_cache
-        raise Exception.new("Property being defined with a key") if @caches.empty?
-        key = grab_caches.join
-        value = Parser.new(self, ';'.hash).parse
-        doc.push Node::Property.new(key, value)
+        doc.push Node::Property.new(grab_caches.join, self)
 
       when i == ';'.hash
         save_cache
@@ -154,17 +150,11 @@ module DA_CSS
 
       when i == '='.hash
         save_cache
-        raise Exception.new("'=' not allowed here.") unless @caches.size == 1
-        var_name = grab_caches.join
-
-        value = Parser.new(self, ';'.hash).parse
-        doc.push Node::Assignment.new(var_name, value)
+        doc.push Node::Assignment.new(grab_caches.join, self)
 
       when i == '('.hash
         save_cache
-        key  = grab_caches.join
-        args = Parser.new(self, ')'.hash).parse
-        doc.push Node::Function_Call.new(key, args)
+        doc.push Node::Function_Call.new(grab_caches.join, self)
 
       when i == ')'.hash
         done!
