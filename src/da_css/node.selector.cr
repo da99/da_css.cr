@@ -42,7 +42,7 @@ module DA_CSS
         @raw : Chars
         def initialize(@raw)
           @raw.each { |i|
-            Selector.valid_char!(i)
+            Selector.valid_char!(i, @raw)
           }
         end
 
@@ -59,12 +59,12 @@ module DA_CSS
 
       end # === struct Partial
 
-      def self.valid_char!(c : Char)
+      def self.valid_char!(c : Char, chars : Chars)
         case c
         when 'a'..'z', '0'..'9', '.', '-', '_', '#'
           true
         else
-          raise Invalid_Char.new(c, "Invalid char for selector: ")
+          raise Error.new("Invalid character for selector: #{c.inspect} (in #{chars.join.inspect})", chars)
         end
       end # === def self.valid_char?
     end # === struct Selector

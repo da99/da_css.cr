@@ -2,10 +2,19 @@
 module DA_CSS
 
   class Error < Exception
+
+    def initialize(@message)
+    end # === def message
+
+    def initialize(@message, reader)
+      @message = "#{@message}: #{reader.pos_summary_in_english}"
+    end # === def message
+
     def message
       "Parser error: #{@message}"
     end # === def message
-  end
+
+  end # === class Error
 
   macro def_exception(name, prefix, &blok)
     class {{name.id}} < Error
@@ -32,18 +41,6 @@ module DA_CSS
       5_000
     end
   end
-
-  class Invalid_Char < Exception
-
-    def initialize(c : Char, prefix = "Invalid character: ")
-      @message = "#{prefix}#{c}"
-    end # === def initialize
-
-    def initialize(i : Int32, prefix = "Invalid character: ")
-      @message = "#{prefix}#{i.chr}"
-    end # === def initialize
-
-  end # === class Invalid_Char
 
   class Invalid_Unit < Exception
 

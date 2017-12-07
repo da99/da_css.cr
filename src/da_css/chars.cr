@@ -8,31 +8,22 @@ module DA_CSS
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw : Deque(Char)
+    @raw    : Deque(Char)
+    getter parent : Parser
     getter pos = 0
     getter pos_line = 1
 
-
-    def initialize
-      @raw = Deque(Char).new
-      @frozen = false
-    end # === def initialize
-
-    def initialize(@raw)
-      @frozen = true
-    end # === def initialize
-
-    def initialize(parser : Parser)
+    def initialize(parent : Parser)
+      @parent   = parent
       @raw      = Deque(Char).new
       @frozen   = false
-      @pos = parser.pos
-      @pos_line = parser.pos_line
+      @pos      = parent.pos
+      @pos_line = parent.pos_line
     end # === def initialize
 
-    def initialize(raw : String)
-      @raw = raw.chars
-      @frozen = true
-    end # === def initialize
+    def join(*args)
+      @raw.join(*args)
+    end
 
     def each
       prev = nil
@@ -107,7 +98,7 @@ module DA_CSS
         '=', ';', '/', '*', '?', '#', '.', ':', '-'
         c
       else
-        raise Invalid_Char.new(c)
+        raise Error.new("Invalid character: #{c.inspect} (in #{self.join.inspect})", self)
       end
     end # === def valid_codepoint?
 

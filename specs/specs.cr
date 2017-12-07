@@ -35,7 +35,7 @@ macro expected!
 end # === macro expected!
 
 macro actual!
-  SPEC_PARSER.new("/input.css", __DIR__).to_css
+  SPEC_PARSER.new("#{__DIR__}/input.css", __DIR__).to_css
 end # === macro actual!
 
 {% for x in `find #{__DIR__}/printer -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}

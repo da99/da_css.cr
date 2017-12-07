@@ -26,7 +26,6 @@ module DA_CSS
 
         def initialize(chars : Chars)
           @name = chars.to_s
-          self.class.valid!(@name)
         end # === def initialize
 
         def self.valid_char!(c : Char)
@@ -54,6 +53,7 @@ module DA_CSS
         end # === def to_s
 
         def print(printer : Printer)
+          self.class.valid!(@name)
           printer.raw! @name
           self
         end # === def print
@@ -66,26 +66,26 @@ module DA_CSS
 
       struct Value
 
-        alias Types = Number_Unit | Number | Percentage | Keyword | Slash | Unknown | Color | Function_Call
-        @raw : Deque(Types)
-        include Enumerable(Types)
+        alias TYPES = Number_Unit | Number | Percentage | Keyword | Slash | Unknown | Color | Function_Call
+        @raw : Deque(TYPES)
+        include Enumerable(TYPES)
 
         def initialize(key, doc : NODES)
-          @raw = Deque(Value::Types).new
-          if doc.empty?
-            raise Invalid_Value.new("Missing value: #{key.to_s}")
-          end
+          @raw = Deque(Value::TYPES).new
           doc.each { |x|
-            case x
-            when Types
-              @raw.push x
+            if x.is_a?(TYPES)
+              @raw.push(x)
             else
-              raise Invalid_Value.new(x.to_s.inspect)
+              raise Error.new("Invalid value for #{key.to_s.inspect}: #{x.to_s}")
             end
           }
         end # === def initialize
 
         def print(printer : Printer)
+          if @raw.empty?
+            raise Error.new("No values set for #{key.to_s}")
+          end
+
           @raw.each_with_index { |x, i|
             printer.raw! " " if i != 0
             x.print(printer)
@@ -125,14 +125,10 @@ module DA_CSS
       getter parent : Parser
 
       def initialize(raw_key : Chars, @parent : Parser)
-        raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
-        @key    = Key.new(raw_key)
-        @value  = doc = Parser.new
+        @key   = Key.new(raw_key)
+        @value = doc = Parser.new
         doc.parent = self
         doc.parse
-        if !doc.nodes?
-          raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")
-        end
       end # === def initialize
 
       def print(printer : Printer)

@@ -5,15 +5,13 @@ module DA_CSS
 
       include Enumerable(Chars)
       getter raw = Deque(Chars).new
+      getter parent : Parser
 
-      def initialize
-      end # === def initialize
-
-      def initialize(@raw)
+      def initialize(@parent)
       end # === def initialize
 
       def join(delim = SPACE)
-        @raw.reduce(Chars.new) { |acc, x|
+        @raw.reduce(Chars.new(@parent)) { |acc, x|
           acc.push(delim) unless acc.empty?
           x.each { |i| acc.push(i) }
           acc

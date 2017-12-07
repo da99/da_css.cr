@@ -17,15 +17,14 @@ module DA_CSS
       Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
       Node::Percentage | Node::Slash | Node::Unknown
 
-    property parent       : PARENT_TYPES = nil
+    property parent : PARENT_TYPES = nil
 
     getter nodes = Deque(NODE_TYPES).new
 
     @reader : Parser | Char::Reader = Char::Reader.new("")
 
     @is_done = false
-    @caches  = Chars::Group.new
-    @cache   = Chars.new
+
     getter pos_line = 0
 
     def initialize
@@ -42,6 +41,16 @@ module DA_CSS
       @parent
     end # === def initialize
 
+    private def cache
+      @cache ||= Chars.new(self)
+      @cache.not_nil!
+    end
+
+    private def caches
+      @caches ||= Chars::Group.new(self)
+      @caches.not_nil!
+    end
+
     def parse
       raise Error.new("Already parsed.") if done?
 
@@ -51,12 +60,12 @@ module DA_CSS
         parse(c)
       end
 
-      if !@cache.empty?
-        raise Error.new("Invalid chars: #{@cache.to_s.inspect}")
+      if !cache.empty?
+        raise Error.new("Invalid chars: #{cache.to_s.inspect}", cache)
       end
 
-      if !@caches.empty?
-        raise Error.new("Invalid chars: #{@caches.join.to_s.inspect}")
+      if !caches.empty?
+        raise Error.new("Invalid chars: #{caches.join.to_s.inspect}", caches.first)
       end
 
       self
@@ -80,7 +89,7 @@ module DA_CSS
           grab_chars(comment, '/')
           break if !current_char?
 
-          if @cache.prev(2) == '*'
+          if cache.prev(2) == '*'
             comment.pop
             was_closed = true
             break
@@ -94,10 +103,10 @@ module DA_CSS
       # PARSE: string '
       # PARSE: string "
       when c == '\'' || c == '"'
-        if !@cache.empty?
+        if !cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
-        @nodes.push Node::Text.new(grab_chars(Chars.new, c))
+        @nodes.push Node::Text.new(grab_chars(Chars.new(self), c))
 
       when c == '{'
         grab_non_empty_cache_to_group
@@ -132,7 +141,7 @@ module DA_CSS
         grab_non_empty_cache_to_group
 
       else
-        @cache.push c
+        cache.push c
 
       end # === while
     end # === def parse
@@ -185,7 +194,7 @@ module DA_CSS
     end # === def skip_to
 
     def grab_chars(c : Char)
-      grab_chars(Chars.new, c)
+      grab_chars(Chars.new(self), c)
     end # === def grab_chars
 
     def grab_chars(dest : Chars, c : Char)
@@ -217,7 +226,7 @@ module DA_CSS
 
       next_char
       count = 1
-      chars = Chars.new
+      chars = Chars.new(self)
       while current_char? && count > 0
         case current_char
         when open
@@ -242,21 +251,21 @@ module DA_CSS
     end # === def grab_between
 
     def grab_non_empty_cache_to_group
-      return false if @cache.empty?
+      return false if cache.empty?
       cache = grab_cache
-      @caches.push cache
+      caches.push cache
       cache
     end # === def grab_non_empty_cache_to_group
 
     def grab_cache
-      cache = @cache.freeze!
-      @cache = Chars.new
-      cache
+      c = cache.freeze!
+      @cache = Chars.new(self)
+      c
     end # === def grab_cache
 
     def grab_caches
-      arr = @caches
-      @caches = Chars::Group.new
+      arr = caches
+      @caches = Chars::Group.new(self)
       return arr
     end # === def grab_unknowns
 

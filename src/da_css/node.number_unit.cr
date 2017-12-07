@@ -10,8 +10,8 @@ module DA_CSS
       @unit   : Unit
 
       def initialize(raw : Chars)
-        nums = Chars.new
-        unit = Chars.new
+        nums = Chars.new(raw.parent)
+        unit = Chars.new(raw.parent)
 
         raw.each_with_index { |c, pos|
           case c
