@@ -11,6 +11,7 @@ module DA_CSS
       def initialize(arr : Chars::Group)
         @raw = Deque(Selector::Partial).new
         arr.each { |chars|
+          next if chars.empty?
           @raw.push Selector::Partial.new(chars)
         }
       end # === def initialize
@@ -25,6 +26,10 @@ module DA_CSS
       end # === def each
 
       def print(printer : Printer)
+        if @raw.empty?
+          raise Error.new("Selector is empty.")
+        end
+
         @raw.each_with_index { |x, i|
           printer.raw! " " if i != 0
           x.print printer

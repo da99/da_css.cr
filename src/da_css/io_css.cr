@@ -23,17 +23,6 @@ module DA_CSS
       }
     end # === def raw!
 
-    def indent
-      @parent_count += 1
-      yield self
-      @parent_count -= 1
-      self
-    end # === def indent
-
-    def indent
-      @parent_count.times { |i| @io << ' ' << ' ' }
-    end
-
     def empty?
       @io.empty?
     end # === def empty?
