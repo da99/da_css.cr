@@ -6,13 +6,14 @@ module DA_CSS
     struct Assignment
 
       getter name  : Chars
-      getter value : Doc
+      getter value : Parser
 
       def initialize(@name, parent : Parser)
         raise Exception.new("Assignment has missing var name.") if @name.empty?
-        @value = doc = Doc.new
-        Parser.new(parent, self, doc, ';').parse
-        if doc.empty?
+        @value = body = Parser.new(parent.reader)
+        body.parent(self)
+        body.parse
+        if !body.nodes?
           raise Exception.new("No value specified for var: #{@name.to_s.inspect}")
         end
       end # === def initialize

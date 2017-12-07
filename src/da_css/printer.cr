@@ -3,7 +3,7 @@ module DA_CSS
   class Printer
 
     getter parent    : Printer? = nil
-    getter doc       : Doc
+    getter doc       : Parser
     getter io_css    : IO_CSS = IO_CSS.new
     getter validator : DA_CSS::Validator
 
@@ -33,9 +33,9 @@ module DA_CSS
 
     def new_line(parent : Parser)
       @io_css.raw! "\n" unless @io_css.empty?
-      parent.parent_count.times do |i|
-        @io_css.raw! "  "
-      end
+      # parent.parent_count.times do |i|
+      #   @io_css.raw! "  "
+      # end
       self
     end # === def new_line
 

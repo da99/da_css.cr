@@ -14,21 +14,22 @@ module DA_CSS
     struct Function_Call
 
       @name : String
-      @args : Doc
+      @args : Parser
 
       def initialize(raw_name : Chars, parent : Parser)
         @name = raw_name.to_s
-        @args = doc = Doc.new
-        Parser.new(parent, self, doc, ')').parse
+        @args = doc = Parser.new(parent.reader, ')')
+        doc.parent(self)
+        doc.parse
       end # === def initialize
 
       def to_s
-        "#{@name}(#{@args.map(&.to_s).join(",")})"
+        "#{@name}(#{@args.nodes.map(&.to_s).join(",")})"
       end # === def to_s
 
       def print(printer : Printer)
         printer.raw! @name, "("
-        @args.each_with_index { |x, i|
+        @args.nodes.each_with_index { |x, i|
           printer.raw!(", ") if i != 0
           x.print(printer)
         }

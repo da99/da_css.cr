@@ -11,7 +11,7 @@ module DA_CSS
     end # === class Invalid_Statement
 
     struct Statement
-      getter raw : Chars::Array
+      getter raw : Chars::Group
 
       def initialize(@raw)
       end # === def initialize

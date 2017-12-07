@@ -4,37 +4,54 @@ module DA_CSS
 
   class Parser
 
-    alias PARENT_NODE = Nil | Node::Selector_With_Body | Node::Property | Node::Assignment | Node::Function_Call
+    alias PARENT_TYPES =
+      Nil | Parser | Node::Selector_With_Body | Node::Property |
+      Node::Assignment | Node::Function_Call
+
+    alias NODE_TYPES =
+      Node::Text | Node::Assignment |
+      Node::Selector_With_Body | Node::Comment |
+      Node::Property | Node::Function_Call | Node::Color |
+      Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
+      Node::Percentage | Node::Slash | Node::Unknown
 
     protected getter origin : Parser | Nil = nil
 
-    getter reader      : Char::Reader
-    getter parent      : Parser | Nil = nil
-    getter parent_node : PARENT_NODE = nil
-    getter parent_count = 0
-    getter doc          = Doc.new
-    getter index        = 0
+    getter reader : Char::Reader
+    getter parent : PARENT_TYPES = nil
+    getter index = 0
+    getter nodes = Deque(NODE_TYPES).new
 
-    @is_done                    = false
     @stop_on_char : Char | Nil = nil
-    @caches                     = Chars::Array.new
-    @cache                      = Chars.new
+    @is_done = false
+    @caches  = Chars::Group.new
+    @cache   = Chars.new
 
-    def initialize(@parent, @parent_node, @doc, @stop_on_char)
-      @parent_count = parent.parent_count + 1
+    def initialize(@parent, @stop_on_char)
       @reader       = parent.reader
       @origin       = parent.origin || parent
     end # === def initialize
 
-    def initialize(@parent, @parent_node, @doc)
-      @parent_count = parent.parent_count + 1
+    def initialize(@reader, @stop_on_char)
+    end # === def initialize
+
+    def initialize(@parent)
       @reader       = parent.reader
       @origin       = parent.origin || parent
+    end # === def initialize
+
+    def initialize(@reader : Char::Reader)
     end # === def initialize
 
     def initialize(raw : String)
       @reader = Char::Reader.new(raw)
     end # === def initialize
+
+
+    def parent(x : PARENT_TYPES)
+      @parent = x
+      self
+    end # === def parent
 
     def parse
       raise Error.new("Already parsed.") if done?
@@ -59,14 +76,14 @@ module DA_CSS
         raise Error.new("Invalid chars: #{@caches.join.to_s.inspect}")
       end
 
-      return doc
+      self
     end # === def parse
 
     def parse(c : Char)
       case
 
       when c.whitespace?
-        save_cache
+        add_cache_to_group
 
       # PARSE: comment
       when c == '/' && current == '*'
@@ -89,7 +106,7 @@ module DA_CSS
         end # loop
 
         if was_closed
-          doc.push(Node::Comment.new(comment))
+          @nodes.push(Node::Comment.new(comment))
         else
           raise Error.new("Comment was not closed.")
         end
@@ -100,43 +117,36 @@ module DA_CSS
         if !@cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
-        doc.push Node::Text.new(grab_chars(Chars.new, c))
+        @nodes.push Node::Text.new(grab_chars(Chars.new, c))
 
       when c == '{'
-        save_cache
-        raise Error.new("Block must have a selector.") if @caches.empty?
-        doc.push Node::Selector_With_Body.new(grab_caches, self)
+        add_cache_to_group
+        @nodes.push Node::Selector_With_Body.new(grab_caches, self)
 
       when c == '}'
-        if @parent_count == 0
-          if next?
-            raise Error.new("Missing opening {")
-          end
-        else
-          done!
-        end
+        done!
 
       when c == ':'
-        save_cache
-        doc.push Node::Property.new(grab_caches.join, self)
+        add_cache_to_group
+        @nodes.push Node::Property.new(grab_caches.join, self)
 
       when c == ';'
-        save_cache
-        parse_caches unless @caches.empty?
+        add_cache_to_group
+        parse_caches
 
       when c == '='
-        save_cache
-        doc.push Node::Assignment.new(grab_caches.join, self)
+        add_cache_to_group
+        @nodes.push Node::Assignment.new(grab_caches.join, self)
 
       when c == '('
-        save_cache
-        doc.push Node::Function_Call.new(grab_caches.join, self)
+        add_cache_to_group
+        @nodes.push Node::Function_Call.new(grab_caches.join, self)
 
       when c == ')'
         done!
 
       when c.whitespace?
-        save_cache
+        add_cache_to_group
 
       else
         @cache.push c
@@ -268,33 +278,66 @@ module DA_CSS
       return chars
     end # === def grab_between
 
-    def save_cache
-      return false if @cache.empty?
-      raise Error.new("CHAR cache is empty. Can't save.") if @cache.empty?
+    def add_cache_to_group
+      return if @cache.empty?
       cache = grab_cache
       @caches.push cache
       cache
-    end # === def save_cache
+    end # === def add_cache_to_group
 
     def grab_cache
-      raise Error.new("CHAR cache is empty. Can't grab.") if @cache.empty?
       cache = @cache.freeze!
       @cache = Chars.new
       cache
     end # === def grab_cache
 
     def grab_caches
-      raise Error.new("No saved cache. Can't grab caches.") if @caches.empty?
       arr = @caches
-      @caches = Chars::Array.new
+      @caches = Chars::Group.new
       return arr
     end # === def grab_unknowns
 
     def parse_caches
       grab_caches.each { |c|
-        doc.push Node.from_chars(c.freeze!)
+        next if c.empty?
+        @nodes.push Node.from_chars(c.freeze!)
       }
     end # === def parse_caches
+
+    def inspect(io)
+      io << "Parser["
+      @nodes.each_with_index { |x, i|
+        io << ", " unless i == 0
+        x.inspect(io)
+      }
+      "]"
+    end # === def inspect
+
+    def print(printer : Printer)
+      @nodes.each_with_index { |x, i|
+        printer.raw! " " if i != 0
+        x.print(printer)
+      }
+      self
+    end # === def print
+
+    def to_s
+      io = IO::Memory.new
+      @nodes.each_with_index { |x, i|
+        io << ' ' if i != 0
+        io << x.to_s
+      }
+      io.to_s
+    end # === def to_s
+
+    def first_and_only(err_msg)
+      return first if @nodes.size == 1
+      raise Error.new(err_msg)
+    end # === def first_and_only
+
+    def nodes?
+      !@nodes.empty?
+    end # === def empty?
 
   end # === class Parser
 

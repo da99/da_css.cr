@@ -1,6 +1,7 @@
 
 module DA_CSS
 
+  alias NODES = Deque(Parser::NODE_TYPES)
   module Node
 
     def parent_node?

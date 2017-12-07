@@ -20,30 +20,6 @@ module DA_CSS
 
       include Node
 
-      getter key    : Key
-      getter value  : Doc
-      getter parent : Parser
-
-      def initialize(raw_key : Chars, parent : Parser)
-        raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
-        @parent = parent
-        @key    = Key.new(raw_key)
-        @value  = doc = Doc.new
-        Parser.new(parent, self, doc, ';').parse
-        if doc.empty?
-          raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")
-        end
-      end # === def initialize
-
-      def print(printer : Printer)
-        printer.new_line(parent)
-        key.print(printer)
-        printer.raw! ": "
-        value.print(printer)
-        printer.raw! ";"
-        self
-      end # === def print
-
       struct Key
 
         @name : String
@@ -94,7 +70,7 @@ module DA_CSS
         @raw : Deque(Types)
         include Enumerable(Types)
 
-        def initialize(key, doc : Doc)
+        def initialize(key, doc : NODES)
           @raw = Deque(Value::Types).new
           if doc.empty?
             raise Invalid_Value.new("Missing value: #{key.to_s}")
@@ -142,9 +118,33 @@ module DA_CSS
             io.raw! x.to_s
           }
         end
-
-
       end # === struct Value
+
+      getter key    : Key
+      getter value  : Parser
+      getter parent : Parser
+
+      def initialize(raw_key : Chars, parent : Parser)
+        raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
+        @parent = parent
+        @key    = Key.new(raw_key)
+        @value  = doc = Parser.new(parent.reader, ';')
+        doc.parent(self)
+        doc.parse
+        if !doc.nodes?
+          raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")
+        end
+      end # === def initialize
+
+      def print(printer : Printer)
+        printer.new_line(parent)
+        key.print(printer)
+        printer.raw! ": "
+        value.print(printer)
+        printer.raw! ";"
+        self
+      end # === def print
+
     end # === struct Property
   end # === module Node
 end # === module DA_CSS

@@ -1,9 +1,8 @@
 
 module DA_CSS
-
   struct Chars
 
-    struct Array
+    struct Group
 
       include Enumerable(Chars)
 
@@ -44,5 +43,4 @@ module DA_CSS
     end # === class Array
 
   end # === class Chars
-
 end # === module DA_CSS

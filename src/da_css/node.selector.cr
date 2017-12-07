@@ -8,7 +8,7 @@ module DA_CSS
       include Enumerable(Char)
 
       @raw : Deque(Selector::Partial)
-      def initialize(arr : Chars::Array)
+      def initialize(arr : Chars::Group)
         @raw = Deque(Selector::Partial).new
         arr.each { |chars|
           @raw.push Selector::Partial.new(chars)
