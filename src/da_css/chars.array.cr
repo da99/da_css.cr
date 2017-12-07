@@ -1,13 +1,13 @@
 
 module DA_CSS
 
-  struct Codepoints
+  struct Chars
 
-    class Array
+    struct Array
 
-      include Enumerable(Codepoints)
+      include Enumerable(Chars)
 
-      getter raw : ::Array(Codepoints) = [] of Codepoints
+      getter raw = Deque(Chars).new
 
       def initialize
       end # === def initialize
@@ -16,7 +16,7 @@ module DA_CSS
       end # === def initialize
 
       def join(delim = SPACE)
-        @raw.reduce(Codepoints.new) { |acc, x|
+        @raw.reduce(Chars.new) { |acc, x|
           acc.push delim unless acc.empty?
           x.each { |i|
             acc.push i
@@ -25,7 +25,7 @@ module DA_CSS
         }
       end
 
-      def push(x : Codepoints)
+      def push(x : Chars)
         @raw.push x
       end # === def push
 
@@ -43,6 +43,6 @@ module DA_CSS
 
     end # === class Array
 
-  end # === class Codepoints
+  end # === class Chars
 
 end # === module DA_CSS

@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Comment
 
-      getter raw : Codepoints
+      getter raw : Chars
 
       def initialize(@raw)
       end # === def initialize

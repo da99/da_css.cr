@@ -5,20 +5,20 @@ module DA_CSS
 
     struct Number_Unit
 
-      LETTERS = ('a'.hash)..('z'.hash)
+      LETTERS = 'a'..'z'
       @number : Number
       @unit   : Unit
 
-      def initialize(raw : Codepoints)
-        nums = Codepoints.new
-        unit = Codepoints.new
+      def initialize(raw : Chars)
+        nums = Chars.new
+        unit = Chars.new
 
-        raw.each_with_index { |x, pos|
-          case x
+        raw.each_with_index { |c, pos|
+          case c
           when LETTERS
-            unit.push x
+            unit.push c
           else
-            nums.push x
+            nums.push c
           end
         }
 
@@ -36,21 +36,21 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(cp : Codepoints)
-        first = cp.first
-        last  = cp.last
+      def self.looks_like?(chars : Chars)
+        first = chars.first
+        last  = chars.last
 
-        return false unless cp.size > 1
+        return false unless chars.size > 1
 
         case first
-        when '-'.hash, '.'.hash, Number::RANGE
+        when '-', '.', Number::RANGE
           true
         else
           return false
         end
 
         case last
-        when ('a'.hash)..('z'.hash)
+        when LETTERS
           true
         else
           false

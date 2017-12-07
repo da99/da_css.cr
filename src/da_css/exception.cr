@@ -1,8 +1,14 @@
 
 module DA_CSS
 
+  class Error < Exception
+    def message
+      "Parser error: #{@message}"
+    end # === def message
+  end
+
   macro def_exception(name, prefix, &blok)
-    class {{name.id}} < Exception
+    class {{name.id}} < Error
 
       def prefix_msg
         {{prefix}}
@@ -18,8 +24,6 @@ module DA_CSS
     end # === class Invalid_Selector
   end # === macro def_exception
 
-  def_exception Invalid_Property_Name, "Invalid property name: "
-  def_exception Invalid_Property_Value, "Invalid property value: "
   def_exception Invalid_Selector, "Invalid selector: "
   def_exception Invalid_URL, "Invalid url: "
   def_exception Unknown_CSS_Function, "Unknown css function: "
@@ -31,25 +35,13 @@ module DA_CSS
 
   class Invalid_Char < Exception
 
+    def initialize(c : Char, prefix = "Invalid character: ")
+      @message = "#{prefix}#{c}"
+    end # === def initialize
+
     def initialize(i : Int32, prefix = "Invalid character: ")
       @message = "#{prefix}#{i.chr}"
     end # === def initialize
-
-    def initialize(codepoints : Codepoints, str)
-      @message = "#{str}: line #{self.class.line codepoints}"
-    end # === def initialize
-
-    def self.line(codepoints : Codepoints)
-      index = codepoints.index
-      new_line = '\n'.hash
-      line = 1
-      codepoints.origin.each_with_index { |x, i|
-        if i == new_line
-          line += 1
-        end
-        return line if i == index
-      }
-    end # === def line
 
   end # === class Invalid_Char
 
@@ -59,23 +51,11 @@ module DA_CSS
       @message = "Invalid Unit: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Codepoints)
+    def initialize(cp : Chars)
       @message = "Invalid Unit: #{cp.to_s.inspect}"
     end # === def initialize
 
   end # === class Invalid_Unit
-
-  class Invalid_Number < Exception
-
-    def initialize(str : String)
-      @message = "Invalid Number: #{str.inspect}"
-    end # === def initialize
-
-    def initialize(cp : Codepoints)
-      @message = "Invalid Number: #{cp.to_s.inspect}"
-    end # === def initialize
-
-  end # === class Invalid_Number
 
   class Invalid_Color < Exception
 
@@ -83,7 +63,7 @@ module DA_CSS
       @message = "Invalid Color: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Codepoints)
+    def initialize(cp : Chars)
       @message = "Invalid Color: #{cp.to_s.inspect}"
     end # === def initialize
 

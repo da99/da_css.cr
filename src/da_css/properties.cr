@@ -227,9 +227,9 @@ module DA_CSS
         when String
           return value
         when :invalid_property_name
-          raise Invalid_Property_Name.new("#{raw_name.inspect} (value: #{raw_value.inspect})")
+          raise Node::Property::Invalid_Name.new("#{raw_name.inspect} (value: #{raw_value.inspect})")
         else
-          raise Invalid_Property_Value.new("#{raw_name.inspect}: #{raw_value.inspect}")
+          raise Node::Property::Invalid_Name.new("#{raw_name.inspect}: #{raw_value.inspect}")
         end
       end # === def clean_property!
 

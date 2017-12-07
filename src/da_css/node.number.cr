@@ -5,12 +5,25 @@ module DA_CSS
 
     struct Number
 
-      RANGE = ('0'.hash)..('9'.hash)
-      @raw : Codepoints
+      class Invalid < Error
+
+        def initialize(str : String)
+          @message = "Invalid Number: #{str.inspect}"
+        end # === def initialize
+
+        def initialize(cp : Chars)
+          @message = "Invalid Number: #{cp.to_s.inspect}"
+        end # === def initialize
+
+      end # === class Invalid
+
+
+      RANGE = '0'..'9'
+      @raw : Chars
 
       def initialize(@raw)
         if @raw.size > 8
-          raise Invalid_Number.new(@raw)
+          raise Number::Invalid.new(@raw)
         end
       end # === def initialize
 
@@ -22,12 +35,12 @@ module DA_CSS
         @raw.print printer
       end # === def print
 
-      def self.looks_like?(codepoints : Codepoints)
-        first = codepoints.first
-        last  = codepoints.last
+      def self.looks_like?(chars : Chars)
+        first = chars.first
+        last  = chars.last
 
         case first
-        when '-'.hash, '.'.hash, RANGE
+        when '-', '.', RANGE
           true
         else
           return false

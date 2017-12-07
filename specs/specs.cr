@@ -13,7 +13,21 @@ end # === macro strip_each_line
 require "../../src/da_css"
 
 class SPEC_PARSER
-  include DA_CSS::Printer
+  struct Validator
+    include DA_CSS::Validator
+    def allow(x)
+      x
+    end # === def allow
+  end # === struct Validator
+
+  def initialize(str : String, dir : String)
+    @raw = str
+    @dir = dir
+  end # === def initialize
+
+  def to_css
+    DA_CSS::Printer.new(@raw, Validator.new).to_css
+  end # === def to_css
 end # === class SPEC_PARSER
 
 macro expected!

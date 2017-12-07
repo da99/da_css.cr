@@ -40,20 +40,15 @@ module DA_CSS
       end # === def delete
 
       def self.is_valid_key?(raw : String)
-        invalid = raw.codepoints.find { |point|
-          case point
-          when ('a'.hash)..('z'.hash),
-            ('A'.hash)..('Z'.hash),
-            ('0'.hash)..('9'.hash),
-            '-'.hash, '_'.hash
-            false
-          else
-            point
+        raw.each_char { |char|
+          case char
+          when 'a'..'z', 'A'..'Z', '0'..'9', '-', '_'
+            return false
           end
         }
-        return !invalid
       end # === def self.is_valid_key?
 
     end # === class Vars
 
 end # === module DA_CSS
+

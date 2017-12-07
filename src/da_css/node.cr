@@ -17,7 +17,7 @@ module DA_CSS
       end
     end # === def parent_node
 
-    def self.from_codepoints(c : Codepoints)
+    def self.from_chars(c : Chars)
       first = c.first
       last = c.last
       case
@@ -45,7 +45,7 @@ module DA_CSS
         {% end %}
 
       end
-    end # === def self.from_codepoints
+    end # === def self.from_chars
 
   end # === module Node
 

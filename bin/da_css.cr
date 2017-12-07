@@ -10,6 +10,7 @@ fi
 
 local +x THE_ARGS="$@"
 local +x THIS_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
+local +x THIS_NAME="$(basename "$THIS_DIR")"
 PATH="$PATH:$THIS_DIR/bin"
 PATH="$PATH:$THIS_DIR/../my_crystal/bin"
 PATH="$PATH:$THIS_DIR/../process/bin"

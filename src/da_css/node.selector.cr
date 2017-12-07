@@ -5,20 +5,21 @@ module DA_CSS
 
     struct Selector
 
-      include Enumerable(Int32)
+      include Enumerable(Char)
 
-      @raw : Array(Selector::Partial)
-      def initialize(arr : Codepoints::Array)
-        @raw = arr.map { |codepoints|
-          Selector::Partial.new(codepoints)
+      @raw : Deque(Selector::Partial)
+      def initialize(arr : Chars::Array)
+        @raw = Deque(Selector::Partial).new
+        arr.each { |chars|
+          @raw.push Selector::Partial.new(chars)
         }
       end # === def initialize
 
       def each
         @raw.each_with_index { |partial, pos|
-          yield(' '.hash) if pos != 0
-          partial.each { |i|
-            yield i
+          yield(' ') if pos != 0
+          partial.each { |c|
+            yield c
           }
         }
       end # === def each
@@ -33,8 +34,8 @@ module DA_CSS
 
       struct Partial
 
-        include Enumerable(Int32)
-        @raw : Codepoints
+        include Enumerable(Char)
+        @raw : Chars
         def initialize(@raw)
           @raw.each { |i|
             Selector.valid_char!(i)
@@ -54,13 +55,12 @@ module DA_CSS
 
       end # === struct Partial
 
-      def self.valid_char!(i : Int32)
-        case i
-        when ('a'.hash)..('z'.hash), ('0'.hash)..('9'.hash), '.'.hash, '-'.hash, '_'.hash,
-          '#'.hash
+      def self.valid_char!(c : Char)
+        case c
+        when 'a'..'z', '0'..'9', '.', '-', '_', '#'
           true
         else
-          raise Invalid_Char.new(i, "Invalid char for selector: ")
+          raise Invalid_Char.new(c, "Invalid char for selector: ")
         end
       end # === def self.valid_char?
     end # === struct Selector

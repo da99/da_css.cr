@@ -1,6 +1,5 @@
 
 module DA_CSS
-
   class Printer
 
     getter parent    : Printer? = nil
@@ -14,9 +13,6 @@ module DA_CSS
 
     def initialize(raw : String, @validator)
       @doc = Parser.new(raw).parse
-    end # === def initialize
-
-    def initialize(@doc, @validator)
     end # === def initialize
 
     def initialize(parent : Printer, @doc)
@@ -83,7 +79,7 @@ module DA_CSS
       io_css.indent
       io_css.raw! "}\n"
       self
-    end # === def write 
-  end # === class Printer
+    end # === def write
 
+  end # === class Printer
 end # === module DA_CSS

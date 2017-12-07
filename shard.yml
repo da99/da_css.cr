@@ -4,3 +4,5 @@ version: 2.2.0
 development_dependencies:
   da_uri:
     github: da99/da_uri.cr
+  inspect_bang:
+    github: da99/inspect_bang.cr

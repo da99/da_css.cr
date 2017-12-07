@@ -5,19 +5,20 @@ module DA_CSS
 
     struct Color
 
-      HASH = '#'.hash
-      UPPER = ('A'.hash)..('Z'.hash)
-      LOWER = ('a'.hash)..('z'.hash)
-      NUMBERS = ('0'.hash)..('9'.hash)
+      HASH    = '#'
+      UPPER   = 'A'..'Z'
+      LOWER   = 'a'..'z'
+      NUMBERS = '0'..'9'
 
-      @raw : Codepoints
+      @raw : Chars
 
       def initialize(@raw)
-        @raw.each_with_index { |x, i|
+        @raw.each_with_index { |c, index|
+          cp = c.ord
           case
-          when i == 0 && x == HASH
+          when index == 0 && c == HASH
             true
-          when i > 0 && i < 9 && (UPPER.includes?(x) || LOWER.includes?(x) || NUMBERS.includes?(x))
+          when index > 0 && index < 9 && (UPPER.includes?(c) || LOWER.includes?(c) || NUMBERS.includes?(c))
             true
           else
             raise Invalid_Color.new(@raw)
@@ -34,8 +35,8 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(cp : Codepoints)
-        cp.first == '#'.hash
+      def self.looks_like?(chars : Chars)
+        chars.first == HASH
       end # === def self.looks_like?
     end # === struct Color
 

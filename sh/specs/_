@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 #
-# === {{CMD}}
+# === {{CMD}}           # same as: {{CMD}} watch
+# === {{CMD}} watch|run
 #
 set -u -e -o pipefail
 
@@ -22,7 +23,8 @@ case "$ACTION" in
     ;;
 
   run)
-    export DEV_BUILD=yes
+    reset
+    export IS_DEV=yes
     mkdir -p tmp/out
     case "${CHANGED_FILE:-}" in
       *"in/arg"*|*".css") : ;;

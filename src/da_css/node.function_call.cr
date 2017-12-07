@@ -5,12 +5,8 @@ module DA_CSS
 
     class Invalid_Function_Call < Exception
 
-      def initialize(cp : Codepoints)
-        @message = "Invalid function call: #{cp.to_s}"
-      end # === def initialize
-
-      def initialize(str : String)
-        @message = "Invalid function call: #{str}"
+      def initialize(chars : Chars | String)
+        @message = "Invalid function call: #{chars.to_s}"
       end # === def initialize
 
     end # === class Invalid_Function_Call
@@ -20,10 +16,10 @@ module DA_CSS
       @name : String
       @args : Doc
 
-      def initialize(raw_name : Codepoints, parent : Parser)
+      def initialize(raw_name : Chars, parent : Parser)
         @name = raw_name.to_s
         @args = doc = Doc.new
-        Parser.new(parent, self, doc, ')'.hash).parse
+        Parser.new(parent, self, doc, ')').parse
       end # === def initialize
 
       def to_s

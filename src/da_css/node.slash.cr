@@ -5,7 +5,7 @@ module DA_CSS
 
     class Invalid_Slash < Exception
 
-      def initialize(cp : Codepoints)
+      def initialize(cp : Chars)
         @message = "Invalid slash character: #{cp.to_s.inspect}"
       end
 
@@ -13,11 +13,11 @@ module DA_CSS
 
     struct Slash
 
-      SLASH = '/'.hash
+      SLASH = '/'
 
-      def initialize(cp : Codepoints)
-        if cp.size != 1 && cp.first != SLASH
-          raise Invalid_Slash.new(cp)
+      def initialize(chars : Chars)
+        if chars.size != 1 && chars.first != SLASH
+          raise Invalid_Slash.new(chars)
         end
       end # === def initialize
 
@@ -30,8 +30,8 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(cp : Codepoints)
-        cp.size == 1 && cp.first == SLASH
+      def self.looks_like?(chars : Chars)
+        chars.size == 1 && chars.first == SLASH
       end # === def self.looks_like?
 
     end # === struct Slash
@@ -39,3 +39,4 @@ module DA_CSS
   end # === module Node
 
 end # === module DA_CSS
+

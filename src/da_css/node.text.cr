@@ -9,15 +9,15 @@ module DA_CSS
         @message = "Invalid string: #{str}"
       end # === def initialize
 
-      def initialize(cp : Codepoints)
-        @message = "Invalid string: #{cp.to_s.inspect}"
+      def initialize(chars : Chars)
+        @message = "Invalid string: #{chars.to_s.inspect}"
       end # === def initialize
 
     end # === class Invalid_Text
 
     struct Text
 
-      @raw : Codepoints
+      @raw : Chars
       def initialize(@raw)
         @raw.each { |x| self.class.valid!(x) }
       end # === def initialize
@@ -34,10 +34,10 @@ module DA_CSS
         self
       end # === def print
 
-      def self.valid!(i : Int32)
-        case i
-        when '\''.hash, '"'.hash
-          raise Invalid_Text.new("Text can't contain single/double quotation marks: #{i.chr}.inspect")
+      def self.valid!(c : Char)
+        case c
+        when '\'', '"'
+          raise Invalid_Text.new("Text can't contain single/double quotation marks: #{c.inspect}")
         else
           true
         end

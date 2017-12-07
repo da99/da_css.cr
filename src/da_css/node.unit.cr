@@ -6,9 +6,9 @@ module DA_CSS
     struct Unit
 
       RANGE = 1..3
-      LETTERS = ('a'.hash)..('z'.hash)
+      LETTERS = 'a'..'z'
 
-      @raw    : Codepoints
+      @raw    : Chars
       @string : String
 
       def initialize(@raw)
@@ -32,8 +32,8 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(cp : Codepoints)
-        RANGE.includes?(cp.size) && cp.all?(LETTERS)
+      def self.looks_like?(chars : Chars)
+        RANGE.includes?(chars.size) && chars.all?(LETTERS)
       end # === def self.looks_like?
 
     end # === struct Unit

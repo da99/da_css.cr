@@ -11,7 +11,7 @@ module DA_CSS
       Node::Percentage | Node::Slash | Node::Unknown
 
     include Enumerable(TYPES)
-    getter nodes = [] of TYPES
+    getter nodes = Deque(TYPES).new
 
     def each
       nodes.each { |x| yield x }

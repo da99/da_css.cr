@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+#
+# === {{CMD}} ... # this is an alias of: specs ...
+#
+set -u -e -o pipefail
+
+exec $THIS_NAME specs $@

@@ -1,111 +1,87 @@
 
-require "./exception"
-require "./codepoints"
-require "./codepoints.array"
-require "./node"
-require "./node.unknown"
-require "./node.empty_array"
-require "./node.assignment"
-require "./node.selector"
-require "./node.selector_with_body"
-require "./node.comment"
-require "./node.color"
-require "./node.slash"
-require "./node.text"
-require "./node.number"
-require "./node.unit"
-require "./node.function_call"
-require "./node.number_unit"
-require "./node.percentage"
-require "./node.keyword"
-require "./node.property"
-require "./node.statement"
-require "./doc"
-require "./parser"
-require "./io_css"
 
 module DA_CSS
 
   class Parser
 
     alias PARENT_NODE = Nil | Node::Selector_With_Body | Node::Property | Node::Assignment | Node::Function_Call
+
     protected getter origin : Parser | Nil = nil
-    getter codepoints : Codepoints
-    getter parent     : Parser | Nil = nil
+
+    getter reader      : Char::Reader
+    getter parent      : Parser | Nil = nil
     getter parent_node : PARENT_NODE = nil
     getter parent_count = 0
     getter doc          = Doc.new
     getter index        = 0
-    getter size         = 0
 
-    @is_done                  = false
-    @final_char : Int32 | Nil = nil
-    @caches                   = Codepoints::Array.new
-    @cache                    = Codepoints.new
+    @is_done                    = false
+    @stop_on_char : Char | Nil = nil
+    @caches                     = Chars::Array.new
+    @cache                      = Chars.new
 
-    def initialize(@parent, @parent_node, @doc, @final_char)
+    def initialize(@parent, @parent_node, @doc, @stop_on_char)
       @parent_count = parent.parent_count + 1
-      @codepoints   = parent.codepoints
+      @reader       = parent.reader
       @origin       = parent.origin || parent
     end # === def initialize
 
     def initialize(@parent, @parent_node, @doc)
       @parent_count = parent.parent_count + 1
-      @codepoints   = parent.codepoints
+      @reader       = parent.reader
       @origin       = parent.origin || parent
     end # === def initialize
 
     def initialize(raw : String)
-      @codepoints = Codepoints.new(raw)
-      @size = @codepoints.size
+      @reader = Char::Reader.new(raw)
     end # === def initialize
 
     def parse
-      raise Exception.new("Already parsed.") if done?
+      raise Error.new("Already parsed.") if done?
 
-      last_chr = false
+      stop_on_char = @stop_on_char
+      stop_on_char_found = false
       while current? && !done?
-        last_chr = true if @final_char && @final_char == current
-        parse(grab)
-        break if last_chr
+        stop_on_char_found = true if stop_on_char && stop_on_char == current
+        parse(next_char)
+        break if stop_on_char_found
       end
 
-      fin_chr = @final_char
-      if fin_chr && !last_chr
-        raise Exception.new("Missing char: #{fin_chr.chr}")
+      if stop_on_char && !stop_on_char_found
+        raise Error.new("Missing char: #{stop_on_char.inspect}")
       end
 
       if !@cache.empty?
-        raise Exception.new("Invalid characters: #{@cache.to_s.inspect}")
+        raise Error.new("Invalid chars: #{@cache.to_s.inspect}")
       end
 
       if !@caches.empty?
-        raise Exception.new("Invalid characters: #{@caches.join.to_s.inspect}")
+        raise Error.new("Invalid chars: #{@caches.join.to_s.inspect}")
       end
 
       return doc
     end # === def parse
 
-    def parse(i : Int32)
+    def parse(c : Char)
       case
 
-      when Codepoints.whitespace?(i)
+      when c.whitespace?
         save_cache
 
       # PARSE: comment
-      when i == ('/').hash && current == ('*').hash
+      when c == '/' && current == '*'
         if !@cache.empty?
-          raise Exception.new("You can't put a comment while defining something else.")
+          raise Error.new("You can't put a comment while defining something else.")
         end
 
-        grab # asterisk
-        comment = Codepoints.new
+        next_char # asterisk
+        comment = Chars.new
         was_closed = false
         loop do
-          grab_slice(comment, '/'.hash)
+          grab_chars(comment, '/')
           break if !current?
 
-          if prev(2).chr == '*'
+          if @cache.prev(2) == '*'
             comment.pop
             was_closed = true
             break
@@ -115,55 +91,55 @@ module DA_CSS
         if was_closed
           doc.push(Node::Comment.new(comment))
         else
-          raise Exception.new("Comment was not closed.")
+          raise Error.new("Comment was not closed.")
         end
 
       # PARSE: string '
       # PARSE: string "
-      when i == ('\'').hash || i == ('"').hash
+      when c == '\'' || c == '"'
         if !@cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
-        doc.push Node::Text.new(grab_slice(Codepoints.new, i))
+        doc.push Node::Text.new(grab_chars(Chars.new, c))
 
-      when i == ('{').hash
+      when c == '{'
         save_cache
-        raise Exception.new("Block must have a selector.") if @caches.empty?
+        raise Error.new("Block must have a selector.") if @caches.empty?
         doc.push Node::Selector_With_Body.new(grab_caches, self)
 
-      when i == '}'.hash
+      when c == '}'
         if @parent_count == 0
           if next?
-            raise Exception.new("Missing opening {")
+            raise Error.new("Missing opening {")
           end
         else
           done!
         end
 
-      when i == ':'.hash
+      when c == ':'
         save_cache
         doc.push Node::Property.new(grab_caches.join, self)
 
-      when i == ';'.hash
+      when c == ';'
         save_cache
         parse_caches unless @caches.empty?
 
-      when i == '='.hash
+      when c == '='
         save_cache
         doc.push Node::Assignment.new(grab_caches.join, self)
 
-      when i == '('.hash
+      when c == '('
         save_cache
         doc.push Node::Function_Call.new(grab_caches.join, self)
 
-      when i == ')'.hash
+      when c == ')'
         done!
 
-      when Codepoints.whitespace?(i)
+      when c.whitespace?
         save_cache
 
       else
-        @cache.push i
+        @cache.push c
 
       end # === while
     end # === def parse
@@ -195,162 +171,128 @@ module DA_CSS
     end
 
     def current?
-      o = origin
-      if o
-        o.index < o.size
-      else
-        @index < @size
-      end
+      (@reader.current_char) ? true : false
     end
 
-    def current?(i : Int32)
-      current? && current == i
+    def current?(c : Char)
+      current? && current == c
     end # === def current?
 
     def current
-      o = origin
-      if o
-        o.current
-      else
-        @codepoints[@index]
-      end
-    end
-
-    def prev(i : Int32 = 1)
-      o = origin
-      if o
-        o.prev(i)
-      else
-        @codepoints[@index - i]
-      end
+      @reader.current_char
     end
 
     def next?
-      o = origin
-      if o
-        o.next?
-      else
-        @index < (@size - 2)
-      end
+      @reader.has_next?
     end
 
     def peek
-      o = origin
-      return o.peek if o
-      @codepoints[@index + 1]
+      return nil unless @reader.has_next?
+      @reader.peek_next_char
     end
 
-    def put_back
-      o = origin
-      return o.put_back if o
-
-      @index -= 1
-      self
-    end # === def put_back
-
-    def grab
-      o = origin
-      return o.grab if o
-      v = current
-      @index += 1
-      v
-    end
-
-    def skip_to(i : Int32)
-      if current? && !whitespace?(current) && next? && whitespace?(peek)
-        grab
+    def skip_to(c : Char)
+      if current? && !current.whitespace?
+        next_char = next? && peek
+        if next_char && next_char.whitespace?
+          next_char
+        end
       end
 
-      while current? && whitespace?(current)
-        grab
+      while (curr = current) && curr && curr.whitespace?
+        next_char
       end
 
-      return self if current? && current == i
-      raise Exception.new("Not found: #{i.chr}")
+      return self if current == c
+      raise Error.new("Not found: #{c.inspect}")
     end # === def skip_to
 
-    def grab_slice(i : Int32)
-      grab_slice(Codepoints.new, i)
-    end # === def grab_slice
+    def next_char
+      @reader.next_char
+    end
 
-    def grab_slice(dest : Codepoints, i : Int32)
-      grab_slice(i) { |x|
+    def grab_chars(c : Char)
+      grab_chars(Chars.new, c)
+    end # === def grab_chars
+
+    def grab_chars(dest : Chars, c : Char)
+      grab_chars(c) { |x|
         dest.push x
       }
       dest
-    end # === def grab_slice
+    end # === def grab_chars
 
-    # Example: "a b c;" -> grab_slice(';'.hash)
+    # Example: "a b c;" -> grab_chars(';')
     # Note: ';' here will be grabbed, but not yield-ed
     #   to the block.
-    def grab_slice(i : Int32)
+    def grab_chars(c : Char)
       while current?
         case current
-        when i
-          grab
+        when c
+          next_char
           return self
         else
-          yield grab
+          yield next_char
         end
       end
-    end # === def grab_slice
+    end # === def grab_chars
 
-    def grab_between(open : Int32, close : Int32)
+    def grab_between(open : Char, close : Char)
       if current != open
-        raise Exception.new(":grab_between: Not on a '#{open.chr}' char.")
+        raise Error.new(":grab_between: Not on a #{open.inspect} char.")
       end
 
-      grab
+      next_char
       count = 1
-      codes = Codepoints.new
+      chars = Chars.new
       while current? && count > 0
         case current
         when open
           count += 1
-          grab
+          next_char
         when close
           count -= 1
-          grab
+          next_char
         else
-          codes.push grab
+          chars.push next_char
         end
       end # === while
 
       if count > 0
-        raise Exception.new("Missing closing chars: '#{close.chr}'")
+        raise Error.new("Missing closing chars: '#{close}'")
       end
       if count < 0
-        raise Exception.new("Missing open chars: '#{open.chr}'")
+        raise Error.new("Missing open chars: '#{open}'")
       end
 
-      return codes
+      return chars
     end # === def grab_between
 
     def save_cache
       return false if @cache.empty?
-      raise Exception.new("CHAR cache is empty. Can't save.") if @cache.empty?
-      c = grab_cache
-      @caches.push c
-      c
+      raise Error.new("CHAR cache is empty. Can't save.") if @cache.empty?
+      cache = grab_cache
+      @caches.push cache
+      cache
     end # === def save_cache
 
     def grab_cache
-      raise Exception.new("CHAR cache is empty. Can't grab.") if @cache.empty?
-      c = @cache.freeze!
-      @cache = Codepoints.new
-      c
+      raise Error.new("CHAR cache is empty. Can't grab.") if @cache.empty?
+      cache = @cache.freeze!
+      @cache = Chars.new
+      cache
     end # === def grab_cache
 
     def grab_caches
-      raise Exception.new("No saved cache. Can't grab caches.") if @caches.empty?
+      raise Error.new("No saved cache. Can't grab caches.") if @caches.empty?
       arr = @caches
-      @caches = Codepoints::Array.new
+      @caches = Chars::Array.new
       return arr
     end # === def grab_unknowns
 
     def parse_caches
       grab_caches.each { |c|
-        doc.push Node.from_codepoints(c.freeze!)
+        doc.push Node.from_chars(c.freeze!)
       }
     end # === def parse_caches
 

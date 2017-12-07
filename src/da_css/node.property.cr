@@ -6,20 +6,32 @@ module DA_CSS
 
     struct Property
 
+      class Invalid_Name < Error
+        def message
+          "Invalid property name: #{@message}"
+        end # === def message
+      end # === class Invalid_Name < Error
+
+      class Invalid_Value < Error
+        def message
+          "Invalid property value: #{@message}"
+        end # === def message
+      end # === class Invalid_Name < Error
+
       include Node
 
       getter key    : Key
       getter value  : Doc
       getter parent : Parser
 
-      def initialize(raw_key : Codepoints, parent : Parser)
-        raise Invalid_Property_Name.new("Property being defined with a key") if raw_key.empty?
+      def initialize(raw_key : Chars, parent : Parser)
+        raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
         @parent = parent
         @key    = Key.new(raw_key)
         @value  = doc = Doc.new
-        Parser.new(parent, self, doc, ';'.hash).parse
+        Parser.new(parent, self, doc, ';').parse
         if doc.empty?
-          raise Invalid_Property_Value.new("Empty value for property: #{@key.to_s.inspect}")
+          raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")
         end
       end # === def initialize
 
@@ -36,17 +48,17 @@ module DA_CSS
 
         @name : String
 
-        def initialize(codepoints : Codepoints)
-          @name = codepoints.to_s
+        def initialize(chars : Chars)
+          @name = chars.to_s
           self.class.valid!(@name)
         end # === def initialize
 
-        def self.valid_char!(i : Int32)
-          case i
-          when ('a'.hash)..('z'.hash), '-'.hash
+        def self.valid_char!(c : Char)
+          case c
+          when 'a'..'z', '-'
             true
           else
-            raise Invalid_Char.new(i, "Invalid char for property name: ")
+            raise Invalid_Char.new(c, "Invalid char for property name: ")
           end
         end # === def self.valid_char?
 
@@ -56,7 +68,7 @@ module DA_CSS
           when {{ system("cat \"#{__DIR__}/propertys.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
             true
           else
-            raise Invalid_Property_Name.new(raw)
+            raise Invalid_Name.new(raw)
           end
           {% end %}
         end # === def self.valid!
@@ -79,20 +91,20 @@ module DA_CSS
       struct Value
 
         alias Types = Number_Unit | Number | Percentage | Keyword | Slash | Unknown | Color | Function_Call
-        @raw : Array(Types)
+        @raw : Deque(Types)
         include Enumerable(Types)
 
         def initialize(key, doc : Doc)
-          @raw = [] of Value::Types
+          @raw = Deque(Value::Types).new
           if doc.empty?
-            raise Invalid_Property_Value.new("Missing value: #{key.to_s}")
+            raise Invalid_Value.new("Missing value: #{key.to_s}")
           end
           doc.each { |x|
             case x
             when Types
               @raw.push x
             else
-              raise Invalid_Property_Value.new(x.to_s.inspect)
+              raise Invalid_Value.new(x.to_s.inspect)
             end
           }
         end # === def initialize
@@ -119,7 +131,7 @@ module DA_CSS
             when klass
               true
             else
-              raise Invalid_Property_Value.new(x.to_s)
+              raise Invalid_Value.new(x.to_s)
             end
           }
         end # === def all!

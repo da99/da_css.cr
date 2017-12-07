@@ -9,7 +9,7 @@ module DA_CSS
       getter body        : Doc
       getter parent      : Parser
 
-      def initialize(arr : Codepoints::Array, parent : Parser)
+      def initialize(arr : Chars::Array, parent : Parser)
         @head   = Node::Selector.new(arr)
         doc     = @body = Doc.new
         @parent = parent
@@ -38,3 +38,4 @@ module DA_CSS
   end # === module Node
 
 end # === module DA_CSS
+

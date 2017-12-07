@@ -1,6 +1,5 @@
 
 module DA_CSS
-
   module Node
 
     class Invalid_Statement < Exception
@@ -12,8 +11,8 @@ module DA_CSS
     end # === class Invalid_Statement
 
     struct Statement
+      getter raw : Chars::Array
 
-      getter raw : Codepoints::Array
       def initialize(@raw)
       end # === def initialize
 
@@ -22,16 +21,16 @@ module DA_CSS
       end # === def to_s
 
       def each
-        @raw.each { |codepoints|
-          yield codepoints
+        @raw.each { |chars|
+          yield chars
         }
       end # === def each
 
       def to_s(io_css : IO_CSS)
-        @raw.each_with_index { |codepoints, i|
+        @raw.each_with_index { |chars, i|
           io_css.raw! ' ' if i != 0
-          codepoints.each { |x|
-            io_css.raw! x.chr
+          chars.each { |x|
+            io_css.raw! x
           }
         }
         self
@@ -40,5 +39,4 @@ module DA_CSS
     end # === struct Statement
 
   end # === module Node
-
 end # === module DA_CSS
