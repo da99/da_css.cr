@@ -124,12 +124,10 @@ module DA_CSS
       getter value  : Parser
       getter parent : Parser
 
-      def initialize(raw_key : Chars, parent : Parser)
+      def initialize(raw_key : Chars, @parent : Parser)
         raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
-        @parent = parent
         @key    = Key.new(raw_key)
         @value  = doc = Parser.new
-        doc.reader = parent
         doc.parent = self
         doc.parse
         if !doc.nodes?

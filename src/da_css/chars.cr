@@ -9,6 +9,9 @@ module DA_CSS
     NEW_LINE = '\n'
 
     @raw : Deque(Char)
+    getter pos = 0
+    getter pos_line = 1
+
 
     def initialize
       @raw = Deque(Char).new
@@ -17,6 +20,13 @@ module DA_CSS
 
     def initialize(@raw)
       @frozen = true
+    end # === def initialize
+
+    def initialize(parser : Parser)
+      @raw      = Deque(Char).new
+      @frozen   = false
+      @pos = parser.pos
+      @pos_line = parser.pos_line
     end # === def initialize
 
     def initialize(raw : String)
@@ -117,6 +127,10 @@ module DA_CSS
       @frozen = true
       return self
     end
+
+    def pos_summary_in_english
+      "Line: #{@pos_line + 1} Column: #{@pos + 1}"
+    end # === def pos_summary_in_english
 
     def print(printer : Printer)
       each { |c| printer.raw! c }

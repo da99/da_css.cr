@@ -18,7 +18,7 @@ end # === module DA_CSS
 
 require "./da_css/exception"
 require "./da_css/chars"
-require "./da_css/chars.multi"
+require "./da_css/chars.group"
 require "./da_css/node"
 require "./da_css/node.unknown"
 require "./da_css/node.empty_array"

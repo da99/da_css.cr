@@ -4,9 +4,11 @@ module DA_CSS
 
   class Parser
 
-    alias PARENT_TYPES =
-      Nil | Parser | Node::Selector_With_Body | Node::Property |
+    alias NODE_TYPES_AS_PARENTS =
+      Node::Selector_With_Body | Node::Property |
       Node::Assignment | Node::Function_Call
+    alias PARENT_TYPES =
+      Nil | Parser | NODE_TYPES_AS_PARENTS
 
     alias NODE_TYPES =
       Node::Text | Node::Assignment |
@@ -19,17 +21,25 @@ module DA_CSS
 
     getter nodes = Deque(NODE_TYPES).new
 
-    setter reader : Parser | Char::Reader = Char::Reader.new("")
+    @reader : Parser | Char::Reader = Char::Reader.new("")
 
     @is_done = false
     @caches  = Chars::Group.new
     @cache   = Chars.new
+    getter pos_line = 0
 
     def initialize
     end # === def initialize
 
     def initialize(raw : String)
       @reader = Char::Reader.new(raw)
+    end # === def initialize
+
+    def parent=(parent : NODE_TYPES_AS_PARENTS)
+      @parent   = parent
+      @reader   = parent.parent
+      @pos_line = parent.parent.pos_line
+      @parent
     end # === def initialize
 
     def parse
@@ -56,17 +66,16 @@ module DA_CSS
       case
 
       when c.whitespace?
-        grab_cache_to_group unless @cache.empty?
+        if c == '\n'
+          @pos_line += 1
+        end
+        grab_non_empty_cache_to_group
 
       # PARSE: comment
       when c == '/' && current_char == '*'
-        if !@cache.empty?
-          raise Error.new("You can't put a comment while defining something else.")
-        end
-
         next_char # == skip asterisk
         was_closed = false
-        comment = Chars.new
+        comment = Chars.new(self)
         loop do
           grab_chars(comment, '/')
           break if !current_char?
@@ -79,9 +88,7 @@ module DA_CSS
         end # loop
 
         if was_closed
-          @nodes.push(Node::Comment.new(comment))
-        else
-          raise Error.new("Comment was not closed.")
+          raise Error.new("Comment was not closed: #{comment.pos_summary_in_english}")
         end
 
       # PARSE: string '
@@ -93,36 +100,36 @@ module DA_CSS
         @nodes.push Node::Text.new(grab_chars(Chars.new, c))
 
       when c == '{'
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         @nodes.push Node::Selector_With_Body.new(grab_caches, self)
 
       when c == '}'
         done!
 
       when c == ':'
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         @nodes.push Node::Property.new(grab_caches.join, self)
 
       when c == ';'
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         caches_to_nodes
         done!
 
       when c == '='
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         @nodes.push Node::Assignment.new(grab_caches.join, self)
 
       when c == '('
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         @nodes.push Node::Function_Call.new(grab_caches.join, self)
 
       when c == ')'
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
         caches_to_nodes
         done!
 
       when c.whitespace?
-        grab_cache_to_group
+        grab_non_empty_cache_to_group
 
       else
         @cache.push c
@@ -147,7 +154,7 @@ module DA_CSS
       self
     end
 
-    {% for x in %w(current_char next_char has_next? peek_next_char) %}
+    {% for x in %w(pos current_char next_char has_next? peek_next_char) %}
       def {{x.id}}(*args)
         @reader.{{x.id}}(*args)
       end
@@ -234,11 +241,12 @@ module DA_CSS
       return chars
     end # === def grab_between
 
-    def grab_cache_to_group
+    def grab_non_empty_cache_to_group
+      return false if @cache.empty?
       cache = grab_cache
       @caches.push cache
       cache
-    end # === def grab_cache_to_group
+    end # === def grab_non_empty_cache_to_group
 
     def grab_cache
       cache = @cache.freeze!

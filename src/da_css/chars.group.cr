@@ -1,11 +1,9 @@
 
 module DA_CSS
   struct Chars
-
     struct Group
 
       include Enumerable(Chars)
-
       getter raw = Deque(Chars).new
 
       def initialize
@@ -16,16 +14,15 @@ module DA_CSS
 
       def join(delim = SPACE)
         @raw.reduce(Chars.new) { |acc, x|
-          acc.push delim unless acc.empty?
-          x.each { |i|
-            acc.push i
-          }
+          acc.push(delim) unless acc.empty?
+          x.each { |i| acc.push(i) }
           acc
         }
       end
 
       def push(x : Chars)
-        @raw.push x
+        @raw.push(x) unless x.empty?
+        self
       end # === def push
 
       def empty?
@@ -40,7 +37,6 @@ module DA_CSS
         @raw.each { |c| yield c }
       end
 
-    end # === class Array
-
-  end # === class Chars
+    end # === struct Group
+  end # === struct Chars
 end # === module DA_CSS

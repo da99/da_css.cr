@@ -6,14 +6,12 @@ module DA_CSS
     struct Selector_With_Body
 
       getter head        : Node::Selector
-      getter body        : Parser
+      getter body        : Parser = Parser.new
       getter parent      : Parser
 
-      def initialize(arr : Chars::Group, parent : Parser)
-        @head   = Node::Selector.new(arr)
-        @body   = body = Parser.new
-        @parent = parent
-        body.reader = parent
+      def initialize(arr : Chars::Group, @parent : Parser)
+        @head = Node::Selector.new(arr)
+        @body = body = Parser.new
         body.parent = self
         body.parse
       end # === def initialize

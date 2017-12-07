@@ -15,11 +15,11 @@ module DA_CSS
 
       @name : String
       @args : Parser
+      getter parent : Parser
 
-      def initialize(raw_name : Chars, parent : Parser)
+      def initialize(raw_name : Chars, @parent : Parser)
         @name = raw_name.to_s
         @args = doc = Parser.new
-        doc.reader = parent
         doc.parent = self
         doc.parse
       end # === def initialize

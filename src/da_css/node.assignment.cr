@@ -7,11 +7,11 @@ module DA_CSS
 
       getter name  : Chars
       getter value : Parser
+      getter parent : Parser
 
-      def initialize(@name, parent : Parser)
+      def initialize(@name, @parent : Parser)
         raise Exception.new("Assignment has missing var name.") if @name.empty?
         @value = body = Parser.new
-        body.reader = parent
         body.parent = self
         body.parse
         if !body.nodes?
