@@ -15,43 +15,22 @@ module DA_CSS
       Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
       Node::Percentage | Node::Slash | Node::Unknown
 
-    protected getter origin : Parser | Nil = nil
+    property parent       : PARENT_TYPES = nil
+    property reader       : Char::Reader = Char::Reader.new("")
+    property stop_on_char : Char | Nil   = nil
 
-    getter reader : Char::Reader
-    getter parent : PARENT_TYPES = nil
-    getter index = 0
     getter nodes = Deque(NODE_TYPES).new
 
-    @stop_on_char : Char | Nil = nil
-    @is_done = false
-    @caches  = Chars::Group.new
-    @cache   = Chars.new
+    @is_done     = false
+    @caches      = Chars::Group.new
+    @cache       = Chars.new
 
-    def initialize(@parent, @stop_on_char)
-      @reader       = parent.reader
-      @origin       = parent.origin || parent
-    end # === def initialize
-
-    def initialize(@reader, @stop_on_char)
-    end # === def initialize
-
-    def initialize(@parent)
-      @reader       = parent.reader
-      @origin       = parent.origin || parent
-    end # === def initialize
-
-    def initialize(@reader : Char::Reader)
+    def initialize
     end # === def initialize
 
     def initialize(raw : String)
       @reader = Char::Reader.new(raw)
     end # === def initialize
-
-
-    def parent(x : PARENT_TYPES)
-      @parent = x
-      self
-    end # === def parent
 
     def parse
       raise Error.new("Already parsed.") if done?
@@ -154,17 +133,8 @@ module DA_CSS
       end # === while
     end # === def parse
 
-
-    def origin?
-      @origin.is_a?(Parser)
-    end
-
     def parent?
       @parent.is_a?(Parser)
-    end
-
-    def origin
-      @origin
     end
 
     def done?

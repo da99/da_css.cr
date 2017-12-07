@@ -11,9 +11,10 @@ module DA_CSS
 
       def initialize(arr : Chars::Group, parent : Parser)
         @head   = Node::Selector.new(arr)
-        @body   = body = Parser.new(parent.reader)
+        @body   = body = Parser.new
         @parent = parent
-        body.parent(self)
+        body.reader = parent.reader
+        body.parent = self
         body.parse
       end # === def initialize
 

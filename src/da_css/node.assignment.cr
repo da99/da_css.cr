@@ -10,8 +10,9 @@ module DA_CSS
 
       def initialize(@name, parent : Parser)
         raise Exception.new("Assignment has missing var name.") if @name.empty?
-        @value = body = Parser.new(parent.reader)
-        body.parent(self)
+        @value = body = Parser.new
+        body.reader = parent.reader
+        body.parent = self
         body.parse
         if !body.nodes?
           raise Exception.new("No value specified for var: #{@name.to_s.inspect}")

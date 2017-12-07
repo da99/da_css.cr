@@ -18,8 +18,10 @@ module DA_CSS
 
       def initialize(raw_name : Chars, parent : Parser)
         @name = raw_name.to_s
-        @args = doc = Parser.new(parent.reader, ')')
-        doc.parent(self)
+        @args = doc = Parser.new
+        doc.reader = parent.reader
+        doc.stop_on_char = ')'
+        doc.parent = self
         doc.parse
       end # === def initialize
 

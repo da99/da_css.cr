@@ -128,8 +128,10 @@ module DA_CSS
         raise Invalid_Name.new("Property being defined with a key") if raw_key.empty?
         @parent = parent
         @key    = Key.new(raw_key)
-        @value  = doc = Parser.new(parent.reader, ';')
-        doc.parent(self)
+        @value  = doc = Parser.new
+        doc.reader       = parent.reader
+        doc.stop_on_char = ';'
+        doc.parent       = self
         doc.parse
         if !doc.nodes?
           raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")
