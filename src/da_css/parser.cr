@@ -16,14 +16,14 @@ module DA_CSS
       Node::Percentage | Node::Slash | Node::Unknown
 
     property parent       : PARENT_TYPES = nil
-    property reader       : Char::Reader = Char::Reader.new("")
-    property stop_on_char : Char | Nil   = nil
 
     getter nodes = Deque(NODE_TYPES).new
 
-    @is_done     = false
-    @caches      = Chars::Group.new
-    @cache       = Chars.new
+    setter reader : Parser | Char::Reader = Char::Reader.new("")
+
+    @is_done = false
+    @caches  = Chars::Group.new
+    @cache   = Chars.new
 
     def initialize
     end # === def initialize
@@ -35,16 +35,10 @@ module DA_CSS
     def parse
       raise Error.new("Already parsed.") if done?
 
-      stop_on_char = @stop_on_char
-      stop_on_char_found = false
-      while current? && !done?
-        stop_on_char_found = true if stop_on_char && stop_on_char == current
-        parse(next_char)
-        break if stop_on_char_found
-      end
-
-      if stop_on_char && !stop_on_char_found
-        raise Error.new("Missing char: #{stop_on_char.inspect}")
+      while current_char? && !done?
+        c = current_char
+        next_char unless done?
+        parse(c)
       end
 
       if !@cache.empty?
@@ -62,20 +56,20 @@ module DA_CSS
       case
 
       when c.whitespace?
-        add_cache_to_group
+        grab_cache_to_group unless @cache.empty?
 
       # PARSE: comment
-      when c == '/' && current == '*'
+      when c == '/' && current_char == '*'
         if !@cache.empty?
           raise Error.new("You can't put a comment while defining something else.")
         end
 
-        next_char # asterisk
-        comment = Chars.new
+        next_char # == skip asterisk
         was_closed = false
+        comment = Chars.new
         loop do
           grab_chars(comment, '/')
-          break if !current?
+          break if !current_char?
 
           if @cache.prev(2) == '*'
             comment.pop
@@ -99,33 +93,36 @@ module DA_CSS
         @nodes.push Node::Text.new(grab_chars(Chars.new, c))
 
       when c == '{'
-        add_cache_to_group
+        grab_cache_to_group
         @nodes.push Node::Selector_With_Body.new(grab_caches, self)
 
       when c == '}'
         done!
 
       when c == ':'
-        add_cache_to_group
+        grab_cache_to_group
         @nodes.push Node::Property.new(grab_caches.join, self)
 
       when c == ';'
-        add_cache_to_group
-        parse_caches
+        grab_cache_to_group
+        caches_to_nodes
+        done!
 
       when c == '='
-        add_cache_to_group
+        grab_cache_to_group
         @nodes.push Node::Assignment.new(grab_caches.join, self)
 
       when c == '('
-        add_cache_to_group
+        grab_cache_to_group
         @nodes.push Node::Function_Call.new(grab_caches.join, self)
 
       when c == ')'
+        grab_cache_to_group
+        caches_to_nodes
         done!
 
       when c.whitespace?
-        add_cache_to_group
+        grab_cache_to_group
 
       else
         @cache.push c
@@ -138,7 +135,7 @@ module DA_CSS
     end
 
     def done?
-      return true if @is_done || !next?
+      return true if @is_done || !has_next?
 
       p = @parent
       return true if p.is_a?(Parser) && p.done?
@@ -150,46 +147,35 @@ module DA_CSS
       self
     end
 
-    def current?
-      (@reader.current_char) ? true : false
+    {% for x in %w(current_char next_char has_next? peek_next_char) %}
+      def {{x.id}}(*args)
+        @reader.{{x.id}}(*args)
+      end
+    {% end %}
+
+    def current_char?
+      (current_char) ? true : false
     end
 
-    def current?(c : Char)
-      current? && current == c
-    end # === def current?
-
-    def current
-      @reader.current_char
-    end
-
-    def next?
-      @reader.has_next?
-    end
-
-    def peek
-      return nil unless @reader.has_next?
-      @reader.peek_next_char
-    end
+    def current_char?(c : Char)
+      current_char == c
+    end # === def current_char?
 
     def skip_to(c : Char)
-      if current? && !current.whitespace?
+      if current_char? && !current_char.whitespace?
         next_char = next? && peek
         if next_char && next_char.whitespace?
           next_char
         end
       end
 
-      while (curr = current) && curr && curr.whitespace?
+      while (curr = current_char) && curr && curr.whitespace?
         next_char
       end
 
-      return self if current == c
+      return self if current_char == c
       raise Error.new("Not found: #{c.inspect}")
     end # === def skip_to
-
-    def next_char
-      @reader.next_char
-    end
 
     def grab_chars(c : Char)
       grab_chars(Chars.new, c)
@@ -206,8 +192,8 @@ module DA_CSS
     # Note: ';' here will be grabbed, but not yield-ed
     #   to the block.
     def grab_chars(c : Char)
-      while current?
-        case current
+      while current_char?
+        case current_char
         when c
           next_char
           return self
@@ -218,15 +204,15 @@ module DA_CSS
     end # === def grab_chars
 
     def grab_between(open : Char, close : Char)
-      if current != open
+      if current_char != open
         raise Error.new(":grab_between: Not on a #{open.inspect} char.")
       end
 
       next_char
       count = 1
       chars = Chars.new
-      while current? && count > 0
-        case current
+      while current_char? && count > 0
+        case current_char
         when open
           count += 1
           next_char
@@ -248,12 +234,11 @@ module DA_CSS
       return chars
     end # === def grab_between
 
-    def add_cache_to_group
-      return if @cache.empty?
+    def grab_cache_to_group
       cache = grab_cache
       @caches.push cache
       cache
-    end # === def add_cache_to_group
+    end # === def grab_cache_to_group
 
     def grab_cache
       cache = @cache.freeze!
@@ -267,20 +252,20 @@ module DA_CSS
       return arr
     end # === def grab_unknowns
 
-    def parse_caches
+    def caches_to_nodes
       grab_caches.each { |c|
         next if c.empty?
         @nodes.push Node.from_chars(c.freeze!)
       }
-    end # === def parse_caches
+    end # === def caches_to_nodes
 
     def inspect(io)
       io << "Parser["
       @nodes.each_with_index { |x, i|
         io << ", " unless i == 0
-        x.inspect(io)
+        io << x.class.to_s << "(instance)"
       }
-      "]"
+      io << "]"
     end # === def inspect
 
     def print(printer : Printer)

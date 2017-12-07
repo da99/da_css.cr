@@ -129,9 +129,8 @@ module DA_CSS
         @parent = parent
         @key    = Key.new(raw_key)
         @value  = doc = Parser.new
-        doc.reader       = parent.reader
-        doc.stop_on_char = ';'
-        doc.parent       = self
+        doc.reader = parent
+        doc.parent = self
         doc.parse
         if !doc.nodes?
           raise Invalid_Value.new("Empty value for property: #{@key.to_s.inspect}")

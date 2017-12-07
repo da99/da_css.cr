@@ -13,7 +13,7 @@ module DA_CSS
         @head   = Node::Selector.new(arr)
         @body   = body = Parser.new
         @parent = parent
-        body.reader = parent.reader
+        body.reader = parent
         body.parent = self
         body.parse
       end # === def initialize

@@ -41,7 +41,7 @@ background-color: unset;
 /* background-image */
 /* Single value */
 background-image: url('/example.com/bck.png');
-/* Group values */
+/* Multiple values */
 background-image: url('/example.com/top.png'), url('/example.com/bottom.png');
 /* Keyword value */
 background-image: none;
