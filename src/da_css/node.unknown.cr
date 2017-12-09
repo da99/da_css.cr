@@ -5,16 +5,16 @@ module DA_CSS
 
     struct Unknown
 
-      @raw : String
+      @raw : Char_Deque
       def initialize(@raw)
       end # === def initialize
 
       def to_s
-        @raw
+        @raw.to_s
       end # === def to_s
 
       def print(printer : Printer)
-        printer.raw! @raw
+        printer.raw! to_s
         self
       end # === def print
 

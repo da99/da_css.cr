@@ -9,7 +9,7 @@ module DA_CSS
       getter body        : Parser = Parser.new
       getter parent      : Parser
 
-      def initialize(arr : Chars::Group, @parent : Parser)
+      def initialize(arr : Char_Deque_Deque, @parent : Parser)
         @head = Node::Selector.new(arr)
         @body = body = Parser.new
         body.parent = self

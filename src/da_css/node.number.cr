@@ -11,7 +11,7 @@ module DA_CSS
           @message = "Invalid Number: #{str.inspect}"
         end # === def initialize
 
-        def initialize(cp : Chars)
+        def initialize(cp : Char_Deque)
           @message = "Invalid Number: #{cp.to_s.inspect}"
         end # === def initialize
 
@@ -19,7 +19,7 @@ module DA_CSS
 
 
       RANGE = '0'..'9'
-      @raw : Chars
+      @raw : Char_Deque
 
       def initialize(@raw)
         if @raw.size > 8
@@ -35,7 +35,7 @@ module DA_CSS
         @raw.print printer
       end # === def print
 
-      def self.looks_like?(chars : Chars)
+      def self.looks_like?(chars : Char_Deque)
         first = chars.first
         last  = chars.last
 

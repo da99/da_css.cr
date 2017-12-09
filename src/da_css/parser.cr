@@ -7,6 +7,7 @@ module DA_CSS
     alias NODE_TYPES_AS_PARENTS =
       Node::Selector_With_Body | Node::Property |
       Node::Assignment | Node::Function_Call
+
     alias PARENT_TYPES =
       Nil | Parser | NODE_TYPES_AS_PARENTS
 
@@ -15,13 +16,13 @@ module DA_CSS
       Node::Selector_With_Body | Node::Comment |
       Node::Property | Node::Function_Call | Node::Color |
       Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
-      Node::Percentage | Node::Slash | Node::Unknown
+      Node::Percentage | Node::Slash | Node::Unknown | Node::Var_Call
 
     property parent : PARENT_TYPES = nil
 
     getter nodes = Deque(NODE_TYPES).new
 
-    @reader : Parser | Char::Reader = Char::Reader.new("")
+    protected getter reader : Parser | Char::Reader = Char::Reader.new("")
 
     @is_done = false
 
@@ -42,13 +43,40 @@ module DA_CSS
     end # === def initialize
 
     private def cache
-      @cache ||= Chars.new(self)
+      @cache ||= Char_Deque.new(self)
       @cache.not_nil!
     end
 
     private def caches
-      @caches ||= Chars::Group.new(self)
+      @caches ||= Char_Deque_Deque.new(self)
       @caches.not_nil!
+    end
+
+    def origin : Parser
+      curr = self
+      loop do
+        next_parent = curr.parent
+        break if !next_parent
+        curr = next_parent
+      end
+
+      case curr
+      when Parser
+        curr
+      else
+        raise Exception.new("origin of parser not found.")
+      end
+    end # === def origin
+
+    def origin_string
+      o = origin
+      r = o.reader
+      case r
+      when Char::Reader
+        r.string
+      else
+        raise Exception.new("origin string not found.")
+      end
     end
 
     def parse
@@ -56,16 +84,16 @@ module DA_CSS
 
       while current_char? && !done?
         c = current_char
-        next_char unless done?
+        next_char
         parse(c)
       end
 
       if !cache.empty?
-        raise Error.new("Invalid chars: #{cache.to_s.inspect}", cache)
+        raise Error.new("Unknown value: ", cache.pos_summary(cache.to_s))
       end
 
       if !caches.empty?
-        raise Error.new("Invalid chars: #{caches.join.to_s.inspect}", caches.first)
+        raise Error.new("Unknown values: ", caches.first.pos_summary(caches.join.to_s))
       end
 
       self
@@ -73,6 +101,9 @@ module DA_CSS
 
     def parse(c : Char)
       case
+
+      when c == ','
+        grab_non_empty_cache_to_group
 
       when c.whitespace?
         if c == '\n'
@@ -84,20 +115,20 @@ module DA_CSS
       when c == '/' && current_char == '*'
         next_char # == skip asterisk
         was_closed = false
-        comment = Chars.new(self)
+        comment = Char_Deque.new(self)
         loop do
           grab_chars(comment, '/')
           break if !current_char?
 
-          if cache.prev(2) == '*'
-            comment.pop
+          if comment.prev(2) == '*'
+            comment.pop(2)
             was_closed = true
             break
           end
         end # loop
 
-        if was_closed
-          raise Error.new("Comment was not closed: #{comment.pos_summary_in_english}")
+        if !was_closed
+          raise Error.new("Comment was not closed: #{comment.pos_summary}")
         end
 
       # PARSE: string '
@@ -106,7 +137,17 @@ module DA_CSS
         if !cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
-        @nodes.push Node::Text.new(grab_chars(Chars.new(self), c))
+        @nodes.push Node::Text.new(grab_chars(Char_Deque.new(self), c))
+
+      when c == '{' && current_char == '{'
+        next_char
+        while current_char? && current_char != '}'
+          cache.push current_char
+          next_char
+        end
+        next_char if current_char == '}'
+        next_char if current_char == '}'
+        @nodes.push Node::Var_Call.new(grab_cache, self)
 
       when c == '{'
         grab_non_empty_cache_to_group
@@ -119,14 +160,14 @@ module DA_CSS
         grab_non_empty_cache_to_group
         @nodes.push Node::Property.new(grab_caches.join, self)
 
+      when c == '='
+        grab_non_empty_cache_to_group
+        @nodes.push Node::Assignment.new(grab_caches.join, self)
+
       when c == ';'
         grab_non_empty_cache_to_group
         caches_to_nodes
         done!
-
-      when c == '='
-        grab_non_empty_cache_to_group
-        @nodes.push Node::Assignment.new(grab_caches.join, self)
 
       when c == '('
         grab_non_empty_cache_to_group
@@ -194,10 +235,10 @@ module DA_CSS
     end # === def skip_to
 
     def grab_chars(c : Char)
-      grab_chars(Chars.new(self), c)
+      grab_chars(Char_Deque.new(self), c)
     end # === def grab_chars
 
-    def grab_chars(dest : Chars, c : Char)
+    def grab_chars(dest : Char_Deque, c : Char)
       grab_chars(c) { |x|
         dest.push x
       }
@@ -209,8 +250,7 @@ module DA_CSS
     #   to the block.
     def grab_chars(c : Char)
       while current_char?
-        case current_char
-        when c
+        if current_char == c
           next_char
           return self
         else
@@ -226,7 +266,7 @@ module DA_CSS
 
       next_char
       count = 1
-      chars = Chars.new(self)
+      chars = Char_Deque.new(self)
       while current_char? && count > 0
         case current_char
         when open
@@ -259,19 +299,18 @@ module DA_CSS
 
     def grab_cache
       c = cache.freeze!
-      @cache = Chars.new(self)
+      @cache = Char_Deque.new(self)
       c
     end # === def grab_cache
 
     def grab_caches
-      arr = caches
-      @caches = Chars::Group.new(self)
-      return arr
+      group = caches
+      @caches = Char_Deque_Deque.new(self)
+      return group
     end # === def grab_unknowns
 
     def caches_to_nodes
       grab_caches.each { |c|
-        next if c.empty?
         @nodes.push Node.from_chars(c.freeze!)
       }
     end # === def caches_to_nodes

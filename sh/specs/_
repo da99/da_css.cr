@@ -36,7 +36,16 @@ case "$ACTION" in
 
     reset
     sh_color ORANGE "=== {{Running}}..."
-    tmp/out/specs $(cat tmp/in/args tmp/in/arg 2>/dev/null || :) $@
+    tmp/out/specs $(cat tmp/in/args tmp/in/arg 2>/dev/null || :) $@ &>tmp/out/errors || {
+      stat=$?
+      if [[ "$(wc -l tmp/out/errors | cut -d' ' -f1)" -gt 100 ]]; then
+        cat tmp/out/errors | head -n 15 >&2
+      else
+        cat tmp/out/errors | head -n 100 >&2
+      fi
+      exit $stat
+    }
+    cat tmp/out/errors >&2
     sh_color GREEN "=== {{DONE}} ==="
     ;;
 

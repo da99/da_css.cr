@@ -1,25 +1,30 @@
 
 module DA_CSS
 
-  struct Chars
+  struct Char_Deque
 
     include Enumerable(Char)
 
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw    : Deque(Char)
+    @raw : Deque(Char)
     getter parent : Parser
-    getter pos = 0
-    getter pos_line = 1
+    getter pos_line = 0
 
     def initialize(parent : Parser)
       @parent   = parent
       @raw      = Deque(Char).new
       @frozen   = false
-      @pos      = parent.pos
       @pos_line = parent.pos_line
     end # === def initialize
+
+    def line
+      @parent.origin_string.lines.each_with_index { |l, i|
+        return l if i == @pos_line
+      }
+      ""
+    end # === def line
 
     def join(*args)
       @raw.join(*args)
@@ -44,7 +49,7 @@ module DA_CSS
     end # === def to_s
 
     def inspect(io)
-      io << "Chars["
+      io << "Char_Deque["
       @raw.each_with_index { |c, index|
         io << ", " unless index == 0
         io << c.inspect
@@ -53,7 +58,7 @@ module DA_CSS
     end # === def inspect
 
     def raise_if_frozen!
-      raise Exception.new("Chars (#{to_s.inspect}) is frozen.") if @frozen
+      raise Exception.new("Char_Deque (#{to_s.inspect}) is frozen.") if @frozen
       false
     end
 
@@ -83,7 +88,7 @@ module DA_CSS
     end # === def empty?
 
     def prev(i : Int32 = 1)
-      @raw[@raw.size - 1 - i]
+      @raw[@raw.size - i]
     end # === def prev(i : Int32 = 1)
 
     def [](i : Int32)
@@ -93,18 +98,18 @@ module DA_CSS
     def valid!(c : Char)
       case c
       when 'A'..'Z', 'a'..'z', '0'..'9',
-        ' ', '\n',
+        ' ', '\n', '_',
         '(', ')', '{', '}', '\'', '"',
         '=', ';', '/', '*', '?', '#', '.', ':', '-'
         c
       else
-        raise Error.new("Invalid character: #{c.inspect} (in #{self.join.inspect})", self)
+        raise Error.new("Invalid character: #{c.inspect}", self)
       end
     end # === def valid_codepoint?
 
-    def pop
+    def pop(i : Int32 = 1)
       raise_if_frozen!
-      @raw.pop
+      i.times { |x| @raw.pop }
     end # === def pop
 
     def all?(r : Range)
@@ -119,9 +124,18 @@ module DA_CSS
       return self
     end
 
-    def pos_summary_in_english
-      "Line: #{@pos_line + 1} Column: #{@pos + 1}"
-    end # === def pos_summary_in_english
+    def pos_summary(str : String)
+      l = line
+      if l.strip == str.strip
+        "#{str.inspect} (Line: #{@pos_line + 1})"
+      else
+        "#{str.inspect} (Line: #{@pos_line + 1} #{line.inspect})"
+      end
+    end # === def pos_summary
+
+    def pos_summary
+      "Line: #{@pos_line + 1} (#{line.inspect})"
+    end # === def pos_summary
 
     def print(printer : Printer)
       each { |c| printer.raw! c }
@@ -142,7 +156,7 @@ module DA_CSS
     extend Common
     include Common
 
-  end # === class Chars
+  end # === class Char_Deque
 
 end # === module DA_CSS
 

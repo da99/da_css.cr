@@ -5,7 +5,7 @@ module DA_CSS
 
     class Invalid_Function_Call < Exception
 
-      def initialize(chars : Chars | String)
+      def initialize(chars : Char_Deque | String)
         @message = "Invalid function call: #{chars.to_s}"
       end # === def initialize
 
@@ -17,7 +17,7 @@ module DA_CSS
       @args : Parser
       getter parent : Parser
 
-      def initialize(raw_name : Chars, @parent : Parser)
+      def initialize(raw_name : Char_Deque, @parent : Parser)
         @name = raw_name.to_s
         @args = doc = Parser.new
         doc.parent = self

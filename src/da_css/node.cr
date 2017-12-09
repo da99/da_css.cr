@@ -18,9 +18,7 @@ module DA_CSS
       end
     end # === def parent_node
 
-    def self.from_chars(c : Chars)
-      first = c.first
-      last = c.last
+    def self.from_chars(c : Char_Deque)
       case
       when Color.looks_like?(c)
         Color.new(c)
@@ -39,9 +37,9 @@ module DA_CSS
         {% begin %}
           case word
           when {{ system("cat \"#{__DIR__}/keywords.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
-            Keyword.new(word)
+            Keyword.new(c)
           else
-            Unknown.new(word)
+            Unknown.new(c)
           end
         {% end %}
 

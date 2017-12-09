@@ -9,7 +9,7 @@ module DA_CSS
         @message = "Invalid string: #{str}"
       end # === def initialize
 
-      def initialize(chars : Chars)
+      def initialize(chars : Char_Deque)
         @message = "Invalid string: #{chars.to_s.inspect}"
       end # === def initialize
 
@@ -17,7 +17,7 @@ module DA_CSS
 
     struct Text
 
-      @raw : Chars
+      @raw : Char_Deque
       def initialize(@raw)
         @raw.each { |x| self.class.valid!(x) }
       end # === def initialize

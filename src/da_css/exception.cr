@@ -6,8 +6,18 @@ module DA_CSS
     def initialize(@message)
     end # === def message
 
-    def initialize(@message, reader)
-      @message = "#{@message}: #{reader.pos_summary_in_english}"
+    def initialize(@message, reader : Char_Deque)
+      @message = "#{@message}: #{reader.pos_summary}"
+    end # === def message
+
+    def initialize(*strs)
+      first = true
+      @message = strs.reduce(IO::Memory.new) { |io, x|
+        io << " " unless first
+        io << x.strip
+        first = false
+        io
+      }.to_s
     end # === def message
 
     def message
@@ -48,7 +58,7 @@ module DA_CSS
       @message = "Invalid Unit: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Chars)
+    def initialize(cp : Char_Deque)
       @message = "Invalid Unit: #{cp.to_s.inspect}"
     end # === def initialize
 
@@ -60,7 +70,7 @@ module DA_CSS
       @message = "Invalid Color: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Chars)
+    def initialize(cp : Char_Deque)
       @message = "Invalid Color: #{cp.to_s.inspect}"
     end # === def initialize
 

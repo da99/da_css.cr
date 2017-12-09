@@ -24,7 +24,7 @@ module DA_CSS
 
         @name : String
 
-        def initialize(chars : Chars)
+        def initialize(chars : Char_Deque)
           @name = chars.to_s
         end # === def initialize
 
@@ -124,7 +124,7 @@ module DA_CSS
       getter value  : Parser
       getter parent : Parser
 
-      def initialize(raw_key : Chars, @parent : Parser)
+      def initialize(raw_key : Char_Deque, @parent : Parser)
         @key   = Key.new(raw_key)
         @value = doc = Parser.new
         doc.parent = self

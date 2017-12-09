@@ -10,7 +10,8 @@ module DA_CSS
       LOWER   = 'a'..'z'
       NUMBERS = '0'..'9'
 
-      @raw : Chars
+      @raw : Char_Deque
+      delegate parent, to: @raw
 
       def initialize(@raw)
         @raw.each_with_index { |c, index|
@@ -35,7 +36,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(chars : Chars)
+      def self.looks_like?(chars : Char_Deque)
         chars.first == HASH
       end # === def self.looks_like?
     end # === struct Color
