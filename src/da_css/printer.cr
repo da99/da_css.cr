@@ -3,19 +3,20 @@ module DA_CSS
   class Printer
 
     getter parent    : Printer? = nil
-    getter doc       : Parser
+    getter parser    : Parser
     getter io_css    : IO_CSS = IO_CSS.new
     getter validator : DA_CSS::Validator
 
     getter data = {} of String => String
-    @is_done = false
+
+    @done = false
     @parent_count = 0
 
     def initialize(raw : String, @validator)
-      @doc = Parser.new(raw).parse
+      @parser = Origin.new(raw).parse
     end # === def initialize
 
-    def initialize(parent : Printer, @doc)
+    def initialize(parent : Printer, @parser)
       @parent_count += 1
       @parent    = parent
       @validator = parent.validator
@@ -40,7 +41,7 @@ module DA_CSS
     end # === def new_line
 
     def run
-      doc.nodes.each_with_index { |x, pos|
+      parser.nodes.each_with_index { |x, pos|
         status = validator.allow(x)
         case status
         when false
@@ -51,12 +52,12 @@ module DA_CSS
 
         x.print(self)
       }
-      @is_done = true
+      @done = true
       self
     end # === def run
 
     def to_css
-      run unless @is_done
+      run unless @done
       io_css.to_s
     end # === def to_css
 

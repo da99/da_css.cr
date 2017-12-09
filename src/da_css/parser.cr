@@ -9,7 +9,7 @@ module DA_CSS
       Node::Assignment | Node::Function_Call
 
     alias PARENT_TYPES =
-      Nil | Parser | NODE_TYPES_AS_PARENTS
+      Nil | Origin | Parser | NODE_TYPES_AS_PARENTS
 
     alias NODE_TYPES =
       Node::Text | Node::Assignment |
@@ -22,22 +22,18 @@ module DA_CSS
 
     getter nodes = Deque(NODE_TYPES).new
 
-    protected getter reader : Parser | Char::Reader = Char::Reader.new("")
-
-    @is_done = false
+    @done = false
 
     getter pos_line = 0
 
     def initialize
     end # === def initialize
 
-    def initialize(raw : String)
-      @reader = Char::Reader.new(raw)
+    def initialize(@parent : Origin | Parser)
     end # === def initialize
 
     def parent=(parent : NODE_TYPES_AS_PARENTS)
       @parent   = parent
-      @reader   = parent.parent
       @pos_line = parent.parent.pos_line
       @parent
     end # === def initialize
@@ -52,7 +48,7 @@ module DA_CSS
       @caches.not_nil!
     end
 
-    def origin : Parser
+    def origin : Origin
       curr = self
       loop do
         next_parent = curr.parent
@@ -61,23 +57,12 @@ module DA_CSS
       end
 
       case curr
-      when Parser
+      when Origin
         curr
       else
         raise Exception.new("origin of parser not found.")
       end
     end # === def origin
-
-    def origin_string
-      o = origin
-      r = o.reader
-      case r
-      when Char::Reader
-        r.string
-      else
-        raise Exception.new("origin string not found.")
-      end
-    end
 
     def parse
       raise Error.new("Already parsed.") if done?
@@ -192,47 +177,12 @@ module DA_CSS
     end
 
     def done?
-      return true if @is_done || !has_next?
+      return true if @done || !has_next?
 
       p = @parent
       return true if p.is_a?(Parser) && p.done?
       false
     end
-
-    def done!
-      @is_done = true
-      self
-    end
-
-    {% for x in %w(pos current_char next_char has_next? peek_next_char) %}
-      def {{x.id}}(*args)
-        @reader.{{x.id}}(*args)
-      end
-    {% end %}
-
-    def current_char?
-      (current_char) ? true : false
-    end
-
-    def current_char?(c : Char)
-      current_char == c
-    end # === def current_char?
-
-    def skip_to(c : Char)
-      if current_char? && !current_char.whitespace?
-        next_char = next? && peek
-        if next_char && next_char.whitespace?
-          next_char
-        end
-      end
-
-      while (curr = current_char) && curr && curr.whitespace?
-        next_char
-      end
-
-      return self if current_char == c
-      raise Error.new("Not found: #{c.inspect}")
-    end # === def skip_to
 
     def grab_chars(c : Char)
       grab_chars(Char_Deque.new(self), c)
@@ -314,6 +264,11 @@ module DA_CSS
         @nodes.push Node.from_chars(c.freeze!)
       }
     end # === def caches_to_nodes
+
+    def done!
+      @done = true
+      self
+    end
 
     def inspect(io)
       io << "Parser["
