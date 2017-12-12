@@ -2,25 +2,15 @@
 module DA_CSS
   class Printer
 
-    getter parent    : Printer? = nil
-    getter parser    : Parser
     getter io_css    : IO_CSS = IO_CSS.new
     getter validator : DA_CSS::Validator
 
-    getter data = {} of String => String
-
+    getter nodes = Deque(Node::Media_Query | Node::Selector_With_Body).new
     @done = false
-    @parent_count = 0
 
     def initialize(raw : String, @validator)
-      @parser = Origin.new(raw).parse
-    end # === def initialize
-
-    def initialize(parent : Printer, @parser)
-      @parent_count += 1
-      @parent    = parent
-      @validator = parent.validator
-      @io_css    = parent.io_css
+      @origin = Origin.new(raw)
+      @nodes = @origin.parse
     end # === def initialize
 
     def raw!(*args)
@@ -32,20 +22,12 @@ module DA_CSS
       self
     end # === def new_line
 
-    def new_line(parent : Parser)
-      @io_css.raw! "\n" unless @io_css.empty?
-      # parent.parent_count.times do |i|
-      #   @io_css.raw! "  "
-      # end
-      self
-    end # === def new_line
-
     def run
-      parser.nodes.each_with_index { |x, pos|
+      nodes.each_with_index { |x, pos|
         status = validator.allow(x)
         case status
         when false
-          raise Exception.new("Invalid value: #{x.to_s.inspect}")
+          raise Error.new("Invalid value: #{x.to_s.inspect}")
         when :ignore
           next
         end

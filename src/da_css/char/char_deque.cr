@@ -16,11 +16,11 @@ module DA_CSS
       @parent   = parent
       @raw      = Deque(Char).new
       @frozen   = false
-      @pos_line = parent.pos_line
+      @pos_line = parent.line_num
     end # === def initialize
 
     def line
-      @parent.origin_string.lines.each_with_index { |l, i|
+      @parent.string.lines.each_with_index { |l, i|
         return l if i == @pos_line
       }
       ""
@@ -100,7 +100,7 @@ module DA_CSS
       when 'A'..'Z', 'a'..'z', '0'..'9',
         ' ', '\n', '_',
         '(', ')', '{', '}', '\'', '"',
-        '=', ';', '/', '*', '?', '#', '.', ':', '-'
+        '=', ';', '/', '*', '?', '#', '.', ':', '-', '@'
         c
       else
         raise Error.new("Invalid character: #{c.inspect}", self)

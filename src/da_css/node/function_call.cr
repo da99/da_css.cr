@@ -14,23 +14,23 @@ module DA_CSS
     struct Function_Call
 
       @name : String
-      @args : Parser
-      getter parent : Parser
+      @args = Deque(Node::Text).new
 
-      def initialize(raw_name : Char_Deque, @parent : Parser)
+      def initialize(raw_name : Char_Deque)
         @name = raw_name.to_s
-        @args = doc = Parser.new
-        doc.parent = self
-        doc.parse
       end # === def initialize
 
       def to_s
-        "#{@name}(#{@args.nodes.map(&.to_s).join(",")})"
+        "#{@name}(#{@args.map(&.to_s).join(",")})"
       end # === def to_s
+
+      def push(x : Node::Text)
+        @args.push x
+      end # === def push
 
       def print(printer : Printer)
         printer.raw! @name, "("
-        @args.nodes.each_with_index { |x, i|
+        @args.each_with_index { |x, i|
           printer.raw!(", ") if i != 0
           x.print(printer)
         }

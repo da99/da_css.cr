@@ -2,6 +2,7 @@
 module DA_CSS
   struct Char_Deque_Deque
 
+    SPACE = ' '
     include Enumerable(Char_Deque)
     getter raw = Deque(Char_Deque).new
     getter parent : Parser

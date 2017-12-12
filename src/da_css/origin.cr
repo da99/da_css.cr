@@ -5,12 +5,13 @@ module DA_CSS
 
     @reader : Char::Reader
     @raw    : String
-    @dir    : String
     @done   : Bool = false
+    @nodes  = Deque(Node::Media_Query | Node::Selector_With_Body).new
+    getter line_num = 0
 
-    delegate string, pos, current_char, next_char, has_next?, peek_next_char, to: @reader
+    delegate string, pos, current_char, has_next?, peek_next_char, to: @reader
 
-    def initialize(@raw, @dir)
+    def initialize(@raw)
       @reader = Char::Reader.new(raw)
     end # === def initialize
 
@@ -20,9 +21,9 @@ module DA_CSS
 
     def parse
       raise Error.new("Already parsed.") if done?
-      result = Parser.new(self).parse
+      @nodes = Parser.new(self).parse
       @done = true
-      self
+      @nodes
     end # === def parse
 
     def current_char?
@@ -48,6 +49,12 @@ module DA_CSS
       return self if current_char == c
       raise Error.new("Not found: #{c.inspect}")
     end # === def skip_to
+
+    def next_char
+      c = current_char
+      @line_num += 1 if c == '\n'
+      @reader.next_char
+    end # === def next_char
 
     def inspect(io)
       io << "Origin[\n"

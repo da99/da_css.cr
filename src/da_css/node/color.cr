@@ -28,11 +28,11 @@ module DA_CSS
       end # === def initialize
 
       def to_s
-        @raw.to_s
+        @raw.to_s.downcase
       end # === def to_s
 
       def print(printer : Printer)
-        @raw.print(printer)
+        printer.raw! to_s
         self
       end # === def print
 

@@ -1,5 +1,6 @@
 
 
+
 module DA_CSS
 
   module Node
@@ -40,7 +41,7 @@ module DA_CSS
         def self.valid!(raw : String)
           {% begin %}
           case raw
-          when {{ system("cat \"#{__DIR__}/propertys.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
+          when {{ system("cat \"#{__DIR__}/../propertys.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
             true
           else
             raise Invalid_Name.new(raw)
@@ -121,21 +122,22 @@ module DA_CSS
       end # === struct Value
 
       getter key    : Key
-      getter value  : Parser
-      getter parent : Parser
+      getter value  = Deque(NODE_TYPES).new
 
-      def initialize(raw_key : Char_Deque, @parent : Parser)
-        @key   = Key.new(raw_key)
-        @value = doc = Parser.new
-        doc.parent = self
-        doc.parse
+      def initialize(raw_key : Char_Deque)
+        @key = Key.new(raw_key)
       end # === def initialize
 
+      def push(x : NODE_TYPES)
+        @value.push x
+      end # === def push
+
       def print(printer : Printer)
-        printer.new_line(parent)
         key.print(printer)
         printer.raw! ": "
-        value.print(printer)
+        value.each { |x|
+          x.print(printer)
+        }
         printer.raw! ";"
         self
       end # === def print

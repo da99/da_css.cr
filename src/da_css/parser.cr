@@ -4,38 +4,20 @@ module DA_CSS
 
   class Parser
 
-    alias NODE_TYPES_AS_PARENTS =
-      Node::Selector_With_Body | Node::Property |
-      Node::Assignment | Node::Function_Call
+    alias OPEN_NODE_TYPES =
+      Node::Media_Query |
+      Node::Selector_With_Body |
+      Node::Property | Node::Function_Call
 
-    alias PARENT_TYPES =
-      Nil | Origin | Parser | NODE_TYPES_AS_PARENTS
-
-    alias NODE_TYPES =
-      Node::Text | Node::Assignment |
-      Node::Selector_With_Body | Node::Comment |
-      Node::Property | Node::Function_Call | Node::Color |
-      Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
-      Node::Percentage | Node::Slash | Node::Unknown | Node::Var_Call
-
-    property parent : PARENT_TYPES = nil
-
-    getter nodes = Deque(NODE_TYPES).new
-
+    getter origin : Origin
+    getter nodes = Deque(Node::Media_Query | Node::Selector_With_Body).new
     @done = false
 
-    getter pos_line = 0
+    delegate line_num, current_char?, current_char, next_char, string, to: @origin
 
-    def initialize
-    end # === def initialize
+    @open_nodes = Deque(OPEN_NODE_TYPES).new
 
-    def initialize(@parent : Origin | Parser)
-    end # === def initialize
-
-    def parent=(parent : NODE_TYPES_AS_PARENTS)
-      @parent   = parent
-      @pos_line = parent.parent.pos_line
-      @parent
+    def initialize(@origin)
     end # === def initialize
 
     private def cache
@@ -48,28 +30,12 @@ module DA_CSS
       @caches.not_nil!
     end
 
-    def origin : Origin
-      curr = self
-      loop do
-        next_parent = curr.parent
-        break if !next_parent
-        curr = next_parent
-      end
-
-      case curr
-      when Origin
-        curr
-      else
-        raise Exception.new("origin of parser not found.")
-      end
-    end # === def origin
-
     def parse
       raise Error.new("Already parsed.") if done?
 
-      while current_char? && !done?
-        c = current_char
-        next_char
+      while origin.current_char? && !done?
+        c = origin.current_char
+        origin.next_char
         parse(c)
       end
 
@@ -81,28 +47,47 @@ module DA_CSS
         raise Error.new("Unknown values: ", caches.first.pos_summary(caches.join.to_s))
       end
 
-      self
+      @nodes
     end # === def parse
 
     def parse(c : Char)
       case
 
-      when c == ','
-        grab_non_empty_cache_to_group
+      when c == '@' && nothing_cached? && root?
+        while current_char? && !current_char.whitespace?
+          cache.push current_char
+          next_char
+        end
+        new_node = Node::Media_Query.new(consume_cache)
+        open_in_root(new_node)
+
+      when c == '(' && nothing_cached? && open?(Node::Media_Query)
+
+      when c == ')' && open?(Node::Property)
+        save_cache unless cache.empty?
+        caches_to_nodes
+        close(Node::Property)
+
+      when c == '{' && open?(Node::Media_Query) && nothing_cached?
+
+      when c == '}' && open?(Node::Media_Query) && nothing_cached?
+        close(Node::Media_Query)
+
+      when c == ',' && open?(Node::Property)
+        save_cache unless cache.empty?
+        caches_to_nodes
+        close(Node::Property)
 
       when c.whitespace?
-        if c == '\n'
-          @pos_line += 1
-        end
-        grab_non_empty_cache_to_group
+        save_cache unless cache.empty?
 
       # PARSE: comment
-      when c == '/' && current_char == '*'
-        next_char # == skip asterisk
+      when c == '/' && origin.current_char == '*'
+        origin.next_char # == skip asterisk
         was_closed = false
         comment = Char_Deque.new(self)
         loop do
-          grab_chars(comment, '/')
+          consume_chars(comment, '/')
           break if !current_char?
 
           if comment.prev(2) == '*'
@@ -118,53 +103,69 @@ module DA_CSS
 
       # PARSE: string '
       # PARSE: string "
-      when c == '\'' || c == '"'
+      when (c == '\'' || c == '"') && open?(Node::Function_Call)
         if !cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
-        @nodes.push Node::Text.new(grab_chars(Char_Deque.new(self), c))
-
-      when c == '{' && current_char == '{'
-        next_char
-        while current_char? && current_char != '}'
-          cache.push current_char
-          next_char
+        n = @open_nodes.last
+        case n
+        when Node::Function_Call
+          n.push Node::Text.new(consume_chars(Char_Deque.new(self), c))
         end
-        next_char if current_char == '}'
-        next_char if current_char == '}'
-        @nodes.push Node::Var_Call.new(grab_cache, self)
 
-      when c == '{'
-        grab_non_empty_cache_to_group
-        @nodes.push Node::Selector_With_Body.new(grab_caches, self)
+      when c == '{' && something_cached? && root?
+        save_cache unless cache.empty?
+        new_node = Node::Selector_With_Body.new(consume_saved_caches)
+        open_in_root(new_node)
 
-      when c == '}'
-        done!
+      when c == '{' && something_cached? && open?(Node::Media_Query)
+        save_cache unless cache.empty?
+        new_node = Node::Selector_With_Body.new(consume_saved_caches)
+        t = @open_nodes.last?
+        case t
+        when Node::Media_Query
+          t.push new_node
+        end
+        @open_nodes.push new_node
 
-      when c == ':'
-        grab_non_empty_cache_to_group
-        @nodes.push Node::Property.new(grab_caches.join, self)
+      when c == '}' && open?(Node::Selector_With_Body)
+        close(Node::Selector_With_Body)
 
-      when c == '='
-        grab_non_empty_cache_to_group
-        @nodes.push Node::Assignment.new(grab_caches.join, self)
+      when c == ':' && something_cached? && (open?(Node::Media_Query) || open?(Node::Selector_With_Body))
+        save_cache unless cache.empty?
+        new_node = Node::Property.new(consume_saved_caches.join)
+        l = @open_nodes.last?
+        case l
+        when Node::Media_Query, Node::Selector_With_Body
+          l.push new_node
+        end
+        @open_nodes.push new_node
 
-      when c == ';'
-        grab_non_empty_cache_to_group
+      when c == ';' && something_cached? && open?(Node::Property)
+        save_cache unless cache.empty?
         caches_to_nodes
-        done!
+        close(Node::Property)
 
-      when c == '('
-        grab_non_empty_cache_to_group
-        @nodes.push Node::Function_Call.new(grab_caches.join, self)
+      when c == '(' && something_cached? && open?(Node::Property)
+        save_cache unless cache.empty?
+        new_node = Node::Function_Call.new(consume_saved_caches.join)
+        l = @open_nodes.last?
+        case l
+        when Node::Property
+          l.push new_node
+        end
+        @open_nodes.push(new_node)
 
-      when c == ')'
-        grab_non_empty_cache_to_group
+      when c == ')' && open?(Node::Function_Call)
+        save_cache unless cache.empty?
         caches_to_nodes
-        done!
+        close(Node::Function_Call)
+
+      when c == '}' || c == ';' || c == ')'
+        raise Error.new("Danglering char: #{c} (line: #{origin.line_num+1})")
 
       when c.whitespace?
-        grab_non_empty_cache_to_group
+        save_cache unless cache.empty?
 
       else
         cache.push c
@@ -172,33 +173,54 @@ module DA_CSS
       end # === while
     end # === def parse
 
-    def parent?
-      @parent.is_a?(Parser)
-    end
-
     def done?
-      return true if @done || !has_next?
-
-      p = @parent
-      return true if p.is_a?(Parser) && p.done?
-      false
+      @done || origin.done?
     end
 
-    def grab_chars(c : Char)
-      grab_chars(Char_Deque.new(self), c)
-    end # === def grab_chars
+    def something_cached?
+      !nothing_cached?
+    end # === def something_cached?
 
-    def grab_chars(dest : Char_Deque, c : Char)
-      grab_chars(c) { |x|
+    def nothing_cached?
+      cache.empty? && caches.empty?
+    end # === def nothing_cached?
+
+    def root?
+      @open_nodes.empty?
+    end # === def root?
+
+    def open?(klass)
+      @open_nodes.last?.class == klass
+    end
+
+    def open_in_root(x : Node::Media_Query | Node::Selector_With_Body)
+      @open_nodes.push x
+      @nodes.push x
+    end # === def open_in_root
+
+    def close(klass)
+      n = @open_nodes.last?
+      if n.class != klass
+        raise Error.new("Not properly closed: #{n.class}")
+      end
+      @open_nodes.pop
+    end # === def close
+
+    def consume_chars(c : Char)
+      consume_chars(Char_Deque.new(self), c)
+    end # === def consume_chars
+
+    def consume_chars(dest : Char_Deque, c : Char)
+      consume_chars(c) { |x|
         dest.push x
       }
       dest
-    end # === def grab_chars
+    end # === def consume_chars
 
-    # Example: "a b c;" -> grab_chars(';')
-    # Note: ';' here will be grabbed, but not yield-ed
+    # Example: "a b c;" -> consume_chars(';')
+    # Note: ';' here will be consumebed, but not yield-ed
     #   to the block.
-    def grab_chars(c : Char)
+    def consume_chars(c : Char)
       while current_char?
         if current_char == c
           next_char
@@ -207,11 +229,11 @@ module DA_CSS
           yield next_char
         end
       end
-    end # === def grab_chars
+    end # === def consume_chars
 
-    def grab_between(open : Char, close : Char)
+    def consume_between(open : Char, close : Char)
       if current_char != open
-        raise Error.new(":grab_between: Not on a #{open.inspect} char.")
+        raise Error.new(":consume_between: Not on a #{open.inspect} char.")
       end
 
       next_char
@@ -238,30 +260,40 @@ module DA_CSS
       end
 
       return chars
-    end # === def grab_between
+    end # === def consume_between
 
-    def grab_non_empty_cache_to_group
-      return false if cache.empty?
-      cache = grab_cache
+    def save_cache
+      if cache.empty?
+        raise Error.new("Missing chars in: line #{origin.line_num + 1}")
+      end
+      cache = consume_cache
       caches.push cache
       cache
-    end # === def grab_non_empty_cache_to_group
+    end # === def save_cache
 
-    def grab_cache
+    def consume_cache
+      raise Exception.new("Cache is empty. Line: #{origin.line_num+1}") if cache.empty?
       c = cache.freeze!
       @cache = Char_Deque.new(self)
       c
-    end # === def grab_cache
+    end # === def consume_cache
 
-    def grab_caches
+    def consume_saved_caches
+      raise Exception.new("Caches are empty. Line: #{origin.line_num+1}") if caches.empty?
       group = caches
       @caches = Char_Deque_Deque.new(self)
       return group
-    end # === def grab_unknowns
+    end # === def consume_unknowns
 
     def caches_to_nodes
-      grab_caches.each { |c|
-        @nodes.push Node.from_chars(c.freeze!)
+      consume_saved_caches.each { |c|
+        container = @open_nodes.last
+        case container
+        when Node::Property
+          container.push Node.from_chars(c.freeze!)
+        else
+          raise Error.new("Node can't contain other nodes: #{container.class}")
+        end
       }
     end # === def caches_to_nodes
 
@@ -269,6 +301,10 @@ module DA_CSS
       @done = true
       self
     end
+
+    def nodes?
+      !@nodes.empty?
+    end # === def empty?
 
     def inspect(io)
       io << "Parser["
@@ -295,15 +331,6 @@ module DA_CSS
       }
       io.to_s
     end # === def to_s
-
-    def first_and_only(err_msg)
-      return first if @nodes.size == 1
-      raise Error.new(err_msg)
-    end # === def first_and_only
-
-    def nodes?
-      !@nodes.empty?
-    end # === def empty?
 
   end # === class Parser
 

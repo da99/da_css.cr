@@ -1,7 +1,7 @@
 
 module DA_CSS
 
-  alias NODES = Deque(Parser::NODE_TYPES)
+  alias NODES = Deque(NODE_TYPES)
   module Node
 
     def parent_node?
@@ -36,7 +36,7 @@ module DA_CSS
         word = c.to_s
         {% begin %}
           case word
-          when {{ system("cat \"#{__DIR__}/keywords.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
+          when {{ system("cat \"#{__DIR__}/../keywords.txt\"").split("\n").reject(&.empty?).map(&.stringify).join(", ").id }}
             Keyword.new(c)
           else
             Unknown.new(c)
