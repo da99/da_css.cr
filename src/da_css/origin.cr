@@ -6,7 +6,7 @@ module DA_CSS
     @reader : Char::Reader
     @raw    : String
     @done   : Bool = false
-    @nodes  = Deque(Node::Media_Query | Node::Selector_With_Body).new
+    @nodes  = Deque(Raw_Blok | Raw_Media_Query).new
     getter line_num = 0
 
     delegate string, pos, current_char, has_next?, peek_next_char, to: @reader

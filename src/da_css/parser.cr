@@ -5,18 +5,18 @@ module DA_CSS
   # Right now the "Parser" is a combined lexer and parser.
   class Parser
 
-    alias ROOT_NODE_TYPES = Node::Media_Query | Node::Selector_With_Body
+    alias ROOT_NODE_TYPES =
+      Raw_Media_Query |
+      Raw_Blok
 
     alias OPEN_NODE_TYPES =
-      Node::Media_Query |
-      Node::Selector_With_Body |
-      Node::Property |
-      Node::Function_Call |
-      Node::Media_Query_Conditions |
-      Node::Media_Query_Condition
+      Raw_Media_Query |
+      Raw_Blok |
+      Raw_Property
 
     getter origin : Origin
-    getter nodes = Deque(Node::Media_Query | Node::Selector_With_Body).new
+    getter nodes = Deque(ROOT_NODE_TYPES).new
+
     @done = false
 
     delegate line_num, current_char?, current_char, next_char?, next_char, string, to: @origin
@@ -38,6 +38,13 @@ module DA_CSS
         c = origin.current_char
         origin.next_char
         parse(c)
+      end
+
+      if @open_nodes.size > 1
+        node = @open_nodes.last?
+        if node
+          raise Error.new("Not properly closed: #{node.english_name}")
+        end
       end
 
       if !cache.empty?
@@ -73,56 +80,11 @@ module DA_CSS
 
       when c == '@' && cache.empty? && root?
         goto!('{')
-        new_node = Node::Media_Query.new(consume_cache)
+        new_node = Raw_Media_Query.new(consume_cache)
         open_node(new_node)
 
-      when c == ')' && open?(Node::Property)
-        save_cache unless cache.empty?
-        nodes = caches_to_nodes
-        l = close_node(Node::Property)
-        case l
-        when Node::Property
-          nodes.each { |n|
-            l.push n
-          }
-        end
-
-      when c == '{' && open?(Node::Media_Query) && cache.empty?
-
-      when c == '}' && open?(Node::Media_Query) && cache.empty?
-        close_node(Node::Media_Query)
-
-      when c == ',' && open?(Node::Media_Query_Condition)
-        save_cache unless cache.empty?
-        cond = current_node(Node::Media_Query_Condition)
-        if cond.is_a?(Node::Media_Query_Condition)
-          cache.split.each { |c|
-            v = case
-                when Node::Number_Unit.looks_like?(c)
-                  Node::Number_Unit.new(c)
-                when Node::Number.looks_like?(c)
-                  Node::Number.new(c)
-                when Node::Percentage.looks_like?(c)
-                  Node::Percentage.new(c)
-                else
-                  Node::Keyword.new(c)
-                end
-            cond.push(v)
-          }
-        end
-        close_node(Node::Media_Query_Condition)
-
-      when c == ',' && open?(Node::Property)
-        save_cache unless cache.empty?
-        q = caches_to_nodes
-        l = close_node(Node::Property)
-        case l
-        when Node::Property
-          q.each { |n| l.push n }
-        end
-
-      when c.whitespace?
-        save_cache unless cache.empty?
+      when c == '}' && open?(Raw_Media_Query) && cache.empty?
+        close_node(Raw_Media_Query)
 
       # PARSE: comment
       when c == '/' && origin.current_char == '*'
@@ -156,114 +118,25 @@ module DA_CSS
           n.push Node::Text.new(consume_chars(A_Char_Deque.new(self), c))
         end
 
-      when c == '{' && !cache.empty? && root?
-        save_cache unless cache.empty?
-        new_node = Node::Selector_With_Body.new(consume_cache)
+      when c == '{' && !cache.empty?
+        new_node = Raw_Blok.new(consume_cache)
         open_node(new_node)
 
-      when c == '{' && !cache.empty? && open?(Node::Media_Query)
+      when c == '}' && open?(Raw_Blok)
+        close_node(Raw_Blok)
+
+      when c == ':' && !cache.empty? && open?(Raw_Blok)
         save_cache unless cache.empty?
-        new_node = Node::Selector_With_Body.new(consume_cache)
-        t = current_node(Node::Media_Query)
-        if t.is_a?(Node::Media_Query)
-          t.push new_node
+        key = consume_cache
+        goto!(';')
+        values = consume_cache
+        blok = current_node(Raw_Blok)
+        if blok.is_a?(Raw_Blok)
+          blok.push(Raw_Property.new(key, values))
         end
-        open_node(new_node)
-
-      when c == '}' && open?(Node::Selector_With_Body)
-        close_node(Node::Selector_With_Body)
-
-      when c == ':' && !cache.empty? && open?(Node::Media_Query_Conditions)
-        new_node = Node::Media_Query_Condition.new(consume_cache)
-        mqc = current_node(Node::Media_Query_Conditions)
-        mqc.push(new_node) if mqc.is_a?(Node::Media_Query_Conditions)
-        open_node(new_node)
-
-      when c == ':' && !cache.empty? && open?(Node::Selector_With_Body)
-        save_cache unless cache.empty?
-        new_node = Node::Property.new(consume_cache)
-        l = current_node(Node::Selector_With_Body)
-        if l.is_a?(Node::Selector_With_Body)
-          l.push new_node
-        end
-        open_node new_node
-
-      when c == ';' && !cache.empty? && open?(Node::Property)
-        save_cache unless cache.empty?
-        nodes = caches_to_nodes
-        l = close_node(Node::Property)
-        case l
-        when Node::Property
-          nodes.each { |n|
-            l.push n
-          }
-        end
-
-      when c == '(' && open?(Node::Media_Query)
-        save_cache unless cache.empty?
-        mq = current_node(Node::Media_Query)
-        if mq.is_a?(Node::Media_Query)
-          consume_cache.split.each { |c|
-            mq.push Node::Media_Query_Keyword.new(c)
-          }
-        end
-        new_node = Node::Media_Query_Conditions.new
-        open_node( new_node )
-
-      when c == ')' && open?(Node::Media_Query_Condition)
-        save_cache unless cache.empty?
-        cond = close_node(Node::Media_Query_Condition)
-        mqc = close_node(Node::Media_Query_Conditions)
-        if cond.is_a?(Node::Media_Query_Condition) && mqc.is_a?(Node::Media_Query_Conditions)
-          consume_cache.split.each { |c|
-            v = case
-                when Node::Number_Unit.looks_like?(c)
-                  Node::Number_Unit.new(c)
-                when Node::Number.looks_like?(c)
-                  Node::Number.new(c)
-                when Node::Percentage.looks_like?(c)
-                  Node::Percentage.new(c)
-                else
-                  Node::Keyword.new(c)
-                end
-            cond.push(v)
-          }
-          mq = current_node(Node::Media_Query)
-          if mq.is_a?(Node::Media_Query)
-            mq.push mqc
-          end
-        end
-
-      when c == ')' && open?(Node::Media_Query_Conditions)
-        save_cache if !cache.empty?
-        mqc = close_node(Node::Media_Query_Conditions)
-        case mqc
-        when Node::Media_Query_Conditions
-          consume_cache.split.each { |c|
-            mqc.push Node::Media_Query_Keyword.new(c)
-          }
-          mq = current_node(Node::Media_Query)
-          if mq.is_a?(Node::Media_Query)
-            mq.push mqc
-          end
-        end # case mqc
-
-      when c == '(' && !cache.empty? && open?(Node::Property)
-        save_cache unless cache.empty?
-        new_node = Node::Function_Call.new(consume_cache)
-        l = current_node(Node::Property)
-        case l
-        when Node::Property
-          l.push new_node
-        end
-        open_node(new_node)
-
-      when c == ')' && open?(Node::Function_Call)
-        save_cache if !cache.empty?
-        f = close_node(Node::Function_Call)
 
       when c == '}' || c == ';' || c == ')'
-        raise Error.new("Danglering char: #{c} (line: #{origin.line_num+1})")
+        raise Error.new("Un-needed character: #{c} (line: #{origin.line_num+1})")
 
       when c.whitespace?
         save_cache unless cache.empty?

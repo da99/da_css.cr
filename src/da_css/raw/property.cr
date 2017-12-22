@@ -9,6 +9,17 @@ module DA_CSS
     def initialize(@name, @values)
     end # === def initialize
 
+    def english_name
+      "property"
+    end # === def english_name
+
+    def print(p : Printer)
+      p.raw! name.to_s
+      p.raw! ": "
+      p.raw! values.to_s
+      p.raw! ";\n"
+    end # === def print
+
   end # === struct Raw_Property
 
 end # === module DA_CSS

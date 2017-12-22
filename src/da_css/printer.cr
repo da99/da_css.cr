@@ -5,7 +5,7 @@ module DA_CSS
     getter io_css    : IO_CSS = IO_CSS.new
     getter validator : DA_CSS::Validator
 
-    getter nodes = Deque(Node::Media_Query | Node::Selector_With_Body).new
+    getter nodes = Deque(Raw_Media_Query | Raw_Blok).new
     @done = false
 
     def initialize(raw : String, @validator)

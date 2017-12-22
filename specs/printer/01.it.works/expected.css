@@ -1,6 +1,6 @@
 
 div {
-  background-color: #FFF;
+  background-color: #fff;
 }
 .empty {
   background-color: #000;
@@ -10,11 +10,7 @@ div {
     body {
       padding: 20px 0 0 10em;
       background-color: #000;
-      background-color: rgb(1, 1, 1);
       background-repeat: no-repeat;
-      background-color: #0000011;
+      background-color: #f0f;
     }
-}
-.include {
-  color: #0000011;
 }
