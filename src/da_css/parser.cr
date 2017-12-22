@@ -57,20 +57,46 @@ module DA_CSS
 
     def goto!(target : Char)
       was_found = false
+      in_string = nil
+
       while next_char?
         c = current_char
         case
+
+        when (c == '\'' || c == '"')
+          cache.push c
+          start_quote = c
+          quote_found = false
+
+          while next_char?
+            next_char
+            cache.push current_char
+
+            if current_char == c
+              quote_found = true
+              next_char
+              break
+            end
+
+          end
+          if !quote_found
+            raise Error.new("String not closed: #{cache.pos_summary}")
+          end
+          next
+
         when c == target
           was_found = true
           break
+
         else
           cache.push c
-        end
-        next_char
+          next_char
+
+        end # === case
       end # === while
 
       if !was_found
-        raise Error.new("Missing character: #{target.inspect}")
+        raise Error.new("Missing character: #{target.inspect} (#{cache.pos_summary})")
       end
 
       return was_found
@@ -104,18 +130,6 @@ module DA_CSS
 
         if !was_closed
           raise Error.new("Comment was not closed: #{comment.pos_summary}")
-        end
-
-      # PARSE: string '
-      # PARSE: string "
-      when (c == '\'' || c == '"') && open_node?(Node::Function_Call)
-        if !cache.empty?
-          raise Node::Invalid_Text.new("Can't start a quoted string here.")
-        end
-        n = current_node
-        case n
-        when Node::Function_Call
-          n.push Node::Text.new(consume_chars(A_Char_Deque.new(self), c))
         end
 
       when c == '{' && !cache.empty? && root?
