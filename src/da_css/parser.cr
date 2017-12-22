@@ -1,5 +1,6 @@
 
 
+
 module DA_CSS
 
   # Right now the "Parser" is a combined lexer and parser.
@@ -58,7 +59,6 @@ module DA_CSS
       was_found = false
       while next_char?
         c = current_char
-        next_char
         case
         when c == target
           was_found = true
@@ -66,6 +66,7 @@ module DA_CSS
         else
           cache.push c
         end
+        next_char
       end # === while
 
       if !was_found
@@ -79,11 +80,10 @@ module DA_CSS
       case
 
       when c == '@' && cache.empty? && root?
-        goto!('{')
-        new_node = Raw_Media_Query.new(consume_cache)
-        open_node(new_node)
+        goto!('{'); next_char
+        open_node(Raw_Media_Query.new(consume_cache))
 
-      when c == '}' && open?(Raw_Media_Query) && cache.empty?
+      when c == '}' && open_node?(Raw_Media_Query) && cache.empty?
         close_node(Raw_Media_Query)
 
       # PARSE: comment
@@ -108,7 +108,7 @@ module DA_CSS
 
       # PARSE: string '
       # PARSE: string "
-      when (c == '\'' || c == '"') && open?(Node::Function_Call)
+      when (c == '\'' || c == '"') && open_node?(Node::Function_Call)
         if !cache.empty?
           raise Node::Invalid_Text.new("Can't start a quoted string here.")
         end
@@ -118,24 +118,31 @@ module DA_CSS
           n.push Node::Text.new(consume_chars(A_Char_Deque.new(self), c))
         end
 
-      when c == '{' && !cache.empty?
+      when c == '{' && !cache.empty? && root?
+        open_node(Raw_Blok.new(consume_cache))
+
+      when c == '{' && !cache.empty? && open_node?(Raw_Media_Query)
         new_node = Raw_Blok.new(consume_cache)
+        mq = current_node
+        if mq.is_a?(Raw_Media_Query)
+          mq.push new_node
+        end
         open_node(new_node)
 
-      when c == '}' && open?(Raw_Blok)
+      when c == '}' && cache.empty? && open_node?(Raw_Blok)
         close_node(Raw_Blok)
 
-      when c == ':' && !cache.empty? && open?(Raw_Blok)
+      when c == ':' && !cache.empty? && open_node?(Raw_Blok)
         save_cache unless cache.empty?
         key = consume_cache
-        goto!(';')
+        goto!(';'); next_char
         values = consume_cache
         blok = current_node(Raw_Blok)
         if blok.is_a?(Raw_Blok)
           blok.push(Raw_Property.new(key, values))
         end
 
-      when c == '}' || c == ';' || c == ')'
+      when c == '}' || c == ';'
         raise Error.new("Un-needed character: #{c} (line: #{origin.line_num+1})")
 
       when c.whitespace?
@@ -155,16 +162,20 @@ module DA_CSS
       @open_nodes.empty?
     end # === def root?
 
-    def open?(klass)
+    def open_node?(klass)
       @open_nodes.last?.class == klass
     end
 
     def open_node(x)
-      case x
-      when ROOT_NODE_TYPES
-        @nodes.push x
+      if root? 
+        if x.is_a?(ROOT_NODE_TYPES)
+          @nodes.push x
+        else
+          raise Error.new("#{x.english_name} can't be opened at the top of a CSS document.")
+        end
       end
       @open_nodes.push x
+      self
     end # === def open_node
 
     def current_node

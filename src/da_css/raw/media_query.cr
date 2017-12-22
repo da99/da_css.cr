@@ -13,6 +13,10 @@ module DA_CSS
       "media query"
     end # === def english_name
 
+    def push(x : Raw_Blok)
+      bloks.push x
+    end # === def push
+
     def print(p : Printer)
       p.raw! "@"
       p.raw! selector.to_s
@@ -20,7 +24,7 @@ module DA_CSS
       bloks.each { |blok|
         blok.print p
       }
-      p.raw! "}\n"
+      p.raw! "\n}\n"
     end # === def print
 
   end # === struct Raw_Media_Query
