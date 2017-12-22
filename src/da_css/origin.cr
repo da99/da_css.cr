@@ -50,6 +50,10 @@ module DA_CSS
       raise Error.new("Not found: #{c.inspect}")
     end # === def skip_to
 
+    def next_char?
+      @reader.has_next?
+    end
+
     def next_char
       c = current_char
       @line_num += 1 if c == '\n'

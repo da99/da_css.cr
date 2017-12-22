@@ -5,9 +5,9 @@ module DA_CSS
 
     struct Var_Call
 
-      @raw : Char_Deque
+      @raw : A_Char_Deque
       getter parent : Parser
-      def initialize(@raw : Char_Deque, @parent : Parser)
+      def initialize(@raw : A_Char_Deque, @parent : Parser)
       end # === def initialize
 
       def print(printer : Printer)

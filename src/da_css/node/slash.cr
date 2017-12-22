@@ -5,7 +5,7 @@ module DA_CSS
 
     class Invalid_Slash < Exception
 
-      def initialize(cp : Char_Deque)
+      def initialize(cp : A_Char_Deque)
         @message = "Invalid slash character: #{cp.to_s.inspect}"
       end
 
@@ -16,8 +16,8 @@ module DA_CSS
       SLASH = '/'
       SLASH_STRING = "/"
 
-      @raw : Char_Deque
-      def initialize(chars : Char_Deque)
+      @raw : A_Char_Deque
+      def initialize(chars : A_Char_Deque)
         @raw = chars
         if chars.size != 1 && chars.first != SLASH
           raise Invalid_Slash.new(chars)
@@ -33,7 +33,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(chars : Char_Deque)
+      def self.looks_like?(chars : A_Char_Deque)
         chars.size == 1 && chars.first == SLASH
       end # === def self.looks_like?
 

@@ -5,7 +5,7 @@ module DA_CSS
 
     class Invalid_Function_Call < Exception
 
-      def initialize(chars : Char_Deque | String)
+      def initialize(chars : A_Char_Deque | String)
         @message = "Invalid function call: #{chars.to_s}"
       end # === def initialize
 
@@ -16,7 +16,7 @@ module DA_CSS
       @name : String
       @args = Deque(Node::Text).new
 
-      def initialize(raw_name : Char_Deque)
+      def initialize(raw_name : A_Char_Deque)
         @name = raw_name.to_s
       end # === def initialize
 

@@ -1,13 +1,15 @@
 
 module DA_CSS
 
-  struct Char_Customized
+  struct A_Char
 
     getter parent : Parser
     getter pos    : Int32
-    getter char   : Char
+    getter raw    : Char
 
-    def initialize(@char, @pos, @parent)
+    delegate whitespace?, to: @char
+
+    def initialize(@raw, @pos, @parent)
     end # === def initialize
 
     def line
@@ -15,7 +17,7 @@ module DA_CSS
     end # === def line
 
     def to_chr
-      @char
+      @raw
     end # === def to_chr
 
   end # === struct Pos

@@ -1,9 +1,9 @@
 
 module DA_CSS
 
-  struct Char_Deque
+  struct A_Char_Deque
 
-    include Enumerable(Char)
+    include Enumerable(A_Char)
 
     SPACE    = ' '
     NEW_LINE = '\n'
@@ -30,6 +30,28 @@ module DA_CSS
       @raw.join(*args)
     end
 
+    def split
+      fin = Deque(A_Char_Deque).new
+      cd = A_Char_Deque.new(@parent)
+      prev = nil
+      each { |c|
+        case
+        when c.whitespace?
+          fin.push cd
+          cd = A_Char_Deque.new(@parent)
+        else
+          cd.push c
+        end
+        prev = c
+      }
+
+      if prev && !prev.whitespace?
+        fin.push cd
+      end
+
+      fin
+    end # === def split
+
     def each
       prev = nil
       @raw.each { |c|
@@ -43,7 +65,12 @@ module DA_CSS
       io = IO::Memory.new
       last_i = @raw.size - 1
       @raw.each_with_index { |c, index|
-        io << c unless last_i == index && c.whitespace?
+        next if last_i == index && c.whitespace?
+        if c.whitespace?
+          io << SPACE
+        else
+          io << c
+        end
       }
       return io.to_s
     end # === def to_s
@@ -98,9 +125,9 @@ module DA_CSS
     def valid!(c : Char)
       case c
       when 'A'..'Z', 'a'..'z', '0'..'9',
-        ' ', '\n', '_',
+        ' ', '_',
         '(', ')', '{', '}', '\'', '"',
-        '=', ';', '/', '*', '?', '#', '.', ':', '-', '@'
+        '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ','
         c
       else
         raise Error.new("Invalid character: #{c.inspect}", self)
@@ -156,7 +183,7 @@ module DA_CSS
     extend Common
     include Common
 
-  end # === class Char_Deque
+  end # === class A_Char_Deque
 
 end # === module DA_CSS
 

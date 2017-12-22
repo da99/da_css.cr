@@ -11,7 +11,7 @@ module DA_CSS
     end # === class Invalid_Statement
 
     struct Statement
-      getter raw : Char_Deque_Deque
+      getter raw : A_Char_Deque
 
       def initialize(@raw)
       end # === def initialize
@@ -21,13 +21,13 @@ module DA_CSS
       end # === def to_s
 
       def each
-        @raw.each { |chars|
+        @raw.split.each { |chars|
           yield chars
         }
       end # === def each
 
       def to_s(io_css : IO_CSS)
-        @raw.each_with_index { |chars, i|
+        @raw.split.each_with_index { |chars, i|
           io_css.raw! ' ' if i != 0
           chars.each { |x|
             io_css.raw! x

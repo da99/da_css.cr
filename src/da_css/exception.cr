@@ -6,7 +6,7 @@ module DA_CSS
     def initialize(@message)
     end # === def message
 
-    def initialize(@message, reader : Char_Deque)
+    def initialize(@message, reader : A_Char_Deque)
       @message = "#{@message}: #{reader.pos_summary}"
     end # === def message
 
@@ -52,13 +52,16 @@ module DA_CSS
     end
   end
 
+  class Invalid_Keyword < Error
+  end # === class Invalid_Keyword
+
   class Invalid_Unit < Exception
 
     def initialize(str : String)
       @message = "Invalid Unit: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Char_Deque)
+    def initialize(cp : A_Char_Deque)
       @message = "Invalid Unit: #{cp.to_s.inspect}"
     end # === def initialize
 
@@ -70,7 +73,7 @@ module DA_CSS
       @message = "Invalid Color: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Char_Deque)
+    def initialize(cp : A_Char_Deque)
       @message = "Invalid Color: #{cp.to_s.inspect}"
     end # === def initialize
 

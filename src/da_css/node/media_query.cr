@@ -5,14 +5,23 @@ module DA_CSS
 
     struct Media_Query
 
-      @name : Char_Deque
-      @args = Deque(Node::Property).new
+      alias ARG_TYPES = Media_Query_Conditions | Media_Query_Keyword | Media_Query_Comma
+      @name : A_Char_Deque
+      @args = Deque(ARG_TYPES).new
       @body = Deque(Node::Selector_With_Body).new
 
       def initialize(@name)
       end # === def initialize
 
-      def push(x : Node::Property)
+      def push(x : Node::Media_Query_Condition)
+        conds = @args.last
+        case conds
+        when Node::Media_Query_Conditions
+          conds.push x
+        end
+      end # === def push
+
+      def push(x : ARG_TYPES)
         @args.push x
       end # === def push
 
@@ -23,16 +32,15 @@ module DA_CSS
       def print(p : Printer)
         p.raw! "@"
         p.raw! @name.to_s
-        p.raw! " ("
-        @args.each_with_index { |a, i|
-          p.raw! ", " if i != 0
-          a.print(p)
+        @args.each_with_index { |arg, i|
+          p.raw! " " unless arg.is_a?(Node::Media_Query_Comma)
+          arg.print(p)
         }
-        p.raw! ") {\n"
+        p.raw! " {\n"
         @body.each { |x|
           x.print(p)
         }
-        p.raw! "\n}"
+        p.raw! "\n}\n"
       end # === def print
 
     end # === struct Media_Query

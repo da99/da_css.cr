@@ -2,7 +2,9 @@
 module DA_CSS
 
   alias NODES = Deque(NODE_TYPES)
+
   module Node
+    alias VALUE_TYPES = Color | Number_Unit | Percentage | Slash | Keyword
 
     def parent_node?
       !parent_node.is_a?(Nil)
@@ -18,7 +20,7 @@ module DA_CSS
       end
     end # === def parent_node
 
-    def self.from_chars(c : Char_Deque)
+    def self.from_chars(c : A_Char_Deque)
       case
       when Color.looks_like?(c)
         Color.new(c)

@@ -8,9 +8,9 @@ module DA_CSS
       include Enumerable(Char)
 
       @raw : Deque(Selector::Partial)
-      def initialize(group : Char_Deque_Deque)
+      def initialize(group : A_Char_Deque)
         @raw = Deque(Selector::Partial).new
-        group.each { |chars|
+        group.split.each { |chars|
           @raw.push Selector::Partial.new(chars)
         }
       end # === def initialize
@@ -39,7 +39,7 @@ module DA_CSS
       struct Partial
 
         include Enumerable(Char)
-        @raw : Char_Deque
+        @raw : A_Char_Deque
         def initialize(@raw)
           @raw.each { |i|
             Selector.valid_char!(i, @raw)
@@ -59,7 +59,7 @@ module DA_CSS
 
       end # === struct Partial
 
-      def self.valid_char!(c : Char, chars : Char_Deque)
+      def self.valid_char!(c : Char, chars : A_Char_Deque)
         case c
         when 'a'..'z', '0'..'9', '.', '-', '_', '#'
           true

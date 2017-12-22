@@ -8,7 +8,7 @@ module DA_CSS
       getter head : Node::Selector
       getter body = Deque(Node::Property).new
 
-      def initialize(arr : Char_Deque_Deque)
+      def initialize(arr : A_Char_Deque)
         @head = Node::Selector.new(arr)
       end # === def initialize
 
@@ -23,7 +23,7 @@ module DA_CSS
         body.each { |x|
           x.print(printer)
         }
-        printer.raw! "\n}"
+        printer.raw! "\n}\n"
       end # === def print
 
     end # === struct Selector

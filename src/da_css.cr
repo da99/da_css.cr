@@ -2,6 +2,9 @@
 require "inspect_bang"
 
 module DA_CSS
+  SPACE    = ' '
+  NEW_LINE = '\n'
+
   module Validator
     abstract def allow(x)
   end # === module Validator
@@ -27,7 +30,10 @@ require "./da_css/char/*"
 require "./da_css/line"
 require "./da_css/exception"
 
-require "./da_css/node/node"
+require "./da_css/node/media_query_comma"
+require "./da_css/node/media_query_keyword"
+require "./da_css/node/media_query_condition"
+require "./da_css/node/media_query_conditions"
 require "./da_css/node/media_query"
 require "./da_css/node/text"
 require "./da_css/node/slash"
@@ -35,6 +41,8 @@ require "./da_css/node/unknown"
 require "./da_css/node/color"
 require "./da_css/node/comment"
 require "./da_css/node/keyword"
+
+require "./da_css/node/node"
 
 require "./da_css/node/function_call"
 
