@@ -20,8 +20,8 @@ module DA_CSS
     Node::Percentage | Node::Slash | Node::Unknown
 
 
-  def self.to_css(str : String, validator : DA_CSS::Validator)
-    Printer.new(str, validator).to_css
+  def self.to_css(str : String)
+    Printer.to_css(Parser.parse(Origin.new(str)))
   end # === def to_css
 
 end # === module DA_CSS

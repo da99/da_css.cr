@@ -1,18 +1,8 @@
 
 class Example_01
 
-  struct Validator
-
-    include DA_CSS::Validator
-
-    def allow(x)
-      x
-    end # === def allow
-
-  end # === struct Validator
-
   def self.to_css
-    DA_CSS.to_css("body { color: #fff; }", Validator.new)
+    DA_CSS.to_css("body { color: #fff; }")
   end # === def self.to_css
 
 end # === class Example_01

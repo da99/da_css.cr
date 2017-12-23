@@ -1,17 +1,12 @@
 
 module DA_CSS
-  class Printer
+  struct Printer
 
-    getter io_css    : IO_CSS = IO_CSS.new
-    getter validator : DA_CSS::Validator
+    getter io_css = IO_CSS.new
 
-    getter nodes = Deque(Raw_Media_Query | Raw_Blok).new
-    @done = false
-
-    def initialize(raw : String, @validator)
-      @origin = Origin.new(raw)
-      @nodes = @origin.parse
-    end # === def initialize
+    def self.to_css(raw_doc)
+      new.to_css(raw_doc)
+    end # === def self.to_css
 
     def raw!(*args)
       @io_css.raw! *args
@@ -22,24 +17,8 @@ module DA_CSS
       self
     end # === def new_line
 
-    def run
-      nodes.each_with_index { |x, pos|
-        status = validator.allow(x)
-        case status
-        when false
-          raise Error.new("Invalid value: #{x.to_s.inspect}")
-        when :ignore
-          next
-        end
-
-        x.print(self)
-      }
-      @done = true
-      self
-    end # === def run
-
-    def to_css
-      run unless @done
+    def to_css(nodes)
+      nodes.each { |x| x.print(self) } if @io_css.empty?
       io_css.to_s
     end # === def to_css
 

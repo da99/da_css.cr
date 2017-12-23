@@ -26,11 +26,10 @@ class SPEC_PARSER
 
   def initialize(str : String, dir : String)
     @raw = File.exists?(str) ? File.read(str) : str
-    @dir = dir
   end # === def initialize
 
   def to_css
-    DA_CSS::Printer.new(@raw, Validator.new).to_css
+    DA_CSS.to_css(@raw)
   end # === def to_css
 
 end # === class SPEC_PARSER

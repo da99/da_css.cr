@@ -6,23 +6,24 @@ module DA_CSS
   # Right now the "Parser" is a combined lexer and parser.
   class Parser
 
+    def self.parse(origin)
+      new(origin).parse
+    end
+
     alias ROOT_NODE_TYPES =
       Raw_Media_Query |
       Raw_Blok
 
     alias OPEN_NODE_TYPES =
       Raw_Media_Query |
-      Raw_Blok |
-      Raw_Property
+      Raw_Blok
 
     getter origin : Origin
     getter nodes = Deque(ROOT_NODE_TYPES).new
-
-    @done = false
+    @open_nodes = Deque(OPEN_NODE_TYPES).new
 
     delegate line_num, current_char?, current_char, next_char?, next_char, string, to: @origin
 
-    @open_nodes = Deque(OPEN_NODE_TYPES).new
 
     def initialize(@origin)
     end # === def initialize
@@ -33,16 +34,14 @@ module DA_CSS
     end
 
     def parse
-      raise Error.new("Already parsed.") if done?
-
-      while origin.current_char? && !done?
-        c = origin.current_char
-        origin.next_char
+      while !done?
+        c = current_char
+        next_char
         parse(c)
       end
 
-      if @open_nodes.size > 1
-        node = @open_nodes.last?
+      if !root?
+        node = current_node
         if node
           raise Error.new("Not properly closed: #{node.english_name}")
         end
@@ -54,6 +53,11 @@ module DA_CSS
 
       @nodes
     end # === def parse
+
+    def done?
+      !next_char? ||
+      (current_char? && current_char == '\0')
+    end # === def done?
 
     def goto!(target : Char)
       was_found = false
@@ -167,10 +171,6 @@ module DA_CSS
 
       end # === while
     end # === def parse
-
-    def done?
-      @done || origin.done?
-    end
 
     def root?
       @open_nodes.empty?
@@ -290,11 +290,6 @@ module DA_CSS
       }
       q
     end # === def caches_to_nodes
-
-    def done!
-      @done = true
-      self
-    end
 
     def nodes?
       !@nodes.empty?

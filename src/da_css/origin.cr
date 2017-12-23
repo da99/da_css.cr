@@ -5,8 +5,6 @@ module DA_CSS
 
     @reader : Char::Reader
     @raw    : String
-    @done   : Bool = false
-    @nodes  = Deque(Raw_Blok | Raw_Media_Query).new
     getter line_num = 0
 
     delegate string, pos, current_char, has_next?, peek_next_char, to: @reader
@@ -20,10 +18,7 @@ module DA_CSS
     end # === def done?
 
     def parse
-      raise Error.new("Already parsed.") if done?
-      @nodes = Parser.new(self).parse
-      @done = true
-      @nodes
+      Parser.new(self).parse
     end # === def parse
 
     def current_char?
