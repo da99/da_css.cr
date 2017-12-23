@@ -5,9 +5,6 @@ module DA_CSS
   SPACE    = ' '
   NEW_LINE = '\n'
 
-  module Validator
-    abstract def allow(x)
-  end # === module Validator
 end # === module DA_CSS
 
 module DA_CSS
@@ -18,7 +15,6 @@ module DA_CSS
     Node::Property | Node::Function_Call | Node::Color |
     Node::Keyword | Node::Property | Node::Number | Node::Number_Unit |
     Node::Percentage | Node::Slash | Node::Unknown
-
 
   def self.to_css(str : String)
     Printer.to_css(Parser.parse(Origin.new(str)))

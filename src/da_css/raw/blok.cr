@@ -23,7 +23,7 @@ module DA_CSS
       propertys.each { |prop|
         prop.print p
       }
-      p.raw! "\n}\n"
+      p.raw! "}\n"
     end # === def print
 
   end # === struct Raw_Blok

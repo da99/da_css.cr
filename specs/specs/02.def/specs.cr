@@ -20,7 +20,7 @@ describe "DA_CSS::Printer def" do
         border-radius: 1px;
       }
     ]
-    should_eq SPEC_PARSER.new(input, __DIR__).to_css, expected
+    should_eq SPEC_PARSER.to_css(input), expected
   end
 
 end # === desc "DA_CSS::Printer"

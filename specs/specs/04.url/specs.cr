@@ -6,7 +6,7 @@ describe "Parser url" do
         background-image: url('/local/image.png');
       }
     ]
-    actual = SPEC_PARSER.new(input, __DIR__).to_css
+    actual = SPEC_PARSER.to_css(input)
     should_eq actual, expected!
   end # === it "accepts local urls"
 
@@ -17,7 +17,7 @@ describe "Parser url" do
       }
     ]
     expect_raises(DA_CSS::Node::Property::Invalid_Value) {
-      SPEC_PARSER.new(input, __DIR__).to_css
+      SPEC_PARSER.to_css(input)
     }
   end # === it "accepts urls for with ';' in them"
 
@@ -29,7 +29,7 @@ describe "Parser url" do
         }
       ]
       expect_raises(DA_CSS::Node::Property::Invalid_Value) {
-        SPEC_PARSER.new(input, __DIR__).to_css
+        SPEC_PARSER.to_css(input)
       }
     end # === it "accepts urls for with ';' in them"
   {% end %}
@@ -40,7 +40,7 @@ describe "Parser url" do
     ]
 
     expect_raises(DA_CSS::Node::Property::Invalid_Value) {
-      SPEC_PARSER.new(input, __DIR__).to_css
+      SPEC_PARSER.to_css(input)
     }
   end # === it "does not allow remove urls: http"
 

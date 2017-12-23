@@ -2,10 +2,10 @@
 describe DA_CSS::Printer do
 
   it "prints css" do
-    should_eq actual!, expected!
+    assert actual! == expected!
   end # === it "works"
 
-  {% for x in system("find specs/printer/samples -maxdepth 1 -type f -name *.css").split("\n").reject(&.empty?) %}
+  {% for x in system("find specs/samples -maxdepth 1 -type f -name *.css").split("\n").reject(&.empty?) %}
     {% name = x.split("/").last.split(".").first.id %}
     it "renders: {{name}}" do
       css = begin
@@ -33,7 +33,7 @@ describe DA_CSS::Printer do
           #{ css }
         }
       ]
-      actual = SPEC_PARSER.new(input, __DIR__).to_css
+      actual = SPEC_PARSER.to_css(input)
       should_eq actual["{{name}}: "], "{{name}}: "
     end # === it "renders "
   {% end %}

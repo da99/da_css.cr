@@ -1,9 +1,19 @@
 
-require "spec"
+
+require "da_spec"
 require "../src/da_css"
 
 macro should_eq(a, e)
-  strip_each_line({{a}}).should eq(strip_each_line({{e}}))
+  %actual = strip_each_line({{a}})
+  %expected = strip_each_line({{e}})
+  if %actual != %expected
+    STDERR.puts "==============================="
+    STDERR.puts %actual
+    STDERR.puts "==============================="
+    STDERR.puts %expected
+    STDERR.puts "==============================="
+  end
+  assert %actual == %expected
 end # === macro should_eq
 
 macro strip_each_line(s)
@@ -12,39 +22,62 @@ end # === macro strip_each_line
 
 require "../../src/da_css"
 
-class SPEC_PARSER
+module SPEC_PARSER
 
-  struct Validator
-
-    include DA_CSS::Validator
-
-    def allow(x)
-      x
-    end # === def allow
-
-  end # === struct Validator
-
-  def initialize(str : String, dir : String)
-    @raw = File.exists?(str) ? File.read(str) : str
-  end # === def initialize
-
-  def to_css
-    DA_CSS.to_css(@raw)
+  def self.to_css(str)
+    raw = File.exists?(str) ? File.read(str) : str
+    DA_CSS.to_css(raw)
   end # === def to_css
 
-end # === class SPEC_PARSER
+end # === module SPEC_PARSER
 
 macro expected!
-  File.read("#{__DIR__}/expected.css")
+  File.read("#{__DIR__}/expected.css").strip.split("\n").map(&.strip).join("\n")
 end # === macro expected!
 
 macro actual!
-  SPEC_PARSER.new("#{__DIR__}/input.css", __DIR__).to_css
+  SPEC_PARSER.to_css("#{__DIR__}/input.css").strip
 end # === macro actual!
 
-{% for x in `find #{__DIR__}/printer -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
-  require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
-{% end %}
+if !ARGV.empty?
+  Describe.pattern(ARGV.join(" "))
+end
+
+macro expect_raises(klass, &blok)
+  %err = nil
+  begin
+    {{blok.body}}
+  rescue e : {{klass}}
+    %err = e
+  end
+
+  assert %err.class == {{klass}}
+end # === macro expect_raises
+
+extend DA_SPEC
+
+module DA_SPEC
+
+  def examine(*args)
+    args.each { |pair|
+      key = pair.first
+      val = pair.last
+      if !val.is_a?(String)
+        puts "================================================"
+        puts "#{key}: (#{val.class})"
+      end
+      puts "================================================"
+      puts val
+    }
+    puts "================================================"
+  end # === def examine
+
+end # === module DA_SPEC
+
+# {% for x in `find #{__DIR__}/specs -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
+#   require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
+# {% end %}
+require "./specs/01.it.works/specs"
 require "../../examples/*"
 
 

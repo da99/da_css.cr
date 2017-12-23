@@ -24,7 +24,7 @@ module DA_CSS
       bloks.each { |blok|
         blok.print p
       }
-      p.raw! "\n}\n"
+      p.raw! "}\n"
     end # === def print
 
   end # === struct Raw_Media_Query

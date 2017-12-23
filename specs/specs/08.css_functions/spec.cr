@@ -10,7 +10,7 @@ describe "Parser css functions" do
       }
     ]
 
-    should_eq SPEC_PARSER.new(input, __DIR__).to_css, expected
+    should_eq SPEC_PARSER.to_css(input), expected
   end # === it "allows rgba(...)"
 
   it "does not allow expression(...)" do
@@ -18,7 +18,7 @@ describe "Parser css functions" do
       div { width: expression(document.width); }
     ]
     expect_raises(DA_CSS::Node::Property::Invalid_Value) {
-      SPEC_PARSER.new(input, __DIR__).to_css
+      SPEC_PARSER.to_css(input)
     }
   end # === it "does not allow expression(...)"
 
