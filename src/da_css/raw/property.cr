@@ -4,7 +4,7 @@ module DA_CSS
   struct Raw_Property
 
     getter name : A_Char_Deque
-    getter values : A_Char_Deque
+    getter values : Deque(A_Char_Deque)
 
     def initialize(@name, @values)
     end # === def initialize
@@ -16,7 +16,7 @@ module DA_CSS
     def print(p : Printer)
       p.raw! name.to_s
       p.raw! ": "
-      p.raw! values.to_s
+      p.raw! A_Char_Deque.join(@values)
       p.raw! ";\n"
     end # === def print
 

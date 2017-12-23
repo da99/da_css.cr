@@ -5,18 +5,18 @@ module DA_CSS
 
     getter number  : Int32
     getter content : String
-    getter parent  : Parser
+    getter parent  : Origin
 
-    def initialize(css_char : CSS_Char)
-      pos       = css_char.pos
-      @parent   = css_char.parent
+    def initialize(a_char : A_Char)
+      pos       = a_char.pos
+      @parent   = a_char.origin
       @number   = 0
       @content  = ""
       start_pos = 0
       end_pos   = 0
-      @parent.origin_string.each_line { |l|
+      @parent.string.each_line { |l|
         end_pos += (l.size - 1)
-        if start_pos <= pos <= current_pos
+        if start_pos <= pos
           @content = l
         end
         @number += 1

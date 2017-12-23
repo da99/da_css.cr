@@ -7,14 +7,14 @@ module DA_CSS
     @raw    : String
     getter line_num = 0
 
-    delegate string, pos, current_char, has_next?, peek_next_char, to: @reader
+    delegate string, pos, has_next?, to: @reader
 
     def initialize(@raw)
       @reader = Char::Reader.new(raw)
     end # === def initialize
 
     def done?
-      @done || !current_char? || !has_next?
+      !current_char? || !has_next? || current_raw_char == '\0'
     end # === def done?
 
     def parse
@@ -28,6 +28,21 @@ module DA_CSS
     def current_char?(c : Char)
       current_char == c
     end # === def current_char?
+
+    def current_raw_char
+      @reader.current_char
+    end # === def current_raw_char
+
+    def current_char
+      A_Char.new(self)
+    end # === def current_char
+
+    def next_char
+      c = current_raw_char
+      @line_num += 1 if c == '\n'
+      @reader.next_char
+      A_Char.new(self)
+    end # === def next_char
 
     def skip_to(c : Char)
       if current_char? && !current_char.whitespace?
@@ -48,12 +63,6 @@ module DA_CSS
     def next_char?
       @reader.has_next?
     end
-
-    def next_char
-      c = current_char
-      @line_num += 1 if c == '\n'
-      @reader.next_char
-    end # === def next_char
 
     def inspect(io)
       io << "Origin[\n"

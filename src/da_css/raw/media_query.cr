@@ -3,7 +3,7 @@ module DA_CSS
 
   struct Raw_Media_Query
 
-    getter selector : A_Char_Deque
+    getter selector : Deque(A_Char_Deque)
     getter bloks = Deque(Raw_Blok).new
 
     def initialize(@selector)
@@ -19,7 +19,7 @@ module DA_CSS
 
     def print(p : Printer)
       p.raw! "@"
-      p.raw! selector.to_s
+      p.raw! A_Char_Deque.join(selector)
       p.raw! " {\n"
       bloks.each { |blok|
         blok.print p

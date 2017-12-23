@@ -19,19 +19,17 @@ module DA_CSS
       Raw_Blok
 
     getter origin : Origin
-    getter nodes = Deque(ROOT_NODE_TYPES).new
-    @open_nodes = Deque(OPEN_NODE_TYPES).new
+    getter nodes            = Deque(ROOT_NODE_TYPES).new
+    private getter cache    = A_Char_Deque.new
+    private getter unknowns = Deque(A_Char_Deque).new
+    @open_nodes             = Deque(OPEN_NODE_TYPES).new
 
-    delegate line_num, current_char?, current_char, next_char?, next_char, string, to: @origin
-
+    delegate done?, line_num, current_char?, current_raw_char,
+      current_char, next_char?, next_char, string,
+      to: @origin
 
     def initialize(@origin)
     end # === def initialize
-
-    private def cache
-      @cache ||= A_Char_Deque.new(self)
-      @cache.not_nil!
-    end
 
     def parse
       while !done?
@@ -47,28 +45,28 @@ module DA_CSS
         end
       end
 
-      if !cache.empty?
+      if cache?
         raise Error.new("Unknown value: ", cache.pos_summary(cache.to_s))
+      end
+
+      if unknowns?
+        raise Error.new("Unknown value: ", A_Char_Deque.join(consume_unknowns))
       end
 
       @nodes
     end # === def parse
-
-    def done?
-      !next_char? ||
-      (current_char? && current_char == '\0')
-    end # === def done?
 
     def goto!(target : Char)
       was_found = false
       in_string = nil
 
       while next_char?
-        c = current_char
+        a_char = current_char
+        c = a_char.raw
         case
 
         when (c == '\'' || c == '"')
-          cache.push c
+          cache.push a_char
           start_quote = c
           quote_found = false
 
@@ -92,8 +90,12 @@ module DA_CSS
           was_found = true
           break
 
+        when c.whitespace?
+          save_cache if cache?
+          next_char
+
         else
-          cache.push c
+          cache.push a_char
           next_char
 
         end # === case
@@ -106,21 +108,24 @@ module DA_CSS
       return was_found
     end # === def goto
 
-    def parse(c : Char)
+    def parse(a_char : A_Char)
+      c = a_char.raw
+
       case
 
-      when c == '@' && cache.empty? && root?
+      when c == '@' && nothing_to_consume? && root?
         goto!('{'); next_char
-        open_node(Raw_Media_Query.new(consume_cache))
+        save_cache if cache?
+        open_node(Raw_Media_Query.new(consume_unknowns))
 
-      when c == '}' && open_node?(Raw_Media_Query) && cache.empty?
+      when c == '}' && open_node?(Raw_Media_Query) && nothing_to_consume?
         close_node(Raw_Media_Query)
 
       # PARSE: comment
       when c == '/' && origin.current_char == '*'
         origin.next_char # == skip asterisk
         was_closed = false
-        comment = A_Char_Deque.new(self)
+        comment = A_Char_Deque.new
         loop do
           consume_chars(comment, '/')
           break if !current_char?
@@ -136,25 +141,25 @@ module DA_CSS
           raise Error.new("Comment was not closed: #{comment.pos_summary}")
         end
 
-      when c == '{' && !cache.empty? && root?
-        open_node(Raw_Blok.new(consume_cache))
+      when c == '{' && !cache? && unknowns? && root?
+        open_node(Raw_Blok.new(consume_unknowns))
 
-      when c == '{' && !cache.empty? && open_node?(Raw_Media_Query)
-        new_node = Raw_Blok.new(consume_cache)
+      when c == '{' && !cache? && unknowns? && open_node?(Raw_Media_Query)
+        new_node = Raw_Blok.new(consume_unknowns)
         mq = current_node
         if mq.is_a?(Raw_Media_Query)
           mq.push new_node
         end
         open_node(new_node)
 
-      when c == '}' && cache.empty? && open_node?(Raw_Blok)
+      when c == '}' && nothing_to_consume? && open_node?(Raw_Blok)
         close_node(Raw_Blok)
 
-      when c == ':' && !cache.empty? && open_node?(Raw_Blok)
-        save_cache unless cache.empty?
+      when c == ':' && cache? && open_node?(Raw_Blok)
         key = consume_cache
         goto!(';'); next_char
-        values = consume_cache
+        save_cache if cache?
+        values = consume_unknowns
         blok = current_node(Raw_Blok)
         if blok.is_a?(Raw_Blok)
           blok.push(Raw_Property.new(key, values))
@@ -167,7 +172,7 @@ module DA_CSS
         save_cache unless cache.empty?
 
       else
-        cache.push c
+        cache.push a_char
 
       end # === while
     end # === def parse
@@ -175,6 +180,18 @@ module DA_CSS
     def root?
       @open_nodes.empty?
     end # === def root?
+
+    def unknowns?
+      !unknowns.empty?
+    end # === def unknowns?
+
+    def cache?
+      !cache.empty?
+    end # === def cache?
+
+    def nothing_to_consume?
+      cache.empty? && unknowns.empty?
+    end # === def nothing_to_consume?
 
     def open_node?(klass)
       @open_nodes.last?.class == klass
@@ -213,7 +230,7 @@ module DA_CSS
     end # === def close
 
     def consume_chars(c : Char)
-      consume_chars(Char_Deque.new(self), c)
+      consume_chars(A_Char_Deque.new(self), c)
     end # === def consume_chars
 
     def consume_chars(dest : A_Char_Deque, c : Char)
@@ -228,7 +245,7 @@ module DA_CSS
     #   to the block.
     def consume_chars(c : Char)
       while current_char?
-        if current_char == c
+        if current_raw_char == c
           next_char
           return self
         else
@@ -272,20 +289,27 @@ module DA_CSS
       if cache.empty?
         raise Error.new("Missing chars in: line #{origin.line_num + 1}")
       end
-      cache.push SPACE
-      cache
+      c = consume_cache
+      unknowns.push c
+      c
     end # === def save_cache
+
+    def consume_unknowns
+      unknowns = @unknowns
+      @unknowns = Deque(A_Char_Deque).new
+      unknowns
+    end # === def consume_unknowns
 
     def consume_cache
       raise Exception.new("Cache is empty. Line: #{origin.line_num+1}") if cache.empty?
       c = cache.freeze!
-      @cache = A_Char_Deque.new(self)
+      @cache = A_Char_Deque.new
       c
     end # === def consume_cache
 
     def caches_to_nodes
       q = Deque(Node::VALUE_TYPES | Node::Unknown).new
-      consume_cache.split.each { |c|
+      consume_unknowns.each { |c|
         q.push Node.from_chars(c.freeze!)
       }
       q

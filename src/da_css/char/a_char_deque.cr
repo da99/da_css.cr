@@ -3,27 +3,35 @@ module DA_CSS
 
   struct A_Char_Deque
 
+    def self.join(stuff : Deque(A_Char_Deque), joiner : String | Char = ' ')
+      io = IO::Memory.new
+      stuff.each_with_index { |x, i|
+        io << joiner if i != 0
+        x.to_s(io)
+      }
+      io.to_s
+    end
+
     include Enumerable(A_Char)
 
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw : Deque(Char)
-    getter parent : Parser
+    @raw = Deque(A_Char).new
     getter pos_line = 0
 
-    def initialize(parent : Parser)
-      @parent   = parent
-      @raw      = Deque(Char).new
+    def initialize
       @frozen   = false
-      @pos_line = parent.line_num
+      @pos_line = 0
     end # === def initialize
 
     def line
-      @parent.string.lines.each_with_index { |l, i|
-        return l if i == @pos_line
-      }
-      ""
+      a_char = @raw.first?
+      if a_char
+        a_char.line.content
+      else
+        ""
+      end
     end # === def line
 
     def join(*args)
@@ -62,21 +70,24 @@ module DA_CSS
     end # === def each
 
     def to_s
-      io = IO::Memory.new
+      to_s(IO::Memory.new)
+    end # === def to_s
+
+    def to_s(io)
       last_i = @raw.size - 1
       @raw.each_with_index { |c, index|
         next if last_i == index && c.whitespace?
         if c.whitespace?
           io << SPACE
         else
-          io << c
+          io << c.raw
         end
       }
       return io.to_s
     end # === def to_s
 
     def inspect(io)
-      io << "Char_Deque["
+      io << "#{self.class}["
       @raw.each_with_index { |c, index|
         io << ", " unless index == 0
         io << c.inspect
@@ -89,7 +100,7 @@ module DA_CSS
       false
     end
 
-    def push(c : Char)
+    def push(c : A_Char)
       raise_if_frozen!
       if !empty? && last.whitespace? && c.whitespace?
         return self
@@ -122,13 +133,14 @@ module DA_CSS
       valid!(@raw[i])
     end
 
-    def valid!(c : Char)
+    def valid!(a_char : A_Char)
+      c = a_char.raw
       case c
       when 'A'..'Z', 'a'..'z', '0'..'9',
         ' ', '_',
         '(', ')', '{', '}', '\'', '"',
         '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ','
-        c
+        a_char
       else
         raise Error.new("Invalid character: #{c.inspect}", self)
       end
