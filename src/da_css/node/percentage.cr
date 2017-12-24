@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Percentage
 
-      @raw : Position_Deque
+      @raw : Token
 
       def initialize(@raw)
       end # === def initialize
@@ -19,7 +19,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(cp : Position_Deque)
+      def self.looks_like?(cp : Token)
         first = cp.first
         last = cp.first
 

@@ -6,7 +6,7 @@ module DA_CSS
     struct Media_Query
 
       alias ARG_TYPES = Media_Query_Conditions | Media_Query_Keyword | Media_Query_Comma
-      @name : Position_Deque
+      @name : Token
       @args = Deque(ARG_TYPES).new
       @body = Deque(Node::Selector_With_Body).new
 

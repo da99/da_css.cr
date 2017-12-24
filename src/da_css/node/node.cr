@@ -20,7 +20,7 @@ module DA_CSS
       end
     end # === def parent_node
 
-    def self.from_chars(c : Position_Deque)
+    def self.from_chars(c : Token)
       case
       when Color.looks_like?(c)
         Color.new(c)

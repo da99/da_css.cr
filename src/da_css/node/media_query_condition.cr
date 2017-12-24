@@ -7,7 +7,7 @@ module DA_CSS
 
       alias VALUE_TYPES = Number_Unit | Number | Percentage | Keyword
 
-      @name : Position_Deque
+      @name : Token
       @vals = Deque(VALUE_TYPES).new
 
       def initialize(@name)

@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Keyword
 
-      @raw : Position_Deque
+      @raw : Token
       @name : String
       def initialize(@raw)
         @name = @raw.to_s

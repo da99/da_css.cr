@@ -9,9 +9,9 @@ module DA_CSS
       @number : Number
       @unit   : Unit
 
-      def initialize(raw : Position_Deque)
-        nums = Position_Deque.new(raw.parent)
-        unit = Position_Deque.new(raw.parent)
+      def initialize(raw : Token)
+        nums = Token.new(raw.parent)
+        unit = Token.new(raw.parent)
 
         raw.each_with_index { |c, pos|
           case c
@@ -36,7 +36,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(chars : Position_Deque)
+      def self.looks_like?(chars : Token)
         first = chars.first
         last  = chars.last
 

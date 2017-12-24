@@ -10,19 +10,15 @@ module DA_CSS
       new(origin).parse
     end
 
-    alias ROOT_NODE_TYPES =
-      Raw_Media_Query |
-      Raw_Blok
-
-    alias OPEN_NODE_TYPES =
-      Raw_Media_Query |
-      Raw_Blok
+    alias ROOT_NODE_TYPES = Raw_Media_Query | Raw_Blok
+    alias OPEN_NODE_TYPES = ROOT_NODE_TYPES
 
     getter origin : Origin
-    getter nodes            = Deque(ROOT_NODE_TYPES).new
-    private getter stack    = Position_Deque.new
-    private getter tokens   = Deque(Position_Deque).new
-    @open_nodes             = Deque(OPEN_NODE_TYPES).new
+    getter nodes = Deque(ROOT_NODE_TYPES).new
+
+    @token      = Token.new
+    @tokens     = Deque(Token).new
+    @open_nodes = Deque(OPEN_NODE_TYPES).new
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
@@ -42,7 +38,7 @@ module DA_CSS
         case
         when c == '@' && !stack? && !tokens? && root?
           upto('{'); next_char
-          make_token if stack?
+          save_token if stack?
           open_node(Raw_Media_Query.new(consume_tokens))
 
         when c == '}' && open_node?(Raw_Media_Query) && !stack? && !tokens?
@@ -52,14 +48,14 @@ module DA_CSS
         when c == '/' && current_char == '*' && !stack? && !tokens?
           next_char # == skip asterisk
           was_closed = false
-          comment    = Position_Deque.new
+          comment    = Token.new
           while !done?
             through('*')
             next if done?
             if current_char == '/'
-              stack.pop # remove previous asterisk
+              @token.pop # remove previous asterisk
               was_closed = true
-              make_token if stack?
+              save_token if stack?
               comment = consume_tokens
               break
             end
@@ -69,10 +65,10 @@ module DA_CSS
             raise Error.new("Comment was not closed: Line: #{p.line.number}")
           end
 
-        when c == '{' && stack.empty? && tokens? && root?
+        when c == '{' && @token.empty? && tokens? && root?
           open_node(Raw_Blok.new(consume_tokens))
 
-        when c == '{' && stack.empty? && tokens? && open_node?(Raw_Media_Query)
+        when c == '{' && @token.empty? && tokens? && open_node?(Raw_Media_Query)
           new_node = Raw_Blok.new(consume_tokens)
           mq = current_node
           if mq.is_a?(Raw_Media_Query)
@@ -86,7 +82,7 @@ module DA_CSS
         when c == ':' && stack? && open_node?(Raw_Blok)
           key = consume_stack
           upto(';'); next_char
-          make_token if stack?
+          save_token if stack?
           values = consume_tokens
           blok = current_node(Raw_Blok)
           if blok.is_a?(Raw_Blok)
@@ -97,10 +93,10 @@ module DA_CSS
           raise Error.new("Un-needed character: #{c} (line: #{p.line.number})")
 
         when c.whitespace?
-          make_token unless stack.empty?
+          save_token unless @token.empty?
 
         else
-          stack.push p
+          @token.push p
         end # === while
 
       end # while !done?
@@ -113,11 +109,11 @@ module DA_CSS
       end
 
       if stack?
-        raise Error.new("Unknown value: ", stack.pos_summary(stack.to_s))
+        raise Error.new("Unknown value: ", @token.pos_summary(@token.to_s))
       end
 
       if tokens?
-        raise Error.new("Unknown value: ", Position_Deque.join(consume_tokens))
+        raise Error.new("Unknown value: ", consume_tokens.join(' '))
       end
 
       @nodes
@@ -128,7 +124,7 @@ module DA_CSS
     # 'target'
     def through(target : Char)
       upto(target)
-      stack.push current_position
+      @token.push current_position
       next_char
     end # === def through
 
@@ -147,15 +143,15 @@ module DA_CSS
           break
 
         when (c == '\'' || c == '"')
-          stack.push p
+          @token.push p
           through(c);
 
         when c.whitespace?
-          make_token if stack?
+          save_token if stack?
           next_char
 
         else
-          stack.push p
+          @token.push p
           next_char
         end # === case
       end # === while
@@ -163,9 +159,9 @@ module DA_CSS
       if !was_found
         case target
         when '\'', '"'
-          raise Error.new("String not closed: #{target.inspect} (#{stack.pos_summary})")
+          raise Error.new("String not closed: #{target.inspect} (#{@token.pos_summary})")
         else
-          raise Error.new("Missing character: #{target.inspect} (#{stack.pos_summary})")
+          raise Error.new("Missing character: #{target.inspect} (#{@token.pos_summary})")
         end
       end
 
@@ -181,11 +177,11 @@ module DA_CSS
     end # === def done?
 
     def tokens?
-      !tokens.empty?
+      !@tokens.empty?
     end # === def tokens?
 
     def stack?
-      !stack.empty?
+      !@token.empty?
     end # === def stack?
 
     def open_node?(klass)
@@ -228,25 +224,25 @@ module DA_CSS
       Position.new(@origin, @reader.pos, @reader.current_char)
     end
 
-    def make_token
-      if stack.empty?
+    def save_token
+      if @token.empty?
         raise Exception.new("Trying to save an empty stack of characters.")
       end
       c = consume_stack
-      tokens.push c
+      @tokens.push c
       c
-    end # === def make_token
+    end # === def save_token
 
     def consume_tokens
       t = @tokens
-      @tokens = Deque(Position_Deque).new
+      @tokens = Deque(Token).new
       t
     end # === def consume_tokens
 
     def consume_stack
-      raise Exception.new("Trying to consume an empty stack.") if stack.empty?
-      s = stack.freeze!
-      @stack = Position_Deque.new
+      raise Exception.new("Trying to consume an empty stack.") if @token.empty?
+      s = @token.freeze!
+      @token = Token.new
       s
     end # === def consume_stack
 

@@ -3,7 +3,7 @@ module DA_CSS
 
   struct Raw_Blok
 
-    getter selector : Deque(Position_Deque)
+    getter selector : Deque(Token)
     getter propertys = Deque(Raw_Property).new
 
     def initialize(@selector)
@@ -18,7 +18,10 @@ module DA_CSS
     end # === def push
 
     def print(p : Printer)
-      p.raw! Position_Deque.join(selector)
+      selector.each_with_index do |x, i|
+        p.raw!(' ') if i != 0
+        x.print p
+      end
       p.raw! " {\n"
       propertys.each { |prop|
         prop.print p

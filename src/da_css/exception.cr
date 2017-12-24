@@ -6,7 +6,7 @@ module DA_CSS
     def initialize(@message)
     end # === def message
 
-    def initialize(@message, reader : Position_Deque)
+    def initialize(@message, reader : Token)
       @message = "#{@message}: #{reader.pos_summary}"
     end # === def message
 
@@ -61,7 +61,7 @@ module DA_CSS
       @message = "Invalid Unit: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Position_Deque)
+    def initialize(cp : Token)
       @message = "Invalid Unit: #{cp.to_s.inspect}"
     end # === def initialize
 
@@ -73,7 +73,7 @@ module DA_CSS
       @message = "Invalid Color: #{str.inspect}"
     end # === def initialize
 
-    def initialize(cp : Position_Deque)
+    def initialize(cp : Token)
       @message = "Invalid Color: #{cp.to_s.inspect}"
     end # === def initialize
 

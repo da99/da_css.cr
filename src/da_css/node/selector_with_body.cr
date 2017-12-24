@@ -8,7 +8,7 @@ module DA_CSS
       getter head : Node::Selector
       getter body = Deque(Node::Property).new
 
-      def initialize(arr : Position_Deque)
+      def initialize(arr : Token)
         @head = Node::Selector.new(arr)
       end # === def initialize
 

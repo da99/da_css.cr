@@ -11,7 +11,7 @@ module DA_CSS
     end # === class Invalid_Statement
 
     struct Statement
-      getter raw : Position_Deque
+      getter raw : Token
 
       def initialize(@raw)
       end # === def initialize

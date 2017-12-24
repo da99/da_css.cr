@@ -10,7 +10,7 @@ module DA_CSS
       LOWER   = 'a'..'z'
       NUMBERS = '0'..'9'
 
-      @raw : Position_Deque
+      @raw : Token
       delegate parent, to: @raw
 
       def initialize(@raw)
@@ -36,7 +36,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(chars : Position_Deque)
+      def self.looks_like?(chars : Token)
         chars.first == HASH
       end # === def self.looks_like?
     end # === struct Color

@@ -8,7 +8,7 @@ module DA_CSS
       RANGE = 1..3
       LETTERS = 'a'..'z'
 
-      @raw    : Position_Deque
+      @raw    : Token
       @string : String
 
       def initialize(@raw)
@@ -32,7 +32,7 @@ module DA_CSS
         self
       end # === def print
 
-      def self.looks_like?(chars : Position_Deque)
+      def self.looks_like?(chars : Token)
         RANGE.includes?(chars.size) && chars.all?(LETTERS)
       end # === def self.looks_like?
 

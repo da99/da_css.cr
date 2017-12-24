@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Comment
 
-      getter raw : Position_Deque
+      getter raw : Token
 
       def initialize(@raw)
       end # === def initialize

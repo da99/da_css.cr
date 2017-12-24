@@ -1,16 +1,7 @@
 
 module DA_CSS
 
-  struct Position_Deque
-
-    def self.join(stuff : Deque(Position_Deque), joiner : String | Char = ' ')
-      io = IO::Memory.new
-      stuff.each_with_index { |x, i|
-        io << joiner if i != 0
-        x.to_s(io)
-      }
-      io.to_s
-    end
+  struct Token
 
     include Enumerable(Position)
 
@@ -155,7 +146,7 @@ module DA_CSS
     end # === def pos_summary
 
     def print(printer : Printer)
-      each { |c| printer.raw! c }
+      each { |p| printer.raw! p.char }
     end # === def print
 
     module Common
@@ -173,7 +164,7 @@ module DA_CSS
     extend Common
     include Common
 
-  end # === class Position_Deque
+  end # === class Token
 
 end # === module DA_CSS
 

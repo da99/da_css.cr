@@ -3,8 +3,8 @@ module DA_CSS
 
   struct Raw_Property
 
-    getter name : Position_Deque
-    getter values : Deque(Position_Deque)
+    getter name : Token
+    getter values : Deque(Token)
 
     def initialize(@name, @values)
     end # === def initialize
@@ -16,7 +16,10 @@ module DA_CSS
     def print(p : Printer)
       p.raw! name.to_s
       p.raw! ": "
-      p.raw! Position_Deque.join(@values)
+      @values.each_with_index { |x, i|
+        p.raw! ' ' if i != 0
+        x.print p
+      }
       p.raw! ";\n"
     end # === def print
 
