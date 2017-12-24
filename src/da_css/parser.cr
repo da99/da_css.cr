@@ -259,22 +259,13 @@ module DA_CSS
       io << "]"
     end # === def inspect
 
-    def print(printer : Printer)
-      @nodes.each_with_index { |x, i|
-        printer.raw! " " if i != 0
-        x.print(printer)
-      }
-      self
-    end # === def print
-
-    def to_s
-      io = IO::Memory.new
+    def to_s(io)
       @nodes.each_with_index { |x, i|
         io << ' ' if i != 0
-        io << x.to_s
+        x.to_s(io)
       }
-      io.to_s
-    end # === def to_s
+      io
+    end # === def print
 
   end # === class Parser
 

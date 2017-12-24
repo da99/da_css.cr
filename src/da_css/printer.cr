@@ -18,7 +18,7 @@ module DA_CSS
     end # === def new_line
 
     def to_css(nodes)
-      nodes.each { |x| x.print(self) } if @io_css.empty?
+      nodes.each { |x| x.to_s(@io_css) } if @io_css.empty?
       io_css.to_s
     end # === def to_css
 

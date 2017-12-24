@@ -13,14 +13,13 @@ module DA_CSS
       "property"
     end # === def english_name
 
-    def print(p : Printer)
-      p.raw! name.to_s
-      p.raw! ": "
+    def to_s(io)
+      io << name.to_s << ": "
       @values.each_with_index { |x, i|
-        p.raw! ' ' if i != 0
-        x.print p
+        io << SPACE if !i.zero?
+        x.to_s io
       }
-      p.raw! ";\n"
+      io << ";\n"
     end # === def print
 
   end # === struct Raw_Property

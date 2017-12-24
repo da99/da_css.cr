@@ -17,17 +17,17 @@ module DA_CSS
       bloks.push x
     end # === def push
 
-    def print(p : Printer)
-      p.raw! "@"
+    def to_s(io)
+      io << "@"
       selector.each_with_index { |x, i|
-        p.raw! ' ' if i != 0
-        x.print p
+        io << SPACE if !i.zero?
+        x.to_s io
       }
-      p.raw! " {\n"
+      io << " {\n"
       bloks.each { |blok|
-        blok.print p
+        blok.to_s io
       }
-      p.raw! "}\n"
+      io << "}\n"
     end # === def print
 
   end # === struct Raw_Media_Query

@@ -17,16 +17,16 @@ module DA_CSS
       @propertys.push x
     end # === def push
 
-    def print(p : Printer)
+    def to_s(io)
       selector.each_with_index do |x, i|
-        p.raw!(' ') if i != 0
-        x.print p
+        io << SPACE if !i.zero?
+        x.to_s io
       end
-      p.raw! " {\n"
+      io << " {\n"
       propertys.each { |prop|
-        prop.print p
+        prop.to_s io
       }
-      p.raw! "}\n"
+      io <<  "}\n"
     end # === def print
 
   end # === struct Raw_Blok

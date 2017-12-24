@@ -3,32 +3,24 @@ module DA_CSS
 
   class IO_CSS
 
-    @parent_count : Int32 = 0
-    @io : IO::Memory = IO::Memory.new
+    @io = IO::Memory.new
+    delegate empty?, to: @io
 
     def initialize
     end # === def initialize
 
-    def initialize(@parent_count)
-    end # === def initialize
-
-    def raw!(*strings)
-      strings.each { |x|
-        case x
-        when String, Char
-          @io << x
-        else
-          raise Exception.new("Invalid string: #{x.inspect}")
-        end
-      }
+    def <<(x : String | Char)
+      case x
+      when String, Char
+        @io << x
+      else
+        raise Exception.new("Invalid string: #{x.inspect}")
+      end
+      self
     end # === def raw!
 
-    def empty?
-      @io.empty?
-    end # === def empty?
-
-    def to_s
-      @io.to_s
+    def to_s(*args)
+      @io.to_s(*args)
     end # === def to_s
 
   end # === class IO_CSS
