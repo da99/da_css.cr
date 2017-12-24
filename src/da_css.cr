@@ -56,7 +56,6 @@ require "./da_css/node/property"
 require "./da_css/node/selector"
 require "./da_css/node/selector_with_body"
 
-require "./da_css/io_css"
 require "./da_css/origin"
 require "./da_css/parser"
 require "./da_css/printer"
