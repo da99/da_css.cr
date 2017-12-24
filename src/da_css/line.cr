@@ -3,30 +3,28 @@ module DA_CSS
 
   struct Line
 
-    getter number  : Int32
+    getter num     : Int32
     getter content : String
-    getter parent  : Origin
 
-    def initialize(a_char : A_Char)
-      pos       = a_char.pos
-      @parent   = a_char.origin
-      @number   = 0
+    def initialize(p : Position)
+      pos_num   = p.num
+      o         = p.origin
+      @num      = 0
       @content  = ""
       start_pos = 0
       end_pos   = 0
-      @parent.string.each_line { |l|
+      o.raw.each_line { |l|
         end_pos += (l.size - 1)
-        if start_pos <= pos
+        if start_pos <= pos_num
           @content = l
         end
-        @number += 1
+        @num += 1
       }
-
     end # === def initialize
 
     def number
-    end # === def line_number
-
+      @num + 1
+    end
 
   end # === struct Line
 

@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Media_Query_Keyword
 
-      @raw : A_Char_Deque
+      @raw : Position_Deque
       @name : String
       def initialize(@raw)
         @name = @raw.to_s

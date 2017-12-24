@@ -20,23 +20,90 @@ module DA_CSS
 
     getter origin : Origin
     getter nodes            = Deque(ROOT_NODE_TYPES).new
-    private getter cache    = A_Char_Deque.new
-    private getter unknowns = Deque(A_Char_Deque).new
+    private getter stack    = Position_Deque.new
+    private getter tokens   = Deque(Position_Deque).new
     @open_nodes             = Deque(OPEN_NODE_TYPES).new
 
-    delegate done?, line_num, current_char?, current_raw_char,
-      current_char, next_char?, next_char, string,
-      to: @origin
+    # A Char::Reader is used because it adds
+    # protection against invalid codepoints.
+    @reader : Char::Reader
+    delegate current_char?, current_char, next_char, next_char?, to: @reader
 
     def initialize(@origin)
+      @reader = Char::Reader.new(@origin.raw)
     end # === def initialize
 
     def parse
       while !done?
+        p = current_position
         c = current_char
         next_char
-        parse(c)
-      end
+
+        case
+        when c == '@' && !stack? && !tokens? && root?
+          upto('{'); next_char
+          make_token if stack?
+          open_node(Raw_Media_Query.new(consume_tokens))
+
+        when c == '}' && open_node?(Raw_Media_Query) && !stack? && !tokens?
+          close_node(Raw_Media_Query)
+
+        # PARSE: comment
+        when c == '/' && current_char == '*' && !stack? && !tokens?
+          next_char # == skip asterisk
+          was_closed = false
+          comment    = Position_Deque.new
+          while !done?
+            through('*')
+            next if done?
+            if current_char == '/'
+              stack.pop # remove previous asterisk
+              was_closed = true
+              make_token if stack?
+              comment = consume_tokens
+              break
+            end
+          end # loop
+
+          if !was_closed
+            raise Error.new("Comment was not closed: Line: #{p.line.number}")
+          end
+
+        when c == '{' && stack.empty? && tokens? && root?
+          open_node(Raw_Blok.new(consume_tokens))
+
+        when c == '{' && stack.empty? && tokens? && open_node?(Raw_Media_Query)
+          new_node = Raw_Blok.new(consume_tokens)
+          mq = current_node
+          if mq.is_a?(Raw_Media_Query)
+            mq.push new_node
+          end
+          open_node(new_node)
+
+        when c == '}' && !stack? && !tokens? && open_node?(Raw_Blok)
+          close_node(Raw_Blok)
+
+        when c == ':' && stack? && open_node?(Raw_Blok)
+          key = consume_stack
+          upto(';'); next_char
+          make_token if stack?
+          values = consume_tokens
+          blok = current_node(Raw_Blok)
+          if blok.is_a?(Raw_Blok)
+            blok.push(Raw_Property.new(key, values))
+          end
+
+        when c == '}' || c == ';'
+          raise Error.new("Un-needed character: #{c} (line: #{p.line.number})")
+
+        when c.whitespace?
+          make_token unless stack.empty?
+
+        else
+          stack.push p
+        end # === while
+
+      end # while !done?
 
       if !root?
         node = current_node
@@ -45,153 +112,81 @@ module DA_CSS
         end
       end
 
-      if cache?
-        raise Error.new("Unknown value: ", cache.pos_summary(cache.to_s))
+      if stack?
+        raise Error.new("Unknown value: ", stack.pos_summary(stack.to_s))
       end
 
-      if unknowns?
-        raise Error.new("Unknown value: ", A_Char_Deque.join(consume_unknowns))
+      if tokens?
+        raise Error.new("Unknown value: ", Position_Deque.join(consume_tokens))
       end
 
       @nodes
     end # === def parse
 
-    def goto!(target : Char)
+    # stacks chars upto, and including, 'target',
+    # thereby setting 'current_raw_char' to the char after
+    # 'target'
+    def through(target : Char)
+      upto(target)
+      stack.push current_position
+      next_char
+    end # === def through
+
+    # stacks chars upto, but not including, 'target',
+    # thereby setting 'target' == 'current_raw_char'
+    def upto(target : Char)
       was_found = false
-      in_string = nil
 
-      while next_char?
-        a_char = current_char
-        c = a_char.raw
+      while !done?
+        p = current_position
+        c = current_char
+
         case
-
-        when (c == '\'' || c == '"')
-          cache.push a_char
-          start_quote = c
-          quote_found = false
-
-          while next_char?
-            next_char
-            cache.push current_char
-
-            if current_char == c
-              quote_found = true
-              next_char
-              break
-            end
-
-          end
-          if !quote_found
-            raise Error.new("String not closed: #{cache.pos_summary}")
-          end
-          next
-
         when c == target
           was_found = true
           break
 
+        when (c == '\'' || c == '"')
+          stack.push p
+          through(c);
+
         when c.whitespace?
-          save_cache if cache?
+          make_token if stack?
           next_char
 
         else
-          cache.push a_char
+          stack.push p
           next_char
-
         end # === case
       end # === while
 
       if !was_found
-        raise Error.new("Missing character: #{target.inspect} (#{cache.pos_summary})")
+        case target
+        when '\'', '"'
+          raise Error.new("String not closed: #{target.inspect} (#{stack.pos_summary})")
+        else
+          raise Error.new("Missing character: #{target.inspect} (#{stack.pos_summary})")
+        end
       end
 
       return was_found
     end # === def goto
 
-    def parse(a_char : A_Char)
-      c = a_char.raw
-
-      case
-
-      when c == '@' && nothing_to_consume? && root?
-        goto!('{'); next_char
-        save_cache if cache?
-        open_node(Raw_Media_Query.new(consume_unknowns))
-
-      when c == '}' && open_node?(Raw_Media_Query) && nothing_to_consume?
-        close_node(Raw_Media_Query)
-
-      # PARSE: comment
-      when c == '/' && origin.current_char == '*'
-        origin.next_char # == skip asterisk
-        was_closed = false
-        comment = A_Char_Deque.new
-        loop do
-          consume_chars(comment, '/')
-          break if !current_char?
-
-          if comment.prev(2) == '*'
-            comment.pop(2)
-            was_closed = true
-            break
-          end
-        end # loop
-
-        if !was_closed
-          raise Error.new("Comment was not closed: #{comment.pos_summary}")
-        end
-
-      when c == '{' && !cache? && unknowns? && root?
-        open_node(Raw_Blok.new(consume_unknowns))
-
-      when c == '{' && !cache? && unknowns? && open_node?(Raw_Media_Query)
-        new_node = Raw_Blok.new(consume_unknowns)
-        mq = current_node
-        if mq.is_a?(Raw_Media_Query)
-          mq.push new_node
-        end
-        open_node(new_node)
-
-      when c == '}' && nothing_to_consume? && open_node?(Raw_Blok)
-        close_node(Raw_Blok)
-
-      when c == ':' && cache? && open_node?(Raw_Blok)
-        key = consume_cache
-        goto!(';'); next_char
-        save_cache if cache?
-        values = consume_unknowns
-        blok = current_node(Raw_Blok)
-        if blok.is_a?(Raw_Blok)
-          blok.push(Raw_Property.new(key, values))
-        end
-
-      when c == '}' || c == ';'
-        raise Error.new("Un-needed character: #{c} (line: #{origin.line_num+1})")
-
-      when c.whitespace?
-        save_cache unless cache.empty?
-
-      else
-        cache.push a_char
-
-      end # === while
-    end # === def parse
-
     def root?
       @open_nodes.empty?
     end # === def root?
 
-    def unknowns?
-      !unknowns.empty?
-    end # === def unknowns?
+    def done?
+      !@reader.has_next?
+    end # === def done?
 
-    def cache?
-      !cache.empty?
-    end # === def cache?
+    def tokens?
+      !tokens.empty?
+    end # === def tokens?
 
-    def nothing_to_consume?
-      cache.empty? && unknowns.empty?
-    end # === def nothing_to_consume?
+    def stack?
+      !stack.empty?
+    end # === def stack?
 
     def open_node?(klass)
       @open_nodes.last?.class == klass
@@ -229,91 +224,31 @@ module DA_CSS
       @open_nodes.pop
     end # === def close
 
-    def consume_chars(c : Char)
-      consume_chars(A_Char_Deque.new(self), c)
-    end # === def consume_chars
+    def current_position
+      Position.new(@origin, @reader.pos, @reader.current_char)
+    end
 
-    def consume_chars(dest : A_Char_Deque, c : Char)
-      consume_chars(c) { |x|
-        dest.push x
-      }
-      dest
-    end # === def consume_chars
-
-    # Example: "a b c;" -> consume_chars(';')
-    # Note: ';' here will be consume-ed, but not yield-ed
-    #   to the block.
-    def consume_chars(c : Char)
-      while current_char?
-        if current_raw_char == c
-          next_char
-          return self
-        else
-          yield next_char
-        end
+    def make_token
+      if stack.empty?
+        raise Exception.new("Trying to save an empty stack of characters.")
       end
-    end # === def consume_chars
-
-    def consume_between(open : Char, close : Char)
-      if current_char != open
-        raise Error.new(":consume_between: Not on a #{open.inspect} char.")
-      end
-
-      next_char
-      count = 1
-      chars = A_Char_Deque.new(self)
-      while current_char? && count > 0
-        case current_char
-        when open
-          count += 1
-          next_char
-        when close
-          count -= 1
-          next_char
-        else
-          chars.push next_char
-        end
-      end # === while
-
-      if count > 0
-        raise Error.new("Missing closing chars: '#{close}'")
-      end
-      if count < 0
-        raise Error.new("Missing open chars: '#{open}'")
-      end
-
-      return chars
-    end # === def consume_between
-
-    def save_cache
-      if cache.empty?
-        raise Error.new("Missing chars in: line #{origin.line_num + 1}")
-      end
-      c = consume_cache
-      unknowns.push c
+      c = consume_stack
+      tokens.push c
       c
-    end # === def save_cache
+    end # === def make_token
 
-    def consume_unknowns
-      unknowns = @unknowns
-      @unknowns = Deque(A_Char_Deque).new
-      unknowns
-    end # === def consume_unknowns
+    def consume_tokens
+      t = @tokens
+      @tokens = Deque(Position_Deque).new
+      t
+    end # === def consume_tokens
 
-    def consume_cache
-      raise Exception.new("Cache is empty. Line: #{origin.line_num+1}") if cache.empty?
-      c = cache.freeze!
-      @cache = A_Char_Deque.new
-      c
-    end # === def consume_cache
-
-    def caches_to_nodes
-      q = Deque(Node::VALUE_TYPES | Node::Unknown).new
-      consume_unknowns.each { |c|
-        q.push Node.from_chars(c.freeze!)
-      }
-      q
-    end # === def caches_to_nodes
+    def consume_stack
+      raise Exception.new("Trying to consume an empty stack.") if stack.empty?
+      s = stack.freeze!
+      @stack = Position_Deque.new
+      s
+    end # === def consume_stack
 
     def nodes?
       !@nodes.empty?

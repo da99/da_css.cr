@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Unknown
 
-      @raw : A_Char_Deque
+      @raw : Position_Deque
       def initialize(@raw)
       end # === def initialize
 

@@ -25,7 +25,7 @@ module DA_CSS
 
         @name : String
 
-        def initialize(chars : A_Char_Deque)
+        def initialize(chars : Position_Deque)
           @name = chars.to_s
         end # === def initialize
 
@@ -124,7 +124,7 @@ module DA_CSS
       getter key    : Key
       getter value  = Deque(NODE_TYPES).new
 
-      def initialize(raw_key : A_Char_Deque)
+      def initialize(raw_key : Position_Deque)
         @key = Key.new(raw_key)
       end # === def initialize
 

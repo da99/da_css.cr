@@ -5,7 +5,7 @@ module DA_CSS
 
     struct Assignment
 
-      getter name  : A_Char_Deque
+      getter name  : Position_Deque
       getter value : Parser
       getter parent : Parser
 

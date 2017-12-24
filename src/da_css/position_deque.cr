@@ -1,9 +1,9 @@
 
 module DA_CSS
 
-  struct A_Char_Deque
+  struct Position_Deque
 
-    def self.join(stuff : Deque(A_Char_Deque), joiner : String | Char = ' ')
+    def self.join(stuff : Deque(Position_Deque), joiner : String | Char = ' ')
       io = IO::Memory.new
       stuff.each_with_index { |x, i|
         io << joiner if i != 0
@@ -12,12 +12,12 @@ module DA_CSS
       io.to_s
     end
 
-    include Enumerable(A_Char)
+    include Enumerable(Position)
 
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw = Deque(A_Char).new
+    @raw = Deque(Position).new
     getter pos_line = 0
 
     def initialize
@@ -37,28 +37,6 @@ module DA_CSS
     def join(*args)
       @raw.join(*args)
     end
-
-    def split
-      fin = Deque(A_Char_Deque).new
-      cd = A_Char_Deque.new(@parent)
-      prev = nil
-      each { |c|
-        case
-        when c.whitespace?
-          fin.push cd
-          cd = A_Char_Deque.new(@parent)
-        else
-          cd.push c
-        end
-        prev = c
-      }
-
-      if prev && !prev.whitespace?
-        fin.push cd
-      end
-
-      fin
-    end # === def split
 
     def each
       prev = nil
@@ -80,7 +58,7 @@ module DA_CSS
         if c.whitespace?
           io << SPACE
         else
-          io << c.raw
+          io << c.char
         end
       }
       return io.to_s
@@ -100,7 +78,7 @@ module DA_CSS
       false
     end
 
-    def push(c : A_Char)
+    def push(c : Position)
       raise_if_frozen!
       if !empty? && last.whitespace? && c.whitespace?
         return self
@@ -133,14 +111,14 @@ module DA_CSS
       valid!(@raw[i])
     end
 
-    def valid!(a_char : A_Char)
-      c = a_char.raw
+    def valid!(p : Position)
+      c = p.char
       case c
       when 'A'..'Z', 'a'..'z', '0'..'9',
         ' ', '_',
         '(', ')', '{', '}', '\'', '"',
         '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ','
-        a_char
+        p
       else
         raise Error.new("Invalid character: #{c.inspect}", self)
       end
@@ -195,7 +173,7 @@ module DA_CSS
     extend Common
     include Common
 
-  end # === class A_Char_Deque
+  end # === class Position_Deque
 
 end # === module DA_CSS
 
