@@ -5,7 +5,7 @@ module DA_CSS
   # in the original string (ie CSS doc).
   struct Position
 
-    getter origin : Origin
+    getter origin : String
     getter num    : Int32
     getter char   : Char
 

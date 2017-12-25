@@ -13,7 +13,7 @@ module DA_CSS
       @content  = ""
       start_pos = 0
       end_pos   = 0
-      o.raw.each_line { |l|
+      o.each_line { |l|
         end_pos += (l.size - 1)
         if start_pos <= pos_num
           @content = l

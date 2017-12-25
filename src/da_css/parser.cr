@@ -13,7 +13,7 @@ module DA_CSS
     alias ROOT_NODE_TYPES = Raw_Media_Query | Raw_Blok
     alias OPEN_NODE_TYPES = ROOT_NODE_TYPES
 
-    getter origin : Origin
+    getter origin : String
     getter nodes = Deque(ROOT_NODE_TYPES).new
 
     @token      = Token.new
@@ -26,7 +26,7 @@ module DA_CSS
     delegate current_char?, current_char, next_char, next_char?, to: @reader
 
     def initialize(@origin)
-      @reader = Char::Reader.new(@origin.raw)
+      @reader = Char::Reader.new(@origin)
     end # === def initialize
 
     def parse

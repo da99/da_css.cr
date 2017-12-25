@@ -17,7 +17,7 @@ module DA_CSS
     Node::Percentage | Node::Slash | Node::Unknown
 
   def self.to_css(str : String)
-    Printer.to_css(Parser.parse(Origin.new(str)))
+    Printer.to_css(Parser.parse(str))
   end # === def to_css
 
 end # === module DA_CSS
@@ -56,7 +56,6 @@ require "./da_css/node/property"
 require "./da_css/node/selector"
 require "./da_css/node/selector_with_body"
 
-require "./da_css/origin"
 require "./da_css/parser"
 require "./da_css/printer"
 
