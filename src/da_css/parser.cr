@@ -17,7 +17,7 @@ module DA_CSS
     getter nodes = Deque(ROOT_NODE_TYPES).new
 
     @token      = Token.new
-    @tokens     = Deque(Token).new
+    @stack      = Deque(Token).new
     @open_nodes = Deque(OPEN_NODE_TYPES).new
 
     # A Char::Reader is used because it adds
@@ -36,16 +36,16 @@ module DA_CSS
         next_char
 
         case
-        when c == '@' && !stack? && !tokens? && root?
+        when c == '@' && !token? && !stack? && root?
           upto('{'); next_char
-          save_token if stack?
-          open_node(Raw_Media_Query.new(consume_tokens))
+          save_token if token?
+          open_node(Raw_Media_Query.new(consume_stack))
 
-        when c == '}' && open_node?(Raw_Media_Query) && !stack? && !tokens?
+        when c == '}' && open_node?(Raw_Media_Query) && !token? && !stack?
           close_node(Raw_Media_Query)
 
         # PARSE: comment
-        when c == '/' && current_char == '*' && !stack? && !tokens?
+        when c == '/' && current_char == '*' && !token? && !stack?
           next_char # == skip asterisk
           was_closed = false
           comment    = Token.new
@@ -55,8 +55,8 @@ module DA_CSS
             if current_char == '/'
               @token.pop # remove previous asterisk
               was_closed = true
-              save_token if stack?
-              comment = consume_tokens
+              save_token if token?
+              comment = consume_stack
               break
             end
           end # loop
@@ -65,25 +65,25 @@ module DA_CSS
             raise Error.new("Comment was not closed: Line: #{p.line.number}")
           end
 
-        when c == '{' && @token.empty? && tokens? && root?
-          open_node(Raw_Blok.new(consume_tokens))
+        when c == '{' && @token.empty? && stack? && root?
+          open_node(Raw_Blok.new(consume_stack))
 
-        when c == '{' && @token.empty? && tokens? && open_node?(Raw_Media_Query)
-          new_node = Raw_Blok.new(consume_tokens)
+        when c == '{' && @token.empty? && stack? && open_node?(Raw_Media_Query)
+          new_node = Raw_Blok.new(consume_stack)
           mq = current_node
           if mq.is_a?(Raw_Media_Query)
             mq.push new_node
           end
           open_node(new_node)
 
-        when c == '}' && !stack? && !tokens? && open_node?(Raw_Blok)
+        when c == '}' && !token? && !stack? && open_node?(Raw_Blok)
           close_node(Raw_Blok)
 
-        when c == ':' && stack? && open_node?(Raw_Blok)
-          key = consume_stack
+        when c == ':' && token? && open_node?(Raw_Blok)
+          key = consume_token
           upto(';'); next_char
-          save_token if stack?
-          values = consume_tokens
+          save_token if token?
+          values = consume_stack
           blok = current_node(Raw_Blok)
           if blok.is_a?(Raw_Blok)
             blok.push(Raw_Property.new(key, values))
@@ -108,12 +108,12 @@ module DA_CSS
         end
       end
 
-      if stack?
+      if token?
         raise Error.new("Unknown value: ", @token.pos_summary(@token.to_s))
       end
 
-      if tokens?
-        raise Error.new("Unknown value: ", consume_tokens.join(' '))
+      if stack?
+        raise Error.new("Unknown value: ", consume_stack.join(' '))
       end
 
       @nodes
@@ -147,7 +147,7 @@ module DA_CSS
           through(c);
 
         when c.whitespace?
-          save_token if stack?
+          save_token if token?
           next_char
 
         else
@@ -176,13 +176,13 @@ module DA_CSS
       !@reader.has_next?
     end # === def done?
 
-    def tokens?
-      !@tokens.empty?
-    end # === def tokens?
-
     def stack?
-      !@token.empty?
+      !@stack.empty?
     end # === def stack?
+
+    def token?
+      !@token.empty?
+    end # === def token?
 
     def open_node?(klass)
       @open_nodes.last?.class == klass
@@ -228,23 +228,23 @@ module DA_CSS
       if @token.empty?
         raise Exception.new("Trying to save an empty stack of characters.")
       end
-      c = consume_stack
-      @tokens.push c
+      c = consume_token
+      @stack.push c
       c
     end # === def save_token
 
-    def consume_tokens
-      t = @tokens
-      @tokens = Deque(Token).new
-      t
-    end # === def consume_tokens
-
     def consume_stack
+      t = @stack
+      @stack = Deque(Token).new
+      t
+    end # === def consume_stack
+
+    def consume_token
       raise Exception.new("Trying to consume an empty stack.") if @token.empty?
       s = @token.freeze!
       @token = Token.new
       s
-    end # === def consume_stack
+    end # === def consume_token
 
     def nodes?
       !@nodes.empty?
