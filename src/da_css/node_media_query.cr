@@ -47,7 +47,13 @@ module DA_CSS
     end # === def initialize
 
     def to_s(io)
-      io << "media query node"
+      io << "@"
+      selector_tokens.join(SPACE, io)
+      io << " {\n"
+      body.each { |blok|
+        blok.to_s(io)
+      }
+      io << "}\n"
     end # === def print
 
   end # === struct Node_Media_Query
