@@ -1,32 +1,33 @@
 
 module DA_CSS
 
-  struct Line
+  struct Column
 
-    getter num     : Int32
-    getter content : String
+    getter line   : Line
+    getter num    : Int32
 
     def initialize(p : Position)
-      pos_num   = p.num
-      @content  = ""
-      num = 0
+      @line = p.line
+      target = p.num
       counter = 0
+      num = 0
       p.origin.each_char { |c|
+        break if counter == target
         case c
         when NEW_LINE
-          num += 1
+          num = 0
         else
-          counter += 1
+          num += 1
         end
-        break if counter >= pos_num
+        counter += 1
       }
       @num = num
     end # === def initialize
 
     def number
       @num + 1
-    end
+    end # === def number
 
-  end # === struct Line
+  end # === struct Column
 
 end # === module DA_CSS

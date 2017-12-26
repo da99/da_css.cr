@@ -109,11 +109,11 @@ module DA_CSS
       end
 
       if token?
-        raise Error.new("Unknown value: ", @token.pos_summary(@token.to_s))
+        raise CSS_Author_Error.new("Unknown value: ", @token.pos_summary(@token.to_s))
       end
 
       if stack?
-        raise Error.new("Unknown value: ", consume_stack.join(' '))
+        raise CSS_Author_Error.new("Unknown value: ", consume_stack.join(' '))
       end
 
       @nodes
@@ -233,18 +233,18 @@ module DA_CSS
       c
     end # === def save_token
 
-    def consume_stack
-      t = @stack
-      @stack = Deque(Token).new
-      t
-    end # === def consume_stack
-
     def consume_token
       raise Exception.new("Trying to consume an empty stack.") if @token.empty?
       s = @token.freeze!
       @token = Token.new
       s
     end # === def consume_token
+
+    def consume_stack
+      t = @stack
+      @stack = Deque(Token).new
+      t
+    end # === def consume_stack
 
     def nodes?
       !@nodes.empty?
@@ -253,18 +253,14 @@ module DA_CSS
     def inspect(io)
       io << "Parser["
       @nodes.each_with_index { |x, i|
-        io << ", " unless i == 0
+        io << ", " if !i.zero?
         io << x.class.to_s << "(instance)"
       }
       io << "]"
     end # === def inspect
 
     def to_s(io)
-      @nodes.each_with_index { |x, i|
-        io << ' ' if i != 0
-        x.to_s(io)
-      }
-      io
+      inspect(io)
     end # === def print
 
   end # === class Parser

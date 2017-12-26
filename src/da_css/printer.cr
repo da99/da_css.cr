@@ -23,7 +23,7 @@ module DA_CSS
       @io.to_s(*args)
     end # === def to_s
 
-    def to_css(nodes)
+    def to_css(nodes : Deque(NODE_TYPES))
       nodes.each { |x| x.to_s(self) } if self.empty?
       to_s
     end # === def to_css

@@ -18,9 +18,17 @@ module DA_CSS
       Line.new(self)
     end # === def line
 
+    def column
+      Column.new(self)
+    end # === def column
+
     def to_chr
       @char
     end # === def to_chr
+
+    def summary
+      "#{char.inspect} line: #{line.number}, column: #{column.number}"
+    end # === def summary
 
     def inspect(io)
       io << "#{self.class}[#{char.inspect} @#{num}]"

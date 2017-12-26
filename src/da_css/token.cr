@@ -111,7 +111,7 @@ module DA_CSS
         '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ','
         p
       else
-        raise Error.new("Invalid character: #{c.inspect}", self)
+        raise CSS_Author_Error.new("Invalid character: #{c.inspect}", self)
       end
     end # === def valid_codepoint?
 

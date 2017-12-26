@@ -2,6 +2,12 @@
 module DA_CSS
 
   class Error < Exception
+  end # === class Error
+
+  class Programmer_Error < Error
+  end # === class Programmer_Error
+
+  class CSS_Author_Error < Error
 
     def initialize(@message)
     end # === def message
@@ -23,11 +29,10 @@ module DA_CSS
     def message
       "Parser error: #{@message}"
     end # === def message
-
-  end # === class Error
+  end # === class CSS_Author_Error
 
   macro def_exception(name, prefix, &blok)
-    class {{name.id}} < Error
+    class {{name.id}} < CSS_Author_Error
 
       def prefix_msg
         {{prefix}}
@@ -52,10 +57,10 @@ module DA_CSS
     end
   end
 
-  class Invalid_Keyword < Error
+  class Invalid_Keyword < CSS_Author_Error
   end # === class Invalid_Keyword
 
-  class Invalid_Unit < Exception
+  class Invalid_Unit < CSS_Author_Error
 
     def initialize(str : String)
       @message = "Invalid Unit: #{str.inspect}"
@@ -67,7 +72,7 @@ module DA_CSS
 
   end # === class Invalid_Unit
 
-  class Invalid_Color < Exception
+  class Invalid_Color < CSS_Author_Error
 
     def initialize(str : String)
       @message = "Invalid Color: #{str.inspect}"
