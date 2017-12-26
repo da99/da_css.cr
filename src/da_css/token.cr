@@ -126,6 +126,22 @@ module DA_CSS
       }
     end # === def all?
 
+    def summary
+      raise Programmer_Error.new("Empty token.") if @raw.empty?
+      first = @raw.first
+      last = @raw.last
+      case
+      when first && first == last
+        first.summary
+      when first && last && first.line.number == last.line.number
+        "Line: #{first.line.number} Column: #{first.column.number}-#{last.column.number}"
+      when first && last && first.line.number != last.line.number
+        "Line: #{first.line.number} - #{last.line.number}"
+      else
+        first.summary
+      end
+    end
+
     def freeze!
       return self if @frozen
       @frozen = true
