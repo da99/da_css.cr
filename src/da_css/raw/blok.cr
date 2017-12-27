@@ -3,10 +3,11 @@ module DA_CSS
 
   struct Raw_Blok
 
-    getter selector : Deque(Token)
+    getter selector_tokens : Tokens
     getter propertys = Deque(Raw_Property).new
 
-    def initialize(@selector)
+    def initialize(raw)
+      @selector_tokens = raw.split
     end # === def initialize
 
     def english_name
@@ -18,7 +19,7 @@ module DA_CSS
     end # === def push
 
     def to_s(io)
-      selector.each_with_index do |x, i|
+      selector_tokens.each_with_index do |x, i|
         io << SPACE if !i.zero?
         x.to_s io
       end

@@ -6,15 +6,14 @@ module DA_CSS
 
   struct Node_Blok
 
-    getter raw : Raw_Blok
     getter head = Deque(Selector_Token).new
     getter body = Deque(Property).new
 
-    def initialize(@raw)
-      @raw.selector.each { |token|
+    def initialize(raw)
+      raw.selector_tokens.each { |token|
         @head.push Selector_Token.new(token)
       }
-      @raw.propertys.each { |raw_property|
+      raw.propertys.each { |raw_property|
         @body.push Property.new(raw_property)
       }
     end # === def initialize

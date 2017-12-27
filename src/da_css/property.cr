@@ -3,6 +3,33 @@ module DA_CSS
 
   struct Property
 
+    # =============================================================================
+    # Instance Methods
+    # =============================================================================
+
+    @key : Token
+    @values = Deque(Token).new
+
+    def initialize(raw_property : Raw_Property)
+      @key = self.class.validate_key!(raw_property.name)
+      raw_property.values.each { |token|
+        token.split.each { |t|
+          @values.push self.class.validate_value_token!(t)
+        }
+      }
+    end # === def initialize
+
+    def to_s(io)
+      @key.to_s(io)
+      io << ": "
+      @values.join(SPACE, io)
+      io << ";"
+    end
+
+    # =============================================================================
+    # Class Methods
+    # =============================================================================
+
     def self.validate_key!(t : Token)
       t.each { |p|
         case p.char
@@ -27,22 +54,6 @@ module DA_CSS
       token
     end # === def self.validate_value!
 
-    @key : Token
-    @values = Deque(Token).new
-
-    def initialize(raw_property : Raw_Property)
-      @key = self.class.validate_key!(raw_property.name)
-      raw_property.values.each { |token|
-        @values.push self.class.validate_value_token!(token)
-      }
-    end # === def initialize
-
-    def to_s(io)
-      @key.to_s(io)
-      io << ": "
-      @values.join(SPACE, io)
-      io << ";"
-    end
 
   end # === struct Selector_Token
 

@@ -4,9 +4,10 @@ module DA_CSS
   struct Raw_Property
 
     getter name : Token
-    getter values : Deque(Token)
+    getter values : Tokens
 
-    def initialize(@name, @values)
+    def initialize(@name, raw_value : Token)
+      @values = raw_value.split
     end # === def initialize
 
     def english_name

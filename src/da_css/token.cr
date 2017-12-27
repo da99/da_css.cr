@@ -1,6 +1,7 @@
 
 module DA_CSS
 
+  alias Tokens = Deque(Token)
   struct Token
 
     include Enumerable(Position)
@@ -13,8 +14,25 @@ module DA_CSS
 
     def initialize
       @frozen   = false
-      @pos_line = 0
     end # === def initialize
+
+    def split(char : Char | Nil = nil)
+      tokens = Tokens.new
+      current = Token.new
+      each { |position|
+        case
+        when ((char == nil && position.char.whitespace?) || position.char == char) && !current.empty?
+          tokens << current
+          current = Token.new
+        else
+          current.push position
+        end
+      }
+      if !current.empty?
+        tokens << current
+      end
+      tokens
+    end # === def split
 
     def line
       a_char = @raw.first?
@@ -136,6 +154,9 @@ module DA_CSS
       when first && last && first.line.number == last.line.number
         "Line: #{first.line.number} Column: #{first.column.number}-#{last.column.number}"
       when first && last && first.line.number != last.line.number
+        each { |position|
+          inspect! position, position.line.num, position.line.number
+        }
         "Line: #{first.line.number} - #{last.line.number}"
       else
         first.summary
@@ -147,19 +168,6 @@ module DA_CSS
       @frozen = true
       return self
     end
-
-    def pos_summary(str : String)
-      l = line
-      if l.strip == str.strip
-        "#{str.inspect} (Line: #{@pos_line + 1})"
-      else
-        "#{str.inspect} (Line: #{@pos_line + 1} #{line.inspect})"
-      end
-    end # === def pos_summary
-
-    def pos_summary
-      "Line: #{@pos_line + 1} (#{line.inspect})"
-    end # === def pos_summary
 
     def print(printer : Printer)
       each { |p| printer.raw! p.char }

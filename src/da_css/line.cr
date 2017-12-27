@@ -15,9 +15,8 @@ module DA_CSS
         case c
         when NEW_LINE
           num += 1
-        else
-          counter += 1
         end
+        counter += 1
         break if counter >= pos_num
       }
       @num = num

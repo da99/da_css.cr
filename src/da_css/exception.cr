@@ -13,7 +13,7 @@ module DA_CSS
     end # === def message
 
     def initialize(@message, reader : Token)
-      @message = "#{@message}: #{reader.pos_summary}"
+      @message = "#{@message}: #{reader.summary}"
     end # === def message
 
     def initialize(*strs)
