@@ -6,7 +6,7 @@ module DA_CSS
     getter selector_tokens : Tokens
     getter propertys = Deque(Raw_Property).new
 
-    def initialize(raw)
+    def initialize(raw : Token)
       @selector_tokens = raw.split
     end # === def initialize
 

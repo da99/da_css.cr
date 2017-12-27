@@ -28,33 +28,31 @@ module DA_CSS
     # =============================================================================
     # Class Methods
     # =============================================================================
-    def self.validate_head!(tokens : Tokens)
+    def self.validate_head!(raw_token : Token)
       clean = Tokens.new
-      tokens.each_with_index { |raw_token, i|
-        raw_token.split.each { |t|
-          if clean.empty?
-            word = t.to_s
-            case word
-            when "media"
+      raw_token.split.each { |t|
+        if clean.empty?
+          word = t.to_s
+          case word
+          when "media"
+            :accepted
+          else
+            raise CSS_Author_Error.new(%[Expecting "media", but got #{word.inspect} instead: #{t.summary}])
+          end
+        else
+          t.each { |p| # each position
+            case p.char
+            when 'a'..'z', '(', ')', ':', '_', '0'..'9', ',', '-'
               :accepted
             else
-              raise CSS_Author_Error.new(%[Expecting "media", but got #{word.inspect} instead: #{t.summary}])
+              raise CSS_Author_Error.new("Invalid character for media query: #{p.summary}")
             end
-          else
-            t.each { |p| # each position
-              case p.char
-              when 'a'..'z', '(', ')', ':', '_', '0'..'9', ',', '-'
-                :accepted
-              else
-                raise CSS_Author_Error.new("Invalid character for media query: #{p.summary}")
-              end
-            }
-          end
+          }
+        end
 
-          clean << t
-        }
+        clean << t
       }
-      tokens
+      clean
     end # === def self.validate_head!
 
     def self.validate_body!(raw_bloks : Deque(Raw_Blok))

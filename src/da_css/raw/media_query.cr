@@ -3,11 +3,10 @@ module DA_CSS
 
   struct Raw_Media_Query
 
-    getter head : Tokens
+    getter head : Token
     getter body = Deque(Raw_Blok).new
 
-    def initialize(token)
-      @head = token.split
+    def initialize(@head)
     end # === def initialize
 
     def english_name
