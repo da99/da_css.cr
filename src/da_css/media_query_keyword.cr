@@ -7,7 +7,8 @@ module DA_CSS
     def initialize(@token)
       str = @token.to_s
       case str
-      when "media", "and", "or", ","
+      when "media", "and", "or", ",", "screen", "not", "all", "monochrome", "color", "print",
+        "hover", "landscape"
         :accepted
       else
         raise CSS_Author_Error.new("Invalid word for media query: #{str.inspect} @ #{@token.summary}")

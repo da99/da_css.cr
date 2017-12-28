@@ -1,5 +1,4 @@
 
-#     when 'a'..'z', '(', ')', ':', '_', '0'..'9', ',', '-'
 module DA_CSS
 
   struct Media_Query_Head
