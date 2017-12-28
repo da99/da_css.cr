@@ -31,14 +31,19 @@ module DA_CSS
     # =============================================================================
 
     def self.validate_key!(t : Token)
-      t.each { |p|
-        case p.char
-        when 'a'..'z', '-'
-          p
+      word = t.to_s
+      {% begin %}
+        case word
+          {% for x in system("cat #{__DIR__}/propertys.txt").split %}
+            {% if !x.empty? %}
+            when "{{x.id}}"
+              :accepted
+            {% end %}
+          {% end %}
         else
-          raise CSS_Author_Error.new("Invalid character for property key: #{p.summary}")
+          raise CSS_Author_Error.new("Invalid property key: #{t.summary}")
         end
-      }
+      {% end %}
       t
     end # === def self.validate_key!
 
