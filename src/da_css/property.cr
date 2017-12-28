@@ -8,15 +8,11 @@ module DA_CSS
     # =============================================================================
 
     @key : Token
-    @values = Deque(Token).new
+    @values : Tokens
 
     def initialize(raw_property : Raw_Property)
       @key = self.class.validate_key!(raw_property.name)
-      raw_property.values.each { |token|
-        token.split.each { |t|
-          @values.push self.class.validate_value_token!(t)
-        }
-      }
+      @values = self.class.validate_value!(raw_property.value)
     end # === def initialize
 
     def to_s(io)
@@ -47,16 +43,16 @@ module DA_CSS
       t
     end # === def self.validate_key!
 
-    def self.validate_value_token!(token : Token)
+    def self.validate_value!(token : Token)
       token.each { |p|
         case p.char
-        when 'a'..'z', '#', '-', '0'..'9'
+        when 'a'..'z', '#', '-', '0'..'9', ' '
           p
         else
           raise CSS_Author_Error.new("Invalid character for property value: #{p.summary}")
         end
       }
-      token
+      token.split
     end # === def self.validate_value!
 
 

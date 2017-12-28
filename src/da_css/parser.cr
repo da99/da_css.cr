@@ -16,8 +16,8 @@ module DA_CSS
     getter origin : String
     getter nodes = Deque(ROOT_NODE_TYPES).new
 
-    @token          = Token.new
-    @open_nodes     = Deque(OPEN_NODE_TYPES).new
+    @token      = Token.new
+    @open_nodes = Deque(OPEN_NODE_TYPES).new
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
