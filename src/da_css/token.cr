@@ -16,6 +16,16 @@ module DA_CSS
       @frozen   = false
     end # === def initialize
 
+    def split_with_splitter
+      splitter = Token_Splitter.new(each)
+      while !splitter.done?
+        yield splitter.current, splitter
+        splitter.next
+      end
+      splitter.save if splitter.token?
+      splitter.tokens
+    end # === def split
+
     def split(char : Char | Nil = nil)
       tokens = Tokens.new
       current = Token.new
@@ -46,6 +56,18 @@ module DA_CSS
     def join(*args)
       @raw.join(*args)
     end
+
+    def each
+      Token_Reader.new(self)
+    end # === def reader
+
+    def each_with_reader
+      r = each
+      while !r.done?
+        yield r.current, r
+        r.next
+      end
+    end # === def each_with_reader
 
     def each
       prev = nil
@@ -85,6 +107,10 @@ module DA_CSS
     def raise_if_frozen!
       raise Exception.new("Char_Deque (#{to_s.inspect}) is frozen.") if @frozen
       false
+    end
+
+    def <<(*args)
+      push *args
     end
 
     def push(c : Position)
