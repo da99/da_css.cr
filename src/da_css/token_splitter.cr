@@ -6,7 +6,7 @@ module DA_CSS
     @token : Token = Token.new
     getter tokens = Tokens.new
     getter reader : Token_Reader
-    delegate current, done?, to: @reader
+    delegate last?, current, done?, to: @reader
 
 
     def initialize(@reader)
@@ -39,16 +39,12 @@ module DA_CSS
 
     def consume_through(*args)
       save if token?
-      new_token = @reader.consume_through(*args)
-      @tokens << new_token
-      self
+      @reader.consume_through(*args)
     end
 
     def consume_upto(*args)
       save if token?
-      new_token = @reader.consume_upto(*args)
-      @tokens << new_token
-      self
+      @reader.consume_upto(*args)
     end
 
     def next

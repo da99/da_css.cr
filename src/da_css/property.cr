@@ -44,15 +44,28 @@ module DA_CSS
     end # === def self.validate_key!
 
     def self.validate_value!(token : Token)
-      token.each { |p|
-        case p.char
-        when 'a'..'z', '#', '-', '0'..'9', ' '
-          p
+      token.split_with_splitter { |p, s|
+        c = p.char
+        case
+        when c.whitespace? || s.last?
+          if s.token?
+            s << p unless c.whitespace?
+            s << s.consume_token
+          end
+
+        when c == OPEN_PAREN
+          if !s.token?
+            raise CSS_Author_Error.new("Missing function call name at #{p.summary}")
+          end
+          name = s.consume_token
+          s.next
+          arg = s.consume_upto(CLOSE_PAREN)
+          s.tokens << Function_Call.new(name, arg).to_token
+
         else
-          raise CSS_Author_Error.new("Invalid character for property value: #{p.summary}")
+          s << p
         end
       }
-      token.split
     end # === def self.validate_value!
 
 

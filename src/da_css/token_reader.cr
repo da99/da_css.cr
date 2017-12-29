@@ -19,16 +19,17 @@ module DA_CSS
     end
 
     def next
-      return stop if done?
       @index += 1
-      while !done? && prev.char.whitespace? && current.char.whitespace?
-        @index += 1
-      end
+      return stop if done?
       @token[@index]
     end
 
+    def last?
+      @index == (@size - 1)
+    end
+
     def done?
-      @index >= (@size - 1)
+      @index >= @size
     end
 
     def current
