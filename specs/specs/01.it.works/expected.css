@@ -12,5 +12,6 @@ div {
       background-color: #000;
       background-repeat: no-repeat;
       background-color: #f0f;
+      background-image: url("/sample/image-01.png");
     }
 }

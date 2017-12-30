@@ -132,7 +132,6 @@ module DA_CSS
           break
 
         when (c == '\'' || c == '"')
-          @token.push p
           through(c);
 
         else
