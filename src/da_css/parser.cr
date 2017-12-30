@@ -118,7 +118,7 @@ module DA_CSS
     end # === def through
 
     # stacks chars upto, but not including, 'target',
-    # thereby setting 'target' == 'current_raw_char'
+    # thereby setting 'target' == 'current_char'
     def upto(target : Char)
       was_found = false
 
@@ -132,6 +132,8 @@ module DA_CSS
           break
 
         when (c == '\'' || c == '"')
+          @token.push p
+          next_char
           through(c);
 
         else
