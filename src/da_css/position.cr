@@ -27,7 +27,7 @@ module DA_CSS
     end # === def to_chr
 
     def summary
-      "#{char.inspect} line: #{line.number}, column: #{column.number}"
+      "#{char.inspect} @ line: #{line.number}, column: #{column.number}"
     end # === def summary
 
     def inspect(io)

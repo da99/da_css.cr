@@ -5,13 +5,23 @@ module DA_CSS
 
     include Iterator(Position)
 
-    getter token : Token
     getter index : Int32 = 0
     getter size : Int32
+    getter token : Token
+    delegate origin, to: @token
+
+    def initialize(raw : String)
+      @token = Token.new(raw)
+      @size = @token.size
+    end # === def initialize
 
     def initialize(@token)
       @size = @token.size
     end # === def initialize
+
+    def prev?
+      !@index.zero?
+    end
 
     def prev
       raise Exception.new("Already at the beginning.") if @index.zero?
@@ -36,6 +46,10 @@ module DA_CSS
       @token[@index]
     end # === def current
 
+    def current?
+      !done?
+    end
+
     def consume_through(*args)
       new_token = consume_upto(*args)
       new_token << self.current
@@ -43,21 +57,34 @@ module DA_CSS
       new_token
     end # === def consume_through
 
-    def consume_upto(target : Char)
+    def consume_upto(target : Char, t : Token = Token.new)
       start = current
-      t = Token.new
       while !done?
         p = current
         c = p.char
         case c
         when target
           return t
+
+        when '\'', '"'
+          t.push p
+          self.next
+          consume_through(c, t);
+          next
+
         else
           t << p
-        end
+
+        end # === case c
         self.next
       end
-      raise CSS_Author_Error.new("Closing character not found: #{target.inspect} (for #{start.summary})")
+
+      case target
+      when '\'', '"'
+        raise CSS_Author_Error.new("String not closed: #{target.inspect} for: #{start.summary}")
+      else
+        raise CSS_Author_Error.new("Closing character not found: #{target.inspect} for: #{start.summary}")
+      end
     end # === def consume_upto
 
   end # === struct Token_Reader

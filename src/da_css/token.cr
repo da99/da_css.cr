@@ -9,11 +9,18 @@ module DA_CSS
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw = Deque(Position).new
+    @raw            = Deque(Position).new
+    @frozen         = false
     getter pos_line = 0
 
     def initialize
-      @frozen   = false
+    end # === def initialize
+
+    def initialize(origin : String)
+      r = Char::Reader.new(origin)
+      r.each { |raw_char|
+        @raw.push Position.new(origin, r.pos, r.current_char)
+      }
     end # === def initialize
 
     def split_with_splitter
@@ -152,10 +159,10 @@ module DA_CSS
       when 'A'..'Z', 'a'..'z', '0'..'9',
         ' ', '_',
         '(', ')', '{', '}', '\'', '"',
-        '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ','
+        '=', ';', '/', '*', '?', '#', '.', ':', '-', '@', ',', '\n'
         p
       else
-        raise CSS_Author_Error.new("Invalid character: #{c.inspect}", self)
+        raise CSS_Author_Error.new("Invalid character: #{p.summary}")
       end
     end # === def valid_codepoint?
 
@@ -170,19 +177,30 @@ module DA_CSS
       }
     end # === def all?
 
-    def summary
+    def first_line_summary
       raise Programmer_Error.new("Empty token.") if @raw.empty?
       first = @raw.first
       last = @raw.last
+
+      case
+      when first == last
+        "Line: #{first.line.number}"
+      else
+        "Starting at line: #{first.line.number}"
+      end
+    end # === def first_line_summary
+
+    def summary(all_lines : Bool = false)
+      raise Programmer_Error.new("Empty token.") if @raw.empty?
+      first = @raw.first
+      last = @raw.last
+
       case
       when first && first == last
         first.summary
       when first && last && first.line.number == last.line.number
         "Line: #{first.line.number} Column: #{first.column.number}-#{last.column.number}"
       when first && last && first.line.number != last.line.number
-        each { |position|
-          inspect! position, position.line.num, position.line.number
-        }
         "Line: #{first.line.number} - #{last.line.number}"
       else
         first.summary

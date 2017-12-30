@@ -12,8 +12,8 @@ module DA_CSS
     def initialize(@message)
     end # === def message
 
-    def initialize(@message, reader : Token)
-      @message = "#{@message}: #{reader.summary}"
+    def initialize(@message, t : Token)
+      @message = "#{@message}: #{t.summary}"
     end # === def message
 
     def initialize(*strs)
