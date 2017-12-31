@@ -3,17 +3,12 @@ module DA_CSS
 
   struct Color
 
-    HASH    = '#'
-    UPPER   = 'A'..'Z'
-    LOWER   = 'a'..'z'
-    NUMBERS = '0'..'9'
-
     @raw : Token
     delegate parent, to: @raw
 
     def initialize(@raw)
-      @raw.each_with_index { |c, index|
-        cp = c.ord
+      @raw.each_with_index { |position, index|
+        c = position.char
         case
         when index == 0 && c == HASH
           true

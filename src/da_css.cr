@@ -2,10 +2,15 @@
 require "inspect_bang"
 
 module DA_CSS
-  SPACE    = ' '
-  NEW_LINE = '\n'
-  OPEN_PAREN = '('
+  LETTERS     = 'a'..'z'
+  SPACE       = ' '
+  NEW_LINE    = '\n'
+  OPEN_PAREN  = '('
   CLOSE_PAREN = ')'
+  HASH        = '#'
+  UPPER       = 'A'..'Z'
+  LOWER       = 'a'..'z'
+  NUMBERS     = '0'..'9'
 end # === module DA_CSS
 
 require "./da_css/exception"

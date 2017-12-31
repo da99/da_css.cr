@@ -3,25 +3,12 @@ module DA_CSS
 
   struct Number_Unit
 
-    LETTERS = 'a'..'z'
     @number : Number
     @unit   : Unit
 
-    def initialize(raw : Token)
-      nums = Token.new(raw.parent)
-      unit = Token.new(raw.parent)
-
-      raw.each_with_index { |c, pos|
-        case c
-        when LETTERS
-          unit.push c
-        else
-          nums.push c
-        end
-      }
-
-      @number = Number.new(nums)
-      @unit   = Unit.new(unit)
+    def initialize(t : Token)
+      @number = Number.new(t.select { |p| !p.letter? })
+      @unit = Unit.new(t.select(&.letter?))
     end # === def initialize
 
     def to_s
@@ -34,20 +21,20 @@ module DA_CSS
       self
     end # === def print
 
-    def self.looks_like?(chars : Token)
-      first = chars.first
-      last  = chars.last
+    def self.looks_like?(t : Token)
+      first = t.first
+      last  = t.last
 
-      return false unless chars.size > 1
+      return false unless t.size > 1
 
-      case first
-      when '-', '.', Number::RANGE
+      case first.char
+      when '-', '.', NUMBERS
         true
       else
         return false
       end
 
-      case last
+      case last.char
       when LETTERS
         true
       else

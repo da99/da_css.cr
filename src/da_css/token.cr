@@ -64,6 +64,14 @@ module DA_CSS
       @raw.join(*args)
     end
 
+    def select : Token
+      t = Token.new
+      each { |p|
+        t.push(p) if yield(p)
+      }
+      t
+    end # === def select
+
     def each
       Token_Reader.new(self)
     end # === def reader

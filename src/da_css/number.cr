@@ -3,13 +3,23 @@ module DA_CSS
 
   struct Number
 
-    RANGE = '0'..'9'
     @raw : Token
 
     def initialize(@raw)
       if @raw.size > 8
-        raise Number::Invalid.new(@raw)
+        raise raise CSS_Author_Error.new("Invalid number: #{@raw.to_s.inspect} (#{@raw.inspect})")
       end
+      @raw.each_with_index { |p, index|
+        c = p.char
+        case
+        when index.zero? && (c == '-' || c == '.')
+          true
+        when NUMBERS.includes?(c)
+          true
+        else
+          raise CSS_Author_Error.new("Invalid number: #{@raw.summary}")
+        end
+      }
     end # === def initialize
 
     def to_s
@@ -20,19 +30,19 @@ module DA_CSS
       @raw.print printer
     end # === def print
 
-    def self.looks_like?(chars : Token)
-      first = chars.first
-      last  = chars.last
+    def self.looks_like?(t : Token)
+      first = t.first.char
+      last  = t.last.char
 
       case first
-      when '-', '.', RANGE
+      when '-', '.', NUMBERS
         true
       else
         return false
       end # === case first
 
       case last
-      when RANGE
+      when NUMBERS
         true
       else
         return false

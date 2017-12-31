@@ -82,6 +82,9 @@ module DA_CSS
           key = consume_token
           r.consume_upto(';', @token)
           r.next
+          if !token?
+            raise CSS_Author_Error.new("Empty property value for: #{key.to_s.inspect} (#{key.summary})")
+          end
           values = consume_token
           blok = current_node(Raw_Blok)
           if blok.is_a?(Raw_Blok)

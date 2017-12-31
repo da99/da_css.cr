@@ -3,8 +3,13 @@ module DA_CSS
 
   struct Keyword
 
-    @raw : Token
+    # =============================================================================
+    # Instance
+    # =============================================================================
+
+    @raw  : Token
     @name : String
+
     def initialize(@raw)
       @name = @raw.to_s
       {% begin %}
@@ -22,6 +27,14 @@ module DA_CSS
     def print(printer : Printer)
       printer.raw! @name
     end # === def print
+
+    # =============================================================================
+    # Class
+    # =============================================================================
+
+    def self.looks_like?(t : Token)
+      !(t.any? { |p| p.char.whitespace? })
+    end # === def self.looks_like?
 
   end # === struct Keyword
 

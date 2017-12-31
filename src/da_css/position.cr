@@ -26,6 +26,10 @@ module DA_CSS
       @char
     end # === def to_chr
 
+    def letter?
+      LETTERS.includes? char
+    end
+
     def summary
       "#{char.inspect} @ line: #{line.number}, column: #{column.number}"
     end # === def summary
