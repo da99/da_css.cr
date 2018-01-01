@@ -21,8 +21,14 @@ module DA_CSS
       end
     end # === def initialize
 
-    def to_s
-      @string
+    def inspect(io)
+      io << "Unit["
+      @raw.inspect(io)
+      io << "]"
+    end # === def inspect
+
+    def to_s(io)
+      io << @string
     end # === def to_s
 
     def push(p : Position)

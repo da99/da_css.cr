@@ -1,7 +1,7 @@
 
 module DA_CSS
 
-  struct Number
+  struct A_Number
 
     @raw : Token
 
@@ -22,8 +22,14 @@ module DA_CSS
       }
     end # === def initialize
 
-    def to_s
-      @raw.to_s
+    def inspect(io)
+      io << self.class.name << "["
+      @raw.inspect(io)
+      io << "]"
+    end # === def inspect
+
+    def to_s(io)
+      @raw.to_s(io)
     end # === def to_s
 
     def print(printer : Printer)

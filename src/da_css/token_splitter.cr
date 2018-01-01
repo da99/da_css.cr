@@ -3,11 +3,14 @@ module DA_CSS
 
   class Token_Splitter
 
-    @token : Token = Token.new
+    @stack : Token = Token.new
     getter tokens = Tokens.new
     getter reader : Token_Reader
-    delegate last?, current, done?, to: @reader
+    delegate index, first?, last?, current, done?, to: @reader
 
+    def initialize(t : Token)
+      @reader = Token_Reader.new(t)
+    end # === def initialize
 
     def initialize(@reader)
     end # === def initialize
@@ -17,7 +20,7 @@ module DA_CSS
     end
 
     def push(p : Position)
-      @token.push p
+      @stack.push p
       self
     end # === def push
 
@@ -27,13 +30,19 @@ module DA_CSS
     end # === def push
 
     def token?
-      !@token.empty?
+      !@stack.empty?
     end # === def empty?
 
+    def split_with_index
+      @reader.each_with_index { |p, i|
+        yield p, i
+      }
+    end # === def split_with_index
+
     def consume_token
-      raise Programmer_Error.new("Token can't be used since it is broken.") if @token.empty?
-      t = @token
-      @token = Token.new
+      raise Programmer_Error.new("Token can't be used since it is broken.") if @stack.empty?
+      t = @stack
+      @stack = Token.new
       t
     end # === def consume_token
 
@@ -52,11 +61,11 @@ module DA_CSS
     end # === def next
 
     def save
-      if @token.empty?
+      if @stack.empty?
         raise Programmer_Error.new("Token can't be saved because it is empty.")
       end
-      @tokens << @token
-      @token = Token.new
+      @tokens << @stack
+      @stack = Token.new
       self
     end # === def save
 

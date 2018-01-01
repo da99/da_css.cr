@@ -34,6 +34,10 @@ module DA_CSS
       @token[@index]
     end
 
+    def first?
+      @index == 0
+    end
+
     def last?
       @index == (@size - 1)
     end

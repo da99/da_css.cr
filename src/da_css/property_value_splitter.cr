@@ -1,20 +1,26 @@
 
 module DA_CSS
 
+  alias PROPERTY_VALUE_TYPES = A_Number | Number_Unit | Color | Function_Call | Keyword
+  alias PROPERTY_VALUE = Deque(PROPERTY_VALUE_TYPES)
+
   struct Property_Value_Splitter
 
+    # =============================================================================
+    # Instance
+    # =============================================================================
+
     getter raw : Token
-    getter tokens = Tokens.new
-    getter values = Deque(Number | Number_Unit | Color | Function_Call | Keyword ).new
+    getter values = PROPERTY_VALUE.new
 
     def initialize(@raw)
-      @tokens = @raw.split_with_splitter { |p, s|
+      @raw.split_with_splitter { |p, s|
         c = p.char
         case
         when c.whitespace? || s.last?
           if s.token?
             s << p unless c.whitespace?
-            s << s.consume_token
+            @values.push self.class.to_value(s.consume_token)
           end
 
         when c == OPEN_PAREN
@@ -23,31 +29,34 @@ module DA_CSS
           end
           name = s.consume_token
           arg = s.consume_through(CLOSE_PAREN)
-          s.tokens << Function_Call.new(name, arg).to_token
+          @values.push Function_Call.new(name, arg)
 
         else
           s << p
         end
       }
-
-      @tokens.each { |t|
-        v = case
-            when Number.looks_like?(t)
-              Number.new(t)
-            when Number_Unit.looks_like?(t)
-              Number_Unit.new(t)
-            when Color.looks_like?(t)
-              Color.new(t)
-            when Function_Call.looks_like?(t)
-              Function_Call.new(t)
-            when Keyword.looks_like?(t)
-              Keyword.new(t)
-            else
-              raise CSS_Author_Error.new("Invalid string: #{t.summary}")
-            end
-        @values.push v
-      }
     end # === def initialize
+
+    # =============================================================================
+    # Class
+    # =============================================================================
+
+    def self.to_value(t : Token)
+      case
+      when A_Number.looks_like?(t)
+        A_Number.new(t)
+      when Number_Unit.looks_like?(t)
+        Number_Unit.new(t)
+      when Color.looks_like?(t)
+        Color.new(t)
+      when Function_Call.looks_like?(t)
+        Function_Call.new(t)
+      when Keyword.looks_like?(t)
+        Keyword.new(t)
+      else
+        raise CSS_Author_Error.new("Invalid string: #{t.summary}")
+      end
+    end # === def self.to_value
 
   end # === struct Property_Value_Splitter
 

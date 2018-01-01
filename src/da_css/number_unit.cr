@@ -3,16 +3,24 @@ module DA_CSS
 
   struct Number_Unit
 
-    @number : Number
+    @number : A_Number
     @unit   : Unit
 
     def initialize(t : Token)
-      @number = Number.new(t.select { |p| !p.letter? })
+      @number = A_Number.new(t.select { |p| !p.letter? })
       @unit = Unit.new(t.select(&.letter?))
     end # === def initialize
 
-    def to_s
-      "#{@number.to_s}#{@unit.to_s}"
+    def inspect(io)
+      io << self.class.name << "["
+      @number.inspect(io)
+      @unit.inspect(io)
+      io << "]"
+    end
+
+    def to_s(io)
+      @number.to_s(io)
+      @unit.to_s(io)
     end # === def to_s
 
     def print(printer : Printer)

@@ -20,8 +20,14 @@ module DA_CSS
       {% end %}
     end # === def initialize
 
-    def to_s
-      @name
+    def inspect(io)
+      io << "Keyword["
+      io << @name
+      io << "]"
+    end # === def inspect
+
+    def to_s(io)
+      io << @name
     end # === def to_s
 
     def print(printer : Printer)

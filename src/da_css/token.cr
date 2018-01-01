@@ -215,6 +215,10 @@ module DA_CSS
       end
     end
 
+    def last_index
+      @size - 1
+    end # === def last_index
+
     def freeze!
       return self if @frozen
       @frozen = true

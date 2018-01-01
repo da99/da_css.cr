@@ -8,11 +8,11 @@ module DA_CSS
     # =============================================================================
 
     @key : Token
-    @values : Tokens
+    @values : PROPERTY_VALUE
 
     def initialize(raw_property : Raw_Property)
       @key = self.class.validate_key!(raw_property.name)
-      @values = self.class.validate_value!(raw_property.value)
+      @values = Property_Value_Splitter.new(raw_property.value).values
     end # === def initialize
 
     def to_s(io)
@@ -42,11 +42,6 @@ module DA_CSS
       {% end %}
       t
     end # === def self.validate_key!
-
-    def self.validate_value!(token : Token)
-      Property_Value_Splitter.new(token).tokens
-    end # === def self.validate_value!
-
 
   end # === struct Selector_Token
 

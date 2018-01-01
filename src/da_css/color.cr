@@ -20,8 +20,8 @@ module DA_CSS
       }
     end # === def initialize
 
-    def to_s
-      @raw.to_s.downcase
+    def to_s(io)
+      @raw.to_s(io)
     end # === def to_s
 
     def print(printer : Printer)
