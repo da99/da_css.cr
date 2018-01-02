@@ -4,37 +4,40 @@ module DA_CSS
   struct Media_Query_Head
 
     @raw : Token
+    @lists = Deque(Media_Query_List).new
+
     def initialize(@raw)
-    end # === def initialize
-
-    def to_tokens
-      stack = Deque(Media_Query_Keyword | Media_Query_Condition).new
-      @raw.split_with_splitter { |position, s|
-        c = position.char
+      tokens = @raw.split_with_splitter { |p, s|
+        c = p.char
         case
-        when c.whitespace?
-          if s.token?
-            stack << Media_Query_Keyword.new(s.consume_token)
+        when c == COMMA
+          if token?
+            @lists.push Media_Query_List.new(s.consume_token)
           end
-
         when c == OPEN_PAREN
-          s.save if s.token?
-          stack << Media_Query_Condition.new(s.reader.consume_through(CLOSE_PAREN))
+          s.through(OPEN_PAREN, CLOSE_PAREN)
         else
-          s << position
-        end
-      }.each { |t| stack << Media_Query_Keyword.new(t) }
-      tokens = Tokens.new
-      stack.each { |x|
-        case x
-        when Media_Query_Keyword
-          tokens << x.to_token
-        else
-          x.to_tokens.each { |t| tokens << t }
+          s << p
         end
       }
-      tokens
+
+      t = tokens.first?
+      if t
+        raise CSS_Author_Error.new("Unknown value: #{t.summary}")
+      end
+    end # === def initialize
+
+    def inspect(io)
+      io << self.class.name << "["
+      @raw.inspect(io)
+      io << "]"
     end # === def to_tokens
+
+    def to_s(io)
+      io << "@media "
+      @lists.join(", ", io)
+      io << SPACE
+    end # === def to_s
 
   end # === struct Media_Query_Head
 
