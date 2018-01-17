@@ -13,6 +13,8 @@ module DA_CSS
     @frozen         = false
     getter pos_line = 0
 
+    delegate first, first?, last, last?, to: @raw
+
     def initialize
     end # === def initialize
 
@@ -152,10 +154,6 @@ module DA_CSS
 
       @raw.push valid!(c)
     end # === def push
-
-    def last
-      @raw.last
-    end # === def last
 
     def size
       @raw.size

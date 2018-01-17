@@ -4,10 +4,11 @@ module DA_CSS
   struct Media_Query_Keyword
 
     getter token : Token
+
     def initialize(@token)
       str = @token.to_s
       case str
-      when "media", "and", "or", ",", "screen", "not", "all", "monochrome", "color", "print",
+      when "only", "media", "and", "or", ",", "screen", "not", "all", "monochrome", "color", "print",
         "hover", "landscape"
         :accepted
       else

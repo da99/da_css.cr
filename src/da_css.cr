@@ -13,6 +13,7 @@ module DA_CSS
   LOWER       = 'a'..'z'
   NUMBERS     = '0'..'9'
   SLASH       = '/'
+  COLON       = ':'
 end # === module DA_CSS
 
 require "./da_css/exception"

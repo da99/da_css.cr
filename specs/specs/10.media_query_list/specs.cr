@@ -1,13 +1,16 @@
 
 
-describe "Parses: media query list (eg screen and (min-width: 30em) and (orientation: landscape))" do
+describe "Parses: Media Query List (e.g. @media ...this... )" do
 
-  it "parses: screen and (min-width: 30em) and (orientation: landscape)" do
-    txt = "screen and (min-width: 30em) and (orientation: landscape)"
-    t = DA_CSS::Token.new(txt)
-    mql = DA_CSS::Media_Query_List.new(t)
-    actual = mql.to_s
-    assert(actual == "screen and (min-width: 30em) and (orientation: landscape)")
-  end # === it "parses: screen and (min-width: 30em) and (orientation: landscape)"
+  File.read(__DIR__ + "/valid.txt").strip.split("\n").each { |line|
+    actual = line.split("->").first
+    expect = line.split("->").last?
+    it "parses: #{actual.inspect}" do
+        t = DA_CSS::Token.new(actual)
+        mql = DA_CSS::Media_Query_List.new(t)
+        expect = (expect || line).strip
+        assert(mql.to_s == expect)
+    end
+  }
 
 end # === desc "Parses: media query list"

@@ -3,7 +3,8 @@ module DA_CSS
 
   # Examples:
   #   screen and (min-width: 30em) and (orientation: landscape)
-  # NOTE: No commas allowed.
+  # Not:
+  #   screen and (min-width: 30em), (max-width: 300px)
   struct Media_Query_List
 
     @raw : Token
@@ -20,7 +21,8 @@ module DA_CSS
 
         when c == OPEN_PAREN && !s.token?
           t = s.consume_through(OPEN_PAREN, CLOSE_PAREN)
-          if t.any_inside?(OPEN_PAREN)
+          case
+          when t.any_inside?(OPEN_PAREN)
             @values.push Media_Query_List.new(t)
           else
             @values.push Media_Query_Condition.new(t)

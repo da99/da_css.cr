@@ -35,11 +35,9 @@ module DA_CSS
     end # === def initialize
 
     def to_s(io)
-      io << OPEN_PAREN
       io << @key
       io << ':' << ' '
       io << @value
-      io << CLOSE_PAREN
     end # === def to_s
 
     # =============================================================================
