@@ -36,6 +36,10 @@ module DA_CSS
       @raw.print printer
     end # === def print
 
+    # =============================================================================
+    # Class
+    # =============================================================================
+
     def self.looks_like?(t : Token)
       first = t.first.char
       last  = t.last.char

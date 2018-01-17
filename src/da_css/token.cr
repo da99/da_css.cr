@@ -93,9 +93,19 @@ module DA_CSS
       }
     end # === def each
 
-    def to_s
-      to_s(IO::Memory.new)
-    end # === def to_s
+    def any?(*chars)
+      @raw.any? { |p|
+        chars.includes?(p.char)
+      }
+    end # === def contains?
+
+    def any_inside?(*chars)
+      last = @raw.size - 1
+      @raw.each_with_index { |p, i|
+        next if i == 0 || i == last
+        return true if chars.includes?(p.char)
+      }
+    end # === def any_inside?
 
     def to_s(io)
       last_i = @raw.size - 1
@@ -107,7 +117,8 @@ module DA_CSS
           io << c.char
         end
       }
-      return io.to_s
+
+      io
     end # === def to_s
 
     def inspect(io)
@@ -117,6 +128,7 @@ module DA_CSS
         io << c.inspect
       }
       io << "]"
+      io
     end # === def inspect
 
     def raise_if_frozen!
@@ -214,6 +226,10 @@ module DA_CSS
         first.summary
       end
     end
+
+    def inspect_and_summary
+      "#{@raw.to_s.inspect} @ #{summary}"
+    end # === def inspect_and_summary
 
     def last_index
       @size - 1

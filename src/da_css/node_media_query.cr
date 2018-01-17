@@ -7,11 +7,11 @@ module DA_CSS
     # Instance Methods
     # =============================================================================
 
-    getter head : Token
+    getter head : Media_Query_Head
     getter body : Deque(Node_Blok)
 
     def initialize(raw)
-      @head = self.class.validate_head!( raw.head )
+      @head = Media_Query_Head.new( raw.head )
       @body = self.class.validate_body!( raw.body )
     end # === def initialize
 
@@ -28,19 +28,6 @@ module DA_CSS
     # =============================================================================
     # Class Methods
     # =============================================================================
-    def self.validate_head!(raw_token : Token)
-      raw_token.each { |position|
-        c = position.char
-        case c
-        when 'a'..'z', '(', ')', ':', '0'..'9', ',', '-', ' '
-          :accepted
-        else
-          raise CSS_Author_Error.new("Invalid character for media query: #{c.inspect} at #{position.summary}")
-        end
-      }
-      raw_token
-    end # === def self.validate_head!
-
     def self.validate_body!(raw_bloks : Deque(Raw_Blok))
       clean = Deque(Node_Blok).new
       raw_bloks.each { |raw_blok|

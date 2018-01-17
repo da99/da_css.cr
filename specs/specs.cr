@@ -77,6 +77,7 @@ end # === module DA_SPEC
 #   require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
 # {% end %}
 require "./specs/01.it.works/specs"
+require "./specs/10.media_query_list/specs"
 require "../../examples/*"
 
 

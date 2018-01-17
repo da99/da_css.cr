@@ -11,11 +11,11 @@ module DA_CSS
         c = p.char
         case
         when c == COMMA
-          if token?
+          if s.token?
             @lists.push Media_Query_List.new(s.consume_token)
           end
         when c == OPEN_PAREN
-          s.through(OPEN_PAREN, CLOSE_PAREN)
+          s << s.consume_through(OPEN_PAREN, CLOSE_PAREN)
         else
           s << p
         end

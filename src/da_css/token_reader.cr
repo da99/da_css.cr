@@ -61,6 +61,47 @@ module DA_CSS
       new_token
     end # === def consume_through
 
+    def consume_upto(open_char : Char, close_char : Char, t : Token = Token.new)
+      start = current
+      opens = Deque(Position).new
+      while !done?
+        p = current
+        c = p.char
+        case c
+
+        when close_char
+          break if opens.empty?
+          opens.pop
+          if opens.empty?
+            return t
+          else
+            t << p
+          end
+
+        when '\'', '"'
+          t.push p
+          self.next
+          consume_through(c, t);
+          next
+
+        else
+          if c == open_char
+            opens.push p
+          end
+          t << p
+
+        end # === case c
+        self.next
+      end
+
+      case close_char
+      when '\'', '"'
+        raise CSS_Author_Error.new("String not closed: #{open_char.inspect} for: #{start.summary}")
+      else
+        raise CSS_Author_Error.new("Closing character not found: #{open_char.inspect} for: #{start.summary}")
+      end
+    end # === def consume_upto
+
     def consume_upto(target : Char, t : Token = Token.new)
       start = current
       while !done?

@@ -23,6 +23,10 @@ module DA_CSS
       @token
     end # === def to_token
 
+    def to_s(io)
+      @token.to_s(io)
+    end # === def to_s
+
   end # === struct Media_Query_Keyword
 
 end # === module DA_CSS
