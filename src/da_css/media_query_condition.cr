@@ -35,7 +35,7 @@ module DA_CSS
 
     def to_s(io)
       io << OPEN_PAREN
-      @list.join(',', io)
+      @list.join(", ", io)
       io << CLOSE_PAREN
     end # === def to_s
 
