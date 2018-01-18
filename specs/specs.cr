@@ -58,6 +58,7 @@ extend DA_SPEC
 module DA_SPEC
 
   def examine(*args)
+    return previous_def if args.any? { |pair| !pair.last?.is_a?(String) }
     args.each { |pair|
       key = pair.first
       val = pair.last

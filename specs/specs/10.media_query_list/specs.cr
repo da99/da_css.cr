@@ -13,4 +13,13 @@ describe "Parses: Media Query List (e.g. @media ...this... )" do
     end
   }
 
+  File.read(__DIR__ + "/invalid.txt").strip.split("\n").each { |line|
+    it "raises when parsing: #{line.inspect}" do
+        t = DA_CSS::Token.new(line)
+        assert_raises(DA_CSS::CSS_Author_Error) {
+          DA_CSS::Media_Query_List.new(t)
+        }
+    end
+  }
+
 end # === desc "Parses: media query list"
