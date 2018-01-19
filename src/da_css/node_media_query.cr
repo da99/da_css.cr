@@ -16,7 +16,6 @@ module DA_CSS
     end # === def initialize
 
     def to_s(io)
-      io << "@"
       head.to_s(io)
       io << " {\n"
       body.each { |blok|

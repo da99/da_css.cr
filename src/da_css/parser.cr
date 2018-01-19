@@ -51,17 +51,24 @@ module DA_CSS
           was_closed = false
           comment    = Token.new
           while !r.done?
-            r.consume_through('*')
-            if r.current.char == '/'
-              @token.pop # remove previous asterisk
+            while !r.done?
+              r.next!
+              break if r.done?
+              if r.raw_char == '*'
+                r.next! unless r.done?
+                break
+              end
+            end
+            break if r.done?
+            if r.raw_char == '/'
+              r.next
               was_closed = true
-              comment = consume_token
               break
             end
           end # loop
 
           if !was_closed
-            raise Error.new("Comment was not closed: Line: #{p.summary}")
+            raise Error.new("Comment was not closed: #{p.summary}")
           end
 
         when c == '{' && token? && root?

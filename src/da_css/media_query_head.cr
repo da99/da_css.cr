@@ -21,7 +21,7 @@ module DA_CSS
             @lists.push Media_Query_List.new(s.consume_token)
           end
         when c == OPEN_PAREN
-          s << s.consume_through(OPEN_PAREN, CLOSE_PAREN)
+          @lists << Media_Query_List.new(s.consume_through(OPEN_PAREN, CLOSE_PAREN))
         else
           s << p
         end
@@ -42,7 +42,6 @@ module DA_CSS
     def to_s(io)
       io << "@media "
       @lists.join(", ", io)
-      io << SPACE
     end # === def to_s
 
   end # === struct Media_Query_Head

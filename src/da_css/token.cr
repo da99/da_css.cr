@@ -9,9 +9,9 @@ module DA_CSS
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    @raw            = Deque(Position).new
-    @frozen         = false
+    getter raw      = Deque(Position).new
     getter pos_line = 0
+    @frozen         = false
 
     delegate first, first?, last, last?, to: @raw
 

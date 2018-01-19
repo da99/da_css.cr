@@ -28,11 +28,7 @@ describe DA_CSS::Printer do
           .join("\n")
       end
 
-      input = %[
-        div.white {
-          #{ css }
-        }
-      ]
+      input = %[ div.white {\n#{ css }\n } ]
       actual = SPEC_PARSER.to_css(input)
       should_eq actual["{{name}}: "], "{{name}}: "
     end # === it "renders "

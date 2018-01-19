@@ -28,8 +28,14 @@ module DA_CSS
       @token[@index - 1]
     end
 
-    def next
+    def next!
       @index += 1
+      return nil if done?
+      @token.raw[@index]
+    end
+
+    def next
+      next!
       return stop if done?
       @token[@index]
     end
@@ -44,6 +50,10 @@ module DA_CSS
 
     def done?
       @index >= @size
+    end
+
+    def raw_char
+      @token.raw[@index].char
     end
 
     def current

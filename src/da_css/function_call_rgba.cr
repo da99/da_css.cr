@@ -1,16 +1,15 @@
 
 module DA_CSS
 
-  struct Function_Call_URL
+  struct Function_Call_RGBA
 
     # =============================================================================
     # Instance
     # =============================================================================
 
-    @args : A_String
-    delegate to_token, to: @raw
+    @raw : Function_Call
 
-    def initialize(@args)
+    def initialize(@raw)
     end # === def initialize
 
     # =============================================================================

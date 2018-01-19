@@ -7,14 +7,12 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    getter name : Token = Token.new
+    getter name : String
     getter args : Deque(A_String)
-
-    def initialize(@name, raw_args : Token)
-      @args = Function_Arg_Splitter.new(raw_args).args
-    end # === def initialize
+    getter func : Function_Call_URL | Function_Call_HSLA | Function_Call_RGBA | Function_Call_RGB
 
     def initialize(raw : Token)
+      name_token = Token.new
       capture_name = true
       raw_args = Token.new
       raw.each { |position|
@@ -24,10 +22,23 @@ module DA_CSS
           capture_name = false
           raw_args.push position
         else
-          @name.push position
+          name_token.push position
         end
       }
       @args = Function_Arg_Splitter.new(raw_args).args
+      @name = name_token.to_s.downcase
+      @func = case @name
+              when "url"
+                Function_Call_URL.new(@args)
+              when "hsla"
+                Function_Call_HSLA.new(@args)
+              when "rgba"
+                Function_Call_RGBA.new(@args)
+              when "rgb"
+                Function_Call_RGB.new(@args)
+              else
+                raise CSS_Author_Error.new("Invalid function name: #{@raw.summary}")
+              end
     end # === def initialize
 
     def inspect(io)
@@ -44,10 +55,7 @@ module DA_CSS
     end # === def inspect
 
     def to_s(io)
-      name.to_s(io)
-      io << "("
-      args.join(", ", io)
-      io << ")"
+      @func.to_s(io)
     end # === def to_s
 
     # =============================================================================
