@@ -217,17 +217,13 @@ module DA_CSS
       when first && first == last
         first.summary
       when first && last && first.line.number == last.line.number
-        "Line: #{first.line.number} Column: #{first.column.number}-#{last.column.number}"
+        "#{to_s.inspect} @ Line: #{first.line.number} Column: #{first.column.number}-#{last.column.number}"
       when first && last && first.line.number != last.line.number
-        "Line: #{first.line.number} - #{last.line.number}"
+        "#{to_s.inspect} @ Line: #{first.line.number} - #{last.line.number}"
       else
         first.summary
       end
     end
-
-    def inspect_and_summary
-      "#{@raw.to_s.inspect} @ #{summary}"
-    end # === def inspect_and_summary
 
     def last_index
       @size - 1

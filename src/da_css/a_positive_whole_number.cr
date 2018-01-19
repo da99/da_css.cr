@@ -10,11 +10,11 @@ module DA_CSS
         when '0'..'9'
           true
         else
-          raise CSS_Author_Error.new("Invalid character for a positive, whole number: #{@raw.inspect_and_summary}")
+          raise CSS_Author_Error.new("Invalid character for a positive, whole number: #{@raw.summary}")
         end
       }
       if @raw.size > 10
-        raise CSS_Author_Error.new("Number is too big: #{@raw.to_s.inspect} @ #{@raw.inspect_and_summary}")
+        raise CSS_Author_Error.new("Number is too big: #{@raw.to_s.inspect} @ #{@raw.summary}")
       end
     end # === def initalize
 

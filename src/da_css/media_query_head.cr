@@ -10,6 +10,12 @@ module DA_CSS
       tokens = @raw.split_with_splitter { |p, s|
         c = p.char
         case
+        when c == 'm' && s.index == 0,
+             c == 'e' && s.index == 1,
+             c == 'd' && s.index == 2,
+             c == 'i' && s.index == 3,
+             c == 'a' && s.index == 4
+          next
         when c == COMMA
           if s.token?
             @lists.push Media_Query_List.new(s.consume_token)
