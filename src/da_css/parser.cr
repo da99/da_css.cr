@@ -47,9 +47,8 @@ module DA_CSS
 
         # PARSE: comment
         when c == '/' && r.current.char == '*' && !token?
-          r.next # == skip asterisk
+          r.next unless r.done? # == skip asterisk
           was_closed = false
-          comment    = Token.new
           while !r.done?
             while !r.done?
               r.next!
