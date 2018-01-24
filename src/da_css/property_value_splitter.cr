@@ -14,25 +14,27 @@ module DA_CSS
     getter values = PROPERTY_VALUE.new
 
     def initialize(@raw)
-      @raw.split_with_splitter { |p, s|
-        c = p.char
+      t = Token.new
+      @raw.reader {
+        position = current
+        c = position.char
         case
-        when c.whitespace? || s.last?
-          if s.token?
-            s << p unless c.whitespace?
-            @values.push self.class.to_value(s.consume_token)
+        when c.whitespace? || last?
+          if !t.empty?
+            t.push(position) unless c.whitespace?
+            @values.push self.class.to_value(t)
+            t = Token.new
           end
 
         when c == OPEN_PAREN
-          if !s.token?
-            raise CSS_Author_Error.new("Missing function call name at #{p.summary}")
+          if t.empty?
+            raise CSS_Author_Error.new("Missing function call name at #{position.summary}")
           end
-          name = s.consume_token
-          arg = s.consume_through(CLOSE_PAREN)
-          @values.push Function_Call.new(name, arg)
+          @values.push Function_Call.new(consume_through(CLOSE_PAREN, t))
+          t = Token.new
 
         else
-          s << p
+          t.push position
         end
       }
     end # === def initialize

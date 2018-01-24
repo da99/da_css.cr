@@ -25,15 +25,14 @@ module DA_CSS
       }
     end # === def initialize
 
-    def split_with_splitter
-      splitter = Token_Splitter.new(each)
-      while !splitter.done?
-        yield splitter.current, splitter
-        splitter.next
+    def reader
+      reader = Token_Reader.new(self)
+      while !reader.done?
+        starting_position = reader.current
+        with reader yield reader
+        reader.next if !reader.done? && starting_position == reader.current
       end
-      splitter.save if splitter.token?
-      splitter.tokens
-    end # === def split
+    end # === def each
 
     def split(char : Char | Nil = nil)
       tokens = Tokens.new
@@ -152,7 +151,7 @@ module DA_CSS
         return self
       end
 
-      @raw.push valid!(c)
+      @raw.push(c)
     end # === def push
 
     def size
@@ -168,7 +167,7 @@ module DA_CSS
     end # === def prev(i : Int32 = 1)
 
     def [](i : Int32)
-      valid!(@raw[i])
+      @raw[i]
     end
 
     def valid!(p : Position)

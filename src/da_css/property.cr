@@ -10,9 +10,25 @@ module DA_CSS
     @key : Token
     @values : PROPERTY_VALUE
 
-    def initialize(raw_property : Raw_Property)
-      @key = self.class.validate_key!(raw_property.name)
-      @values = Property_Value_Splitter.new(raw_property.value).values
+    def initialize(raw : Token)
+      raw_key = Token.new
+      raw_val = Token.new
+      fill_key = true
+      raw.reader {
+        c = current.char
+        case
+        when c == ':' && fill_key
+          fill_key = false
+        else
+          if fill_key
+            raw_key.push current
+          else
+            raw_val.push current
+          end
+        end
+      }
+      @key = self.class.validate_key!(raw_key)
+      @values = Property_Value_Splitter.new(raw_val).values
     end # === def initialize
 
     def to_s(io)

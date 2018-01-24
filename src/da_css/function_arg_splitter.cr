@@ -7,17 +7,24 @@ module DA_CSS
     getter args : Deque(A_String) = Deque(A_String).new
 
     def initialize(@raw)
-      args_as_tokens = @raw.split_with_splitter { |position, s|
-        c = position.char
+      args_as_tokens = Deque(Token).new
+      token = Token.new
+      @raw.reader {
+        c = current.char
         case
-        when (c == OPEN_PAREN && s.first?) || (c == CLOSE_PAREN && s.last?)
+        when (c == OPEN_PAREN && first?) || (c == CLOSE_PAREN && last?)
           :ignore
         when c == ','
-          s.save if s.token?
+          if !token.empty?
+            args_as_tokens.push token
+            token = Token.new
+          end
         else
-          s << position
+          token.push current
         end
       }
+      args_as_tokens.push(token) unless token.empty?
+
       args_as_tokens.each { |t|
         case
         when A_String.looks_like?(t)

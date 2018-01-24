@@ -7,11 +7,26 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @args : A_String
+    @arg : A_String
     delegate to_token, to: @raw
 
-    def initialize(@args)
+    def initialize(name : Token, args)
+      a = args.first?
+      @arg = case a
+             when A_String
+               a
+             when Nil
+               raise CSS_Author_Error.new("No args specified for: #{name.summary}")
+             else
+               raise CSS_Author_Error.new("Invalid args for, #{name.summary}: #{a.to_s.inspect}")
+             end
     end # === def initialize
+
+    def to_s(io)
+      io << "url" << OPEN_PAREN
+      @arg.to_s(io)
+      io << CLOSE_PAREN
+    end # === def to_s
 
     # =============================================================================
     # Class

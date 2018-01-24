@@ -8,7 +8,7 @@ module DA_CSS
     # =============================================================================
 
     getter name : String
-    getter args : Deque(A_String)
+    getter args = Deque(A_String).new
     getter func : Function_Call_URL | Function_Call_HSLA | Function_Call_RGBA | Function_Call_RGB
 
     def initialize(raw : Token)
@@ -25,19 +25,20 @@ module DA_CSS
           name_token.push position
         end
       }
+
       @args = Function_Arg_Splitter.new(raw_args).args
       @name = name_token.to_s.downcase
       @func = case @name
               when "url"
-                Function_Call_URL.new(@args)
+                Function_Call_URL.new(name_token, @args)
               when "hsla"
-                Function_Call_HSLA.new(@args)
-              when "rgba"
-                Function_Call_RGBA.new(@args)
+                Function_Call_HSLA.new(name_token, @args)
               when "rgb"
-                Function_Call_RGB.new(@args)
+                Function_Call_RGB.new(name_token, @args)
+              when "rgba"
+                Function_Call_RGBA.new(name_token, @args)
               else
-                raise CSS_Author_Error.new("Invalid function name: #{@raw.summary}")
+                raise CSS_Author_Error.new("Invalid function name: #{raw.summary}")
               end
     end # === def initialize
 

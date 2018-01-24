@@ -52,10 +52,6 @@ module DA_CSS
       @index >= @size
     end
 
-    def raw_char
-      @token.raw[@index].char
-    end
-
     def current
       @token[@index]
     end # === def current
@@ -70,6 +66,12 @@ module DA_CSS
       self.next
       new_token
     end # === def consume_through
+
+    def consume_upto_then_next(*args)
+      t = consume_upto(*args)
+      self.next unless done?
+      t
+    end # === def consume_upto_then_next
 
     def consume_upto(open_char : Char, close_char : Char, t : Token = Token.new)
       start = current

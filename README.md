@@ -29,13 +29,11 @@ File `input.css`:
     font-size: 2em;
   }
 
-  @media (max-width: 12450px, min-width: 1000px) {
-    body {
-      padding: 20px 0 0 10em;
-      background {
-        color: #fcf;
-        repeat: no-repeat;
-      }
+  body {
+    padding: 20px 0 0 10em;
+    background {
+      color: #fcf;
+      repeat: no-repeat;
     }
   }
 ```
@@ -53,12 +51,10 @@ Output:
     font-size: 1em;
     font-size: 2em;
   }
-  @media (max-width: 12450px, min-width: 1000px) {
-      body {
-        padding: 20px 0 0 10em;
-        background-color: #000;
-        background-repeat: no-repeat;
-        background-color: #0000011;
-      }
+  body {
+    padding: 20px 0 0 10em;
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-color: #0000011;
   }
 ```

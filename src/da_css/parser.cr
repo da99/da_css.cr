@@ -6,61 +6,54 @@ module DA_CSS
   # Right now the "Parser" is a combined lexer and parser.
   class Parser
 
+    # =============================================================================
+    # Class
+    # =============================================================================
+
     def self.parse(origin)
       new(origin).parse
     end
 
-    alias ROOT_NODE_TYPES = Raw_Media_Query | Raw_Blok
-    alias OPEN_NODE_TYPES = ROOT_NODE_TYPES
+    # =============================================================================
+    # Instance
+    # =============================================================================
 
-    getter nodes = Deque(ROOT_NODE_TYPES).new
-
-    @token      = Token.new
-    @open_nodes = Deque(OPEN_NODE_TYPES).new
+    getter nodes          = Deque(Blok).new
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
-    @reader : Token_Reader
+    getter reader : Token_Reader
     delegate done?, to: @reader
 
     def initialize(raw : String)
       @reader = Token_Reader.new(raw)
     end # === def initialize
 
-    private def r
-      @reader
-    end
-
     def parse
-      while !r.done?
-        p = r.current
+      while !reader.done?
+        p = reader.current
         c = p.char
-        r.next
+        reader.next
 
         case
-        when c == '@' && !token? && root?
-          r.consume_upto('{', @token); r.next
-          open_node(Raw_Media_Query.new(consume_token))
-
-        when c == '}' && open_node?(Raw_Media_Query) && !token?
-          close_node(Raw_Media_Query)
-
         # PARSE: comment
-        when c == '/' && r.current.char == '*' && !token?
-          r.next unless r.done? # == skip asterisk
+        when p.whitespace?
+          next
+        when c == '/' && reader.current.char == '*'
+          reader.next unless reader.done? # == skip asterisk
           was_closed = false
-          while !r.done?
-            while !r.done?
-              r.next!
-              break if r.done?
-              if r.raw_char == '*'
-                r.next! unless r.done?
+          while !reader.done?
+            while !reader.done?
+              reader.next!
+              break if reader.done?
+              if reader.current.char == '*'
+                reader.next! unless reader.done?
                 break
               end
             end
-            break if r.done?
-            if r.raw_char == '/'
-              r.next
+            break if reader.done?
+            if reader.current.char == '/'
+              reader.next
               was_closed = true
               break
             end
@@ -70,107 +63,28 @@ module DA_CSS
             raise Error.new("Comment was not closed: #{p.summary}")
           end
 
-        when c == '{' && token? && root?
-          open_node(Raw_Blok.new(consume_token))
-
-        when c == '{' && token? && open_node?(Raw_Media_Query)
-          new_node = Raw_Blok.new(consume_token)
-          mq = current_node
-          if mq.is_a?(Raw_Media_Query)
-            mq.push new_node
-          end
-          open_node(new_node)
-
-        when c == '}' && !token? && open_node?(Raw_Blok)
-          close_node(Raw_Blok)
-
-        when c == ':' && token? && open_node?(Raw_Blok)
-          key = consume_token
-          r.consume_upto(';', @token)
-          r.next
-          if !token?
-            raise CSS_Author_Error.new("Empty property value for: #{key.to_s.inspect} (#{key.summary})")
-          end
-          values = consume_token
-          blok = current_node(Raw_Blok)
-          if blok.is_a?(Raw_Blok)
-            blok.push(Raw_Property.new(key, values))
-          end
-
-        when c == '}' || c == ';'
-          raise Error.new("Un-needed character: #{c} (line: #{p.summary})")
-
         else
-          @token.push p
+          raw_selector = reader.consume_upto(OPEN_BRACKET)
+          if reader.done?
+            raise CSS_Author_Error.new("Selector has missing body: #{raw_selector.summary}")
+          end
+          reader.next
+
+          raw_body = reader.consume_upto(CLOSE_BRACKET)
+          if reader.done?
+            raise CSS_Author_Error.new("Block not properly closed: #{raw_body.summary}")
+          end
+          reader.next
+
+          nodes.push Blok.new(raw_selector, raw_body)
+
         end # === while
 
       end # while !done?
 
-      if !root?
-        node = current_node
-        if node
-          raise Error.new("Not properly closed: #{node.english_name}")
-        end
-      end
-
-      if token?
-        raise CSS_Author_Error.new("Unknown value: ", @token.summary)
-      end
-
       @nodes
     end # === def parse
 
-
-    def root?
-      @open_nodes.empty?
-    end # === def root?
-
-    def token?
-      !@token.empty?
-    end # === def token?
-
-    def open_node?(klass)
-      @open_nodes.last?.class == klass
-    end
-
-    def open_node(x)
-      if root? 
-        if x.is_a?(ROOT_NODE_TYPES)
-          @nodes.push x
-        else
-          raise Error.new("#{x.english_name} can't be opened at the top of a CSS document.")
-        end
-      end
-      @open_nodes.push x
-      self
-    end # === def open_node
-
-    def current_node
-      l = @open_nodes.last?
-    end
-
-    def current_node(x)
-      l = @open_nodes.last?
-      if l.class != x
-        raise Error.new("Node was not opened: #{x.to_s}")
-      end
-      l
-    end
-
-    def close_node(klass)
-      n = @open_nodes.last?
-      if n.class != klass
-        raise Error.new("Not properly closed: #{n.class}")
-      end
-      @open_nodes.pop
-    end # === def close
-
-    def consume_token
-      raise Exception.new("Trying to consume an empty token.") if @token.empty?
-      s = @token.freeze!
-      @token = Token.new
-      s
-    end # === def consume_token
 
     def nodes?
       !@nodes.empty?

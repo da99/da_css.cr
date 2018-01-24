@@ -7,10 +7,16 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @raw : Function_Call
+    @args : Deque(A_String)
 
-    def initialize(@raw)
+    def initialize(name : Token, @args)
     end # === def initialize
+
+    def to_s(io)
+      io << "rgb" << OPEN_PAREN
+      @args.join(", ", io)
+      io << CLOSE_PAREN
+    end # === def to_s
 
     # =============================================================================
     # Class
