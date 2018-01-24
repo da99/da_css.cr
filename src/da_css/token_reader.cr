@@ -6,7 +6,7 @@ module DA_CSS
     include Iterator(Position)
 
     getter index : Int32 = 0
-    getter size : Int32
+    getter size  : Int32
     getter token : Token
     delegate origin, to: @token
 
@@ -18,6 +18,17 @@ module DA_CSS
     def initialize(@token)
       @size = @token.size
     end # === def initialize
+
+    def peek
+      return nil if done?
+      @token[@index + 1]
+    end # === def peek
+
+    def peek?(c : Char)
+      p = peek
+      return p.char == c if p
+      false
+    end # === def peek?
 
     def prev?
       !@index.zero?

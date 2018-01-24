@@ -22,25 +22,25 @@ module DA_CSS
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
-    getter reader : Token_Reader
+    getter raw : Token
     delegate done?, to: @reader
 
-    def initialize(raw : String)
-      @reader = Token_Reader.new(raw)
+    def initialize(origin : String)
+      @raw = Token.new(origin)
     end # === def initialize
 
     def parse
-      while !reader.done?
-        p = reader.current
+      @raw.reader { |reader|
+        p = current
         c = p.char
-        reader.next
 
         case
-        # PARSE: comment
-        when p.whitespace?
+
+        when p.whitespace? # PARSE: comment
           next
-        when c == '/' && reader.current.char == '*'
-          reader.next unless reader.done? # == skip asterisk
+
+        when c == '/' && peek?('*')
+          reader.next # == skip asterisk
           was_closed = false
           while !reader.done?
             while !reader.done?
@@ -64,23 +64,21 @@ module DA_CSS
           end
 
         else
-          raw_selector = reader.consume_upto(OPEN_BRACKET)
+          raw_selector = reader.consume_upto_then_next(OPEN_BRACKET)
           if reader.done?
             raise CSS_Author_Error.new("Selector has missing body: #{raw_selector.summary}")
           end
-          reader.next
 
-          raw_body = reader.consume_upto(CLOSE_BRACKET)
+          raw_body = reader.consume_upto_then_next(CLOSE_BRACKET)
           if reader.done?
             raise CSS_Author_Error.new("Block not properly closed: #{raw_body.summary}")
           end
-          reader.next
 
           nodes.push Blok.new(raw_selector, raw_body)
 
-        end # === while
+        end # case
 
-      end # while !done?
+      } # reader
 
       @nodes
     end # === def parse

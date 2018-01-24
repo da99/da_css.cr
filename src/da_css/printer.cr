@@ -24,7 +24,7 @@ module DA_CSS
     end # === def to_s
 
     def to_css(nodes : Deque(Blok))
-      nodes.each { |x| x.to_s(self) } if self.empty?
+      nodes.join('\n', self)
       to_s
     end # === def to_css
 
