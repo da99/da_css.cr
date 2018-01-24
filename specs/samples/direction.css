@@ -1,8 +1,10 @@
-/* direction */
-/* Keyword values */
-direction: ltr;
-direction: rtl;
-/* Global values */
-direction: inherit;
-direction: initial;
-direction: unset;
+div {
+  /* direction */
+  /* Keyword values */
+  direction: ltr;
+  direction: rtl;
+  /* Global values */
+  direction: inherit;
+  direction: initial;
+  direction: unset;
+}

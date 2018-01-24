@@ -1,21 +1,23 @@
-/* width */
-/* <length> values */
-width: 300px;
-width: 25em;
-/* <percentage> value */
-width: 75%;
-/* Keyword values */
-width: 25em border-box;
-width: 75% content-box;
-width: max-content;
-width: min-content;
-width: available;
-width: fit-content;
-width: auto;
-/* Global values */
-width: inherit;
-width: initial;
-width: unset;
-/*  values */
-/*  value */
-/* Keyword values (mostly experimental) */
+div {
+  /* width */
+  /* <length> values */
+  width: 300px;
+  width: 25em;
+  /* <percentage> value */
+  width: 75%;
+  /* Keyword values */
+  width: 25em border-box;
+  width: 75% content-box;
+  width: max-content;
+  width: min-content;
+  width: available;
+  width: fit-content;
+  width: auto;
+  /* Global values */
+  width: inherit;
+  width: initial;
+  width: unset;
+  /*  values */
+  /*  value */
+  /* Keyword values (mostly experimental) */
+}

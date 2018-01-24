@@ -18,7 +18,7 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    getter nodes          = Deque(Blok).new
+    getter nodes = Deque(Blok).new
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
@@ -65,14 +65,7 @@ module DA_CSS
 
         else
           raw_selector = reader.consume_upto_then_next(OPEN_BRACKET)
-          if reader.done?
-            raise CSS_Author_Error.new("Selector has missing body: #{raw_selector.summary}")
-          end
-
           raw_body = reader.consume_upto_then_next(CLOSE_BRACKET)
-          if reader.done?
-            raise CSS_Author_Error.new("Block not properly closed: #{raw_body.summary}")
-          end
 
           nodes.push Blok.new(raw_selector, raw_body)
 

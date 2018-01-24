@@ -1,14 +1,16 @@
-/* page-break-after */
-/* Keyword values */
-page-break-after: auto;
-page-break-after: always;
-page-break-after: avoid;
-page-break-after: left;
-page-break-after: right;
-page-break-after: recto;
-page-break-after: verso;
-/* Global values */
-page-break-after: inherit;
-page-break-after: initial;
-page-break-after: unset;
-/* move to a new page after footnotes */
+div {
+  /* page-break-after */
+  /* Keyword values */
+  page-break-after: auto;
+  page-break-after: always;
+  page-break-after: avoid;
+  page-break-after: left;
+  page-break-after: right;
+  page-break-after: recto;
+  page-break-after: verso;
+  /* Global values */
+  page-break-after: inherit;
+  page-break-after: initial;
+  page-break-after: unset;
+  /* move to a new page after footnotes */
+}

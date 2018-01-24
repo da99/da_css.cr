@@ -1,8 +1,10 @@
-/* orphans */
-/* <integer> values */
-orphans: 2;
-orphans: 3;
-/* Global values */
-orphans: inherit;
-orphans: initial;
-orphans: unset;
+div {
+  /* orphans */
+  /* <integer> values */
+  orphans: 2;
+  orphans: 3;
+  /* Global values */
+  orphans: inherit;
+  orphans: initial;
+  orphans: unset;
+}

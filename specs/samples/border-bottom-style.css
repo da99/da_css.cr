@@ -1,18 +1,20 @@
-/* border-bottom-style */
-/* Keyword values */
-border-bottom-style: none;
-border-bottom-style: hidden;
-border-bottom-style: dotted;
-border-bottom-style: dashed;
-border-bottom-style: solid;
-border-bottom-style: double;
-border-bottom-style: groove;
-border-bottom-style: ridge;
-border-bottom-style: inset;
-border-bottom-style: outset;
-/* Global values */
-border-bottom-style: inherit;
-border-bottom-style: initial;
-border-bottom-style: unset;
-/* Define look of the table */
-/* border-bottom-style example classes */
+div {
+  /* border-bottom-style */
+  /* Keyword values */
+  border-bottom-style: none;
+  border-bottom-style: hidden;
+  border-bottom-style: dotted;
+  border-bottom-style: dashed;
+  border-bottom-style: solid;
+  border-bottom-style: double;
+  border-bottom-style: groove;
+  border-bottom-style: ridge;
+  border-bottom-style: inset;
+  border-bottom-style: outset;
+  /* Global values */
+  border-bottom-style: inherit;
+  border-bottom-style: initial;
+  border-bottom-style: unset;
+  /* Define look of the table */
+  /* border-bottom-style example classes */
+}

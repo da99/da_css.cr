@@ -1,10 +1,12 @@
-/* outline-width */
-/* Keyword values */
-outline-width: thin;
-outline-width: medium;
-outline-width: thick;
-/* <length> values */
-outline-width: 1px;
-outline-width: 0.1em;
-/* Global values */
-outline-width: inherit;
+div {
+  /* outline-width */
+  /* Keyword values */
+  outline-width: thin;
+  outline-width: medium;
+  outline-width: thick;
+  /* <length> values */
+  outline-width: 1px;
+  outline-width: 0.1em;
+  /* Global values */
+  outline-width: inherit;
+}

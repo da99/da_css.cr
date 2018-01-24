@@ -1,11 +1,13 @@
-/* text-transform */
-/* Keyword values */
-text-transform: capitalize;
-text-transform: uppercase;
-text-transform: lowercase;
-text-transform: none;
-text-transform: full-width;
-/* Global values */
-text-transform: inherit;
-text-transform: initial;
-text-transform: unset;
+div {
+  /* text-transform */
+  /* Keyword values */
+  text-transform: capitalize;
+  text-transform: uppercase;
+  text-transform: lowercase;
+  text-transform: none;
+  text-transform: full-width;
+  /* Global values */
+  text-transform: inherit;
+  text-transform: initial;
+  text-transform: unset;
+}

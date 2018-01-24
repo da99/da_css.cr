@@ -1,12 +1,14 @@
-/* right */
-/* <length> values */
-right: 3px;
-right: 2.4em;
-/* <percentage>s of the width of the containing block */
-right: 10%;
-/* Keyword value */
-right: auto;
-/* Global values */
-right: inherit;
-right: initial;
-right: unset;
+div {
+  /* right */
+  /* <length> values */
+  right: 3px;
+  right: 2.4em;
+  /* <percentage>s of the width of the containing block */
+  right: 10%;
+  /* Keyword value */
+  right: auto;
+  /* Global values */
+  right: inherit;
+  right: initial;
+  right: unset;
+}

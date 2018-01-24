@@ -1,14 +1,16 @@
-/* min-width */
-/* <length> value */
-min-width: 3.5em;
-/* <percentage> value */
-min-width: 10%;
-/* Keyword values */
-min-width: max-content;
-min-width: min-content;
-min-width: fit-content;
-min-width: fill-available;
-/* Global values */
-min-width: inherit;
-min-width: initial;
-min-width: unset;
+div {
+  /* min-width */
+  /* <length> value */
+  min-width: 3.5em;
+  /* <percentage> value */
+  min-width: 10%;
+  /* Keyword values */
+  min-width: max-content;
+  min-width: min-content;
+  min-width: fit-content;
+  min-width: fill-available;
+  /* Global values */
+  min-width: inherit;
+  min-width: initial;
+  min-width: unset;
+}

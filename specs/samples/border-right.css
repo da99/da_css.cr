@@ -1,5 +1,7 @@
-/* border-right */
-border-right: medium dashed green;
-border-right: 1em dashed green;
-border-right: 0 dashed green;
-border-right-style: dotted;
+div {
+  /* border-right */
+  border-right: medium dashed green;
+  border-right: 1em dashed green;
+  border-right: 0 dashed green;
+  border-right-style: dotted;
+}

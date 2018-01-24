@@ -1,20 +1,22 @@
-/* outline-style */
-/* Keyword values */
-outline-style: auto;
-outline-style: none;
-outline-style: dotted;
-outline-style: dashed;
-outline-style: solid;
-outline-style: double;
-outline-style: groove;
-outline-style: ridge;
-outline-style: inset;
-outline-style: outset;
-/* Global values */
-outline-style: inherit;
-outline-style: initial;
-outline-style: unset;
-/* To make the Demo clearer */
-/* To make the Demo clearer */
-/* To make the Demo clearer */
-/* To make the Demo clearer */
+div {
+  /* outline-style */
+  /* Keyword values */
+  outline-style: auto;
+  outline-style: none;
+  outline-style: dotted;
+  outline-style: dashed;
+  outline-style: solid;
+  outline-style: double;
+  outline-style: groove;
+  outline-style: ridge;
+  outline-style: inset;
+  outline-style: outset;
+  /* Global values */
+  outline-style: inherit;
+  outline-style: initial;
+  outline-style: unset;
+  /* To make the Demo clearer */
+  /* To make the Demo clearer */
+  /* To make the Demo clearer */
+  /* To make the Demo clearer */
+}

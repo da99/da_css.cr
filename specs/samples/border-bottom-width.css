@@ -1,13 +1,15 @@
-/* border-bottom-width */
-/* Keyword values */
-border-bottom-width: thin;
-border-bottom-width: medium;
-border-bottom-width: thick;
-/* <length> values */
-border-bottom-width: 10em;
-border-bottom-width: 3vmax;
-border-bottom-width: 6px;
-/* Global keywords */
-border-bottom-width: inherit;
-border-bottom-width: initial;
-border-bottom-width: unset;
+div {
+  /* border-bottom-width */
+  /* Keyword values */
+  border-bottom-width: thin;
+  border-bottom-width: medium;
+  border-bottom-width: thick;
+  /* <length> values */
+  border-bottom-width: 10em;
+  border-bottom-width: 3vmax;
+  border-bottom-width: 6px;
+  /* Global keywords */
+  border-bottom-width: inherit;
+  border-bottom-width: initial;
+  border-bottom-width: unset;
+}

@@ -1,3 +1,5 @@
-/* border-top */
-border-top: 1px dashed green;
-border-top: medium dashed green;
+div {
+  /* border-top */
+  border-top: 1px dashed green;
+  border-top: medium dashed green;
+}

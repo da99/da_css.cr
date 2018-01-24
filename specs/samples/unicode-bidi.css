@@ -1,12 +1,14 @@
-/* unicode-bidi */
-/* Keyword values */
-unicode-bidi: normal;
-unicode-bidi: embed;
-unicode-bidi: isolate;
-unicode-bidi: bidi-override;
-unicode-bidi: isolate-override;
-unicode-bidi: plaintext;
-/* Global values */
-unicode-bidi: inherit;
-unicode-bidi: initial;
-unicode-bidi: unset;
+div {
+  /* unicode-bidi */
+  /* Keyword values */
+  unicode-bidi: normal;
+  unicode-bidi: embed;
+  unicode-bidi: isolate;
+  unicode-bidi: bidi-override;
+  unicode-bidi: isolate-override;
+  unicode-bidi: plaintext;
+  /* Global values */
+  unicode-bidi: inherit;
+  unicode-bidi: initial;
+  unicode-bidi: unset;
+}

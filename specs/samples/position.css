@@ -1,11 +1,13 @@
-/* position */
-/* Keyword values */
-position: static;
-position: relative;
-position: absolute;
-position: fixed;
-position: sticky;
-/* Global values */
-position: inherit;
-position: initial;
-position: unset;
+div {
+  /* position */
+  /* Keyword values */
+  position: static;
+  position: relative;
+  position: absolute;
+  position: fixed;
+  position: sticky;
+  /* Global values */
+  position: inherit;
+  position: initial;
+  position: unset;
+}

@@ -1,12 +1,14 @@
-/* border-top-color */
-/* <color> values */
-border-top-color: red;
-border-top-color: #ffbb00;
-border-top-color: rgb(255, 0, 0);
-border-top-color: hsla(100%, 50%, 25%, 0.75);
-border-top-color: currentColor;
-border-top-color: transparent;
-/* Global values */
-border-top-color: inherit;
-border-top-color: initial;
-border-top-color: unset;
+div {
+  /* border-top-color */
+  /* <color> values */
+  border-top-color: red;
+  border-top-color: #ffbb00;
+  border-top-color: rgb(255, 0, 0);
+  border-top-color: hsla(100%, 50%, 25%, 0.75);
+  border-top-color: currentColor;
+  border-top-color: transparent;
+  /* Global values */
+  border-top-color: inherit;
+  border-top-color: initial;
+  border-top-color: unset;
+}

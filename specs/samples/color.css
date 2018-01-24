@@ -1,24 +1,26 @@
-/* color */
-/* Keyword values */
-color: currentcolor;
-/* <named-color> values */
-color: red;
-color: orange;
-color: tan;
-color: rebeccapurple;
-/* <hex-color> values */
-color: #090;
-color: #009900;
-color: #090a;
-color: #009900aa;
-/* <rgb()> values */
-color: rgb(34, 12, 64, 0.6);
-color: rgba(34, 12, 64, 0.6);
-color: rgb(34 12 64 / 0.6);
-color: rgba(34 12 64 / 0.3);
+div {
+  /* color */
+  /* Keyword values */
+  color: currentcolor;
+  /* <named-color> values */
+  color: red;
+  color: orange;
+  color: tan;
+  color: rebeccapurple;
+  /* <hex-color> values */
+  color: #090;
+  color: #009900;
+  color: #090a;
+  color: #009900aa;
+  /* <rgb()> values */
+  color: rgb(34, 12, 64, 0.6);
+  color: rgba(34, 12, 64, 0.6);
+  color: rgb(34 12 64 / 0.6);
+  color: rgba(34 12 64 / 0.3);
 
-/* Global values */
-color: inherit;
-color: initial;
-color: unset;
+  /* Global values */
+  color: inherit;
+  color: initial;
+  color: unset;
 
+}

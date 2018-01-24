@@ -1,9 +1,11 @@
-/* border-spacing */
-/* <length> */
-border-spacing: 2px;
-/* horizontal <length> | vertical <length> */
-border-spacing: 1cm 2em;
-/* Global values */
-border-spacing: inherit;
-border-spacing: initial;
-border-spacing: unset;
+div {
+  /* border-spacing */
+  /* <length> */
+  border-spacing: 2px;
+  /* horizontal <length> | vertical <length> */
+  border-spacing: 1cm 2em;
+  /* Global values */
+  border-spacing: inherit;
+  border-spacing: initial;
+  border-spacing: unset;
+}

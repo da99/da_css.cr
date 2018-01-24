@@ -1,11 +1,13 @@
-/* padding-left */
-/* <length> values */
-padding-left: 0.5em;
-padding-left: 0;
-padding-left: 2cm;
-/* <percentage> value */
-padding-left: 10%;
-/* Global values */
-padding-left: inherit;
-padding-left: initial;
-padding-left: unset;
+div {
+  /* padding-left */
+  /* <length> values */
+  padding-left: 0.5em;
+  padding-left: 0;
+  padding-left: 2cm;
+  /* <percentage> value */
+  padding-left: 10%;
+  /* Global values */
+  padding-left: inherit;
+  padding-left: initial;
+  padding-left: unset;
+}

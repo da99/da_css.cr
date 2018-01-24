@@ -1,5 +1,7 @@
-/* border-left */
-border-left: medium dashed green;
-border-left: 0 dotted green;
-border-left-style: dotted;
-border-left-style: dotted;
+div {
+  /* border-left */
+  border-left: medium dashed green;
+  border-left: 0 dotted green;
+  border-left-style: dotted;
+  border-left-style: dotted;
+}

@@ -1,8 +1,10 @@
-/* margin-right */
-/* <length> values */
-/* Keyword values */
-margin-right: auto;
-/* Global values */
-margin-right: inherit;
-margin-right: initial;
-margin-right: unset;
+div {
+  /* margin-right */
+  /* <length> values */
+  /* Keyword values */
+  margin-right: auto;
+  /* Global values */
+  margin-right: inherit;
+  margin-right: initial;
+  margin-right: unset;
+}

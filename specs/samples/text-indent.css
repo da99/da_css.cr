@@ -1,13 +1,15 @@
-/* text-indent */
-/* <length> values */
-text-indent: 3mm;
-text-indent: 40px;
-text-indent: 15%;
-/* Keyword values */
-text-indent: 5em each-line;
-text-indent: 5em hanging;
-text-indent: 5em hanging each-line;
-/* Global values */
-text-indent: inherit;
-text-indent: initial;
-text-indent: unset;
+div {
+  /* text-indent */
+  /* <length> values */
+  text-indent: 3mm;
+  text-indent: 40px;
+  text-indent: 15%;
+  /* Keyword values */
+  text-indent: 5em each-line;
+  text-indent: 5em hanging;
+  text-indent: 5em hanging each-line;
+  /* Global values */
+  text-indent: inherit;
+  text-indent: initial;
+  text-indent: unset;
+}

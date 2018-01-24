@@ -1,13 +1,15 @@
-/* word-spacing */
-/* Keyword value */
-word-spacing: normal;
-/* <length> values */
-word-spacing: 3px;
-word-spacing: 0.3em;
-/* <percentage> values */
-word-spacing: 50%;
-word-spacing: 200%;
-/* Global values */
-word-spacing: inherit;
-word-spacing: initial;
-word-spacing: unset;
+div {
+  /* word-spacing */
+  /* Keyword value */
+  word-spacing: normal;
+  /* <length> values */
+  word-spacing: 3px;
+  word-spacing: 0.3em;
+  /* <percentage> values */
+  word-spacing: 50%;
+  word-spacing: 200%;
+  /* Global values */
+  word-spacing: inherit;
+  word-spacing: initial;
+  word-spacing: unset;
+}

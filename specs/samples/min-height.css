@@ -1,14 +1,16 @@
-/* min-height */
-/* <length> value */
-min-height: 3.5em;
-/* <percentage> value */
-min-height: 10%;
-/* Keyword values */
-min-height: max-content;
-min-height: min-content;
-min-height: fit-content;
-min-height: fill-available;
-/* Global values */
-min-height: inherit;
-min-height: initial;
-min-height: unset;
+div {
+  /* min-height */
+  /* <length> value */
+  min-height: 3.5em;
+  /* <percentage> value */
+  min-height: 10%;
+  /* Keyword values */
+  min-height: max-content;
+  min-height: min-content;
+  min-height: fit-content;
+  min-height: fill-available;
+  /* Global values */
+  min-height: inherit;
+  min-height: initial;
+  min-height: unset;
+}

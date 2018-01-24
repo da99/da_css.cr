@@ -1,13 +1,15 @@
-/* margin */
-/* Apply to all four sides */
-margin: 1em;
-/* vertical | horizontal */
-margin: 5% auto;
-/* top | horizontal | bottom */
-margin: 1em auto 2em;
-/* top | right | bottom | left */
-margin: 2px 1em 0 auto;
-/* Global values */
-margin: inherit;
-margin: initial;
-margin: unset;
+div {
+  /* margin */
+  /* Apply to all four sides */
+  margin: 1em;
+  /* vertical | horizontal */
+  margin: 5% auto;
+  /* top | horizontal | bottom */
+  margin: 1em auto 2em;
+  /* top | right | bottom | left */
+  margin: 2px 1em 0 auto;
+  /* Global values */
+  margin: inherit;
+  margin: initial;
+  margin: unset;
+}
