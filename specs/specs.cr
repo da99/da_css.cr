@@ -74,11 +74,8 @@ module DA_SPEC
 
 end # === module DA_SPEC
 
-# {% for x in `find #{__DIR__}/specs -mindepth 1 -maxdepth 1 -type d `.split("\n").reject { |x| x.empty? } %}
-#   require ".{{x.gsub(/#{__DIR__}/, "").id}}/*"
-# {% end %}
 require "./specs/01.it.works/specs"
-# require "./specs/10.media_query_list/specs"
+require "./specs/01.it.runs.samples/specs"
 require "../../examples/*"
 
 
