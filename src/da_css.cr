@@ -16,6 +16,7 @@ module DA_CSS
   NUMBERS       = '0'..'9'
   SLASH         = '/'
   COLON         = ':'
+  alias FUNCTION_ARGS = Deque(A_String | Percentage | A_Number)
 end # === module DA_CSS
 
 require "./da_css/exception"

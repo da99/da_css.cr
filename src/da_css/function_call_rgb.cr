@@ -7,7 +7,7 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @args : Deque(A_String)
+    @args : FUNCTION_ARGS
 
     def initialize(name : Token, @args)
     end # === def initialize

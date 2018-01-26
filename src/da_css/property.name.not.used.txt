@@ -7,3 +7,8 @@ cue               # For later.
 cue-after         # For later.
 cue-before        # For later.
 quotes            # For later.
+
+-webkit-border-radius
+-moz-border-radius
+-ms-border-radius
+-webkit-border-radius

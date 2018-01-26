@@ -4,7 +4,7 @@ module DA_CSS
   struct Function_Arg_Splitter
 
     getter raw : Token
-    getter args : Deque(A_String) = Deque(A_String).new
+    getter args = FUNCTION_ARGS.new
 
     def initialize(@raw)
       args_as_tokens = Deque(Token).new
@@ -29,6 +29,10 @@ module DA_CSS
         case
         when A_String.looks_like?(t)
           @args << A_String.new(t)
+        when A_Number.looks_like?(t)
+          @args << A_Number.new(t)
+        when Percentage.looks_like?(t)
+          @args << Percentage.new(t)
         else
           raise CSS_Author_Error.new("Invalid function argument: #{t.summary}")
         end

@@ -9,10 +9,19 @@ module DA_CSS
       if @raw.size > 8
         raise raise CSS_Author_Error.new("Invalid number: #{@raw.to_s.inspect} (#{@raw.inspect})")
       end
+      last_i = @raw.size - 1
+      minus_signs = 0
+      periods = 0
       @raw.each_with_index { |p, index|
         c = p.char
+        (minus_signs += 1) if c == '-'
+        (periods += 1) if c == '.'
         case
+        when last_i && NUMBERS.includes?(c)
+          true
         when index.zero? && (c == '-' || c == '.')
+          true
+        when periods < 2 && c == '.' && index < last_i
           true
         when NUMBERS.includes?(c)
           true
@@ -31,10 +40,6 @@ module DA_CSS
     def to_s(io)
       @raw.to_s(io)
     end # === def to_s
-
-    def print(printer : Printer)
-      @raw.print printer
-    end # === def print
 
     # =============================================================================
     # Class

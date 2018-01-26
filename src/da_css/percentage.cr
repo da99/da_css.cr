@@ -8,23 +8,18 @@ module DA_CSS
     def initialize(@raw)
     end # === def initialize
 
-    def to_s
-      @raw.to_s
+    def to_s(io)
+      @raw.to_s(io)
     end # === def to_s
 
-    def print(printer : Printer)
-      @raw.print(printer)
-      self
-    end # === def print
+    def self.looks_like?(t : Token)
+      first = t.first.char
+      last  = t.last.char
 
-    def self.looks_like?(cp : Token)
-      first = cp.first
-      last = cp.first
-
-      return false if cp.size > 8 || cp.size < 2
+      return false if t.size > 8 || t.size < 2
 
       case first
-      when Number::RANGE, '-', '.'
+      when NUMBERS, '-', '.'
         true
       else
         return false

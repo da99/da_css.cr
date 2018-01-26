@@ -8,7 +8,7 @@ module DA_CSS
     # =============================================================================
 
     getter name : String
-    getter args = Deque(A_String).new
+    getter args = FUNCTION_ARGS.new
     getter func : Function_Call_URL | Function_Call_HSLA | Function_Call_RGBA | Function_Call_RGB
 
     def initialize(raw : Token)
