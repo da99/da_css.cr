@@ -76,8 +76,8 @@ end # === module DA_SPEC
 
 require "./specs/00.token.reader.matches/specs"
 require "./specs/00.token.reader.consume_between/specs"
-# require "./specs/01.it.works/specs"
-# require "./specs/01.it.runs.samples/specs"
+require "./specs/01.it.works/specs"
+require "./specs/01.it.runs.samples/specs"
 # require "../../examples/*"
 
 

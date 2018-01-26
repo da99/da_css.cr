@@ -83,6 +83,14 @@ module DA_CSS
       true
     end # === def matches?
 
+    def comment_starting?
+      matches?('/', '*')
+    end
+
+    def comment_ending?
+      matches?('*', '/' )
+    end
+
     def get?(x : Int32)
       t = Token.new
       current_i = @index

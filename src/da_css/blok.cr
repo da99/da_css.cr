@@ -19,10 +19,11 @@ module DA_CSS
         next if current.whitespace?
         c = current.char
         case
-        when c == '/'
+        when c == '/' && comment_starting?
           consume_between({'/', '*'}, {'*', '/'})
+        else
+          @propertys.push Property.new(consume_upto_then_next ';')
         end
-        @propertys.push Property.new(consume_upto_then_next ';')
       }
     end # === def initialize
 
