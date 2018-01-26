@@ -12,7 +12,7 @@ module DA_CSS
         case
         when index == 0 && c == HASH
           true
-        when index > 0 && index < 9 && (UPPER.includes?(c) || LOWER.includes?(c) || NUMBERS.includes?(c))
+        when index > 0 && index < 9 && (UPPER_CASE_LETTERS.includes?(c) || LOWER_CASE_LETTERS.includes?(c) || NUMBERS.includes?(c))
           true
         else
           raise Invalid_Color.new(@raw)

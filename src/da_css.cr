@@ -2,7 +2,6 @@
 require "inspect_bang"
 
 module DA_CSS
-  LETTERS       = 'a'..'z'
   SPACE         = ' '
   NEW_LINE      = '\n'
   COMMA         = ','
@@ -11,8 +10,8 @@ module DA_CSS
   OPEN_BRACKET  = '{'
   CLOSE_BRACKET = '}'
   HASH          = '#'
-  UPPER         = 'A'..'Z'
-  LOWER         = 'a'..'z'
+  UPPER_CASE_LETTERS = 'A'..'Z'
+  LOWER_CASE_LETTERS = 'a'..'z'
   NUMBERS       = '0'..'9'
   SLASH         = '/'
   COLON         = ':'

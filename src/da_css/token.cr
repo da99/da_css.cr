@@ -94,6 +94,14 @@ module DA_CSS
       }
     end # === def each
 
+    def matches?(t : Token)
+      return false if size != t.size
+      @raw.each_with_index { |c, i|
+        return false if c != t.raw[i]
+      }
+      true
+    end # === def matches?
+
     def any?(*chars)
       @raw.any? { |p|
         chars.includes?(p.char)

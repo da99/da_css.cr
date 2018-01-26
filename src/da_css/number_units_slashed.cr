@@ -52,7 +52,7 @@ module DA_CSS
       end
 
       case last.char
-      when LETTERS
+      when LOWER_CASE_LETTERS
         true
       else
         false

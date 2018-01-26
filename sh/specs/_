@@ -2,6 +2,7 @@
 #
 # === {{CMD}}           # same as: {{CMD}} watch
 # === {{CMD}} watch|run
+# === {{CMD}} new       01 name of spec
 #
 set -u -e -o pipefail
 
@@ -13,6 +14,17 @@ else
 fi
 
 case "$ACTION" in
+
+  new)
+    cd "$THIS_DIR"
+    local +x raw_name="$@"
+    local +x name="$(echo ${=raw_name} | tr ' ' '.')"
+    local +x folder="specs/specs/$name"
+    local +x file="$folder/specs.cr"
+    mkdir -p "$folder"
+    touch "$file"
+    echo $file
+    ;;
 
   watch)
     mkdir -p tmp/in

@@ -27,7 +27,7 @@ module DA_CSS
     end # === def to_chr
 
     def letter?
-      LETTERS.includes? char
+      LOWER_CASE_LETTERS.includes? char
     end
 
     def summary

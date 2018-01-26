@@ -7,8 +7,8 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @selectors = Deque(Selector).new
-    @propertys = Deque(Property).new
+    getter selectors = Deque(Selector).new
+    getter propertys = Deque(Property).new
 
     def initialize(raw_selector : Token, raw_body : Token)
       raw_selector.split(',').each { |t|
