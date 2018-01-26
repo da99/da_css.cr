@@ -33,6 +33,8 @@ module DA_CSS
           @args << A_Number.new(t)
         when Percentage.looks_like?(t)
           @args << Percentage.new(t)
+        when Number_Unit.looks_like?(t)
+          @args << Number_Unit.new(t)
         else
           raise CSS_Author_Error.new("Invalid function argument: #{t.summary}")
         end

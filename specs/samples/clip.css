@@ -3,7 +3,6 @@ div {
   /* Keyword value */
   clip: auto;
   /* <shape> values */
-  clip: rect(1px 10em 3rem 2ch);
   clip: rect(1px, 10em, 3rem, 2ch);
   /* Global values */
   clip: inherit;

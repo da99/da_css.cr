@@ -6,7 +6,6 @@ div {
   border-left-width: thick;
   /* <length> values */
   border-left-width: 10em;
-  border-left-width: 3vmax;
   border-left-width: 6px;
   /* Global keywords */
   border-left-width: inherit;

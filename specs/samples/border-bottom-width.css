@@ -6,7 +6,6 @@ div {
   border-bottom-width: thick;
   /* <length> values */
   border-bottom-width: 10em;
-  border-bottom-width: 3vmax;
   border-bottom-width: 6px;
   /* Global keywords */
   border-bottom-width: inherit;

@@ -1,6 +1,4 @@
 
-border-radius
-
 background
 background-clip
 background-attachment
@@ -20,6 +18,10 @@ border-left-color
 border-left-style
 border-left-width
 border-radius
+border-top-left-radius
+border-top-right-radius
+border-bottom-left-radius
+border-bottom-right-radius
 border-right
 border-right-color
 border-right-style

@@ -26,9 +26,6 @@ module DA_CSS
       }.to_s
     end # === def message
 
-    def message
-      "Parser error: #{@message}"
-    end # === def message
   end # === class CSS_Author_Error
 
   macro def_exception(name, prefix, &blok)
