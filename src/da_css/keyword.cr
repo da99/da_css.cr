@@ -14,7 +14,7 @@ module DA_CSS
       @name = @raw.to_s
       {% begin %}
         case @name
-        when {{ system("cat #{__DIR__}/keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
+        when {{ system("cat #{__DIR__}/config/keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
           :ok
         end
       {% end %}

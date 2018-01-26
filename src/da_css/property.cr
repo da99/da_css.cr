@@ -46,7 +46,7 @@ module DA_CSS
       word = t.to_s
       {% begin %}
         case word
-          {% for x in system("cat #{__DIR__}/propertys.txt").split %}
+          {% for x in system("cat #{__DIR__}/config/propertys.txt").split %}
             {% if !x.empty? %}
             when "{{x.id}}"
               :accepted
