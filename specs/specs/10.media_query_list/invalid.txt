@@ -1,3 +1,0 @@
-screen and min-width: 30em)
-screen and (min-width: 30 em)
-screen and (wdth: 30em)

@@ -1,5 +1,4 @@
-/* border-bottom */
-border-bottom: 1px;
-border-bottom: 2px dotted;
-border-bottom: thick green;
-border-bottom: none thick green;
+div {
+  /* border-bottom */
+  border-bottom: 1vmax;
+}

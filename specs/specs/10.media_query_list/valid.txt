@@ -1,5 +1,0 @@
-screen and (min-width: 30em) and (orientation: landscape)
-   (color)
-  only screen and (min-width: 320px) 
-(min-color:8) -> (min-color: 8)
-(min-width: 320px, max-width: 400px)

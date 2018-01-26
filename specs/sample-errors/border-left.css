@@ -1,5 +1,4 @@
-/* border-left */
-border-left: 1px;
-border-left: 2px dotted;
-border-left: none thick green;
-border-left: thick green;
+div {
+  /* border-left */
+  border-left: 2vmin;
+}

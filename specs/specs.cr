@@ -81,5 +81,11 @@ require "./specs/02.selectors/specs"
 require "./specs/01.it.works/specs"
 require "./specs/01.it.runs.samples/specs"
 require "../../examples/*"
+require "./specs/04.url/specs"
+require "./specs/05.comments/specs"
+require "./specs/07.invalid.property_names/specs"
+require "./specs/07.invalid.property_values/specs"
+require "./specs/07.invalid.selectors/specs"
+require "./specs/08.css_functions/specs"
 
 

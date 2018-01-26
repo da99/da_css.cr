@@ -7,7 +7,11 @@ describe "Parser url" do
       }
     ]
     actual = SPEC_PARSER.to_css(input)
-    should_eq actual, expected!
+    assert actual == strip_each_line(%[
+      div {
+        background-image: url('/local/image.png');
+      }
+    ])
   end # === it "accepts local urls"
 
   it "does not accept urls for with ';' in them" do
@@ -16,7 +20,7 @@ describe "Parser url" do
         background-image: url('/local/image.png;shoutcast');
       }
     ]
-    expect_raises(DA_CSS::Node::Property::Invalid_Value) {
+    assert_raises(DA_CSS::CSS_Author_Error) {
       SPEC_PARSER.to_css(input)
     }
   end # === it "accepts urls for with ';' in them"
@@ -28,7 +32,7 @@ describe "Parser url" do
           background-image: url('{{x.id}}://remote/image.png');
         }
       ]
-      expect_raises(DA_CSS::Node::Property::Invalid_Value) {
+      assert_raises(DA_CSS::CSS_Author_Error) {
         SPEC_PARSER.to_css(input)
       }
     end # === it "accepts urls for with ';' in them"
@@ -39,7 +43,7 @@ describe "Parser url" do
       div { background-image: url('http://remote.com/image.png'); }
     ]
 
-    expect_raises(DA_CSS::Node::Property::Invalid_Value) {
+    assert_raises(DA_CSS::CSS_Author_Error) {
       SPEC_PARSER.to_css(input)
     }
   end # === it "does not allow remove urls: http"
