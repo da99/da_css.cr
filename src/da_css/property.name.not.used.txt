@@ -1,5 +1,6 @@
 azimuth           # obsolete
 elevation         # obsolete
+clip              # obsolete
 content           # For later. Not ready, for security concerns
 counter-increment # For later.
 counter-reset     # For later.
@@ -7,6 +8,7 @@ cue               # For later.
 cue-after         # For later.
 cue-before        # For later.
 quotes            # For later.
+cursor            # potential for mis-use
 
 -webkit-border-radius
 -moz-border-radius

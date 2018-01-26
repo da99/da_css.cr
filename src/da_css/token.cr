@@ -124,9 +124,9 @@ module DA_CSS
 
     def inspect(io)
       io << "#{self.class}["
-      @raw.each_with_index { |c, index|
+      @raw.each_with_index { |position, index|
         io << ", " unless index == 0
-        io << c.inspect
+        io << position.summary
       }
       io << "]"
       io

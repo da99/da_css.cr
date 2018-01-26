@@ -7,7 +7,7 @@ module DA_CSS
 
     def initialize(@raw)
       if @raw.size > 8
-        raise raise CSS_Author_Error.new("Invalid number: #{@raw.to_s.inspect} (#{@raw.inspect})")
+        raise raise CSS_Author_Error.new("Invalid number: #{@raw.summary}")
       end
       last_i = @raw.size - 1
       minus_signs = 0
