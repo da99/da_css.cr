@@ -17,6 +17,11 @@ module DA_CSS
 
       raw_body.reader {
         next if current.whitespace?
+        c = current.char
+        case
+        when c == '/'
+          consume_between({'/', '*'}, {'*', '/'})
+        end
         @propertys.push Property.new(consume_upto_then_next ';')
       }
     end # === def initialize

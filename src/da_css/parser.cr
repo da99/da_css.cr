@@ -64,11 +64,12 @@ module DA_CSS
           end
 
         else
-          raw_selector = reader.consume_upto_then_next(OPEN_BRACKET)
-          raw_body = reader.consume_upto_then_next(CLOSE_BRACKET)
-
-          nodes.push Blok.new(raw_selector, raw_body)
-
+          nodes.push(
+            Blok.new(
+              reader.consume_upto_then_next(OPEN_BRACKET),
+              reader.consume_upto_then_next(CLOSE_BRACKET)
+            )
+          )
         end # case
 
       } # reader

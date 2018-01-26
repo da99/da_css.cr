@@ -71,6 +71,54 @@ module DA_CSS
       !done?
     end
 
+    def matches?(*chars)
+      char_size = chars.size
+      i = @index
+
+      return false if i > (@token.size - char_size)
+      chars.each_with_index { |x, char_i|
+        return false if x != @token[i + char_i].char
+      }
+
+      true
+    end # === def matches?
+
+    def get?(x : Int32)
+      t = Token.new
+      current_i = @index
+      last_i = @token.size - 1
+      x.times { |i|
+        break if (current_i + i) > last_i
+        t.push @token[current_i + i]
+      }
+      t
+    end # === def get
+
+    def consume_between(a, b, t : Token = Token.new)
+      r = self
+      starting_position = current
+      if !matches?(*a)
+        raise CSS_Author_Error.new("Expecting #{a.join.inspect}, but found #{get?(a.size).to_s.inspect}")
+      end
+      a.size.times { r.next unless r.done? }
+
+      while !r.done?
+        if r.matches?(*b)
+          b.size.times { r.next }
+          return t
+        end
+
+        t.push current
+        r.next unless r.done?
+      end
+
+      if b.size == 1
+        raise CSS_Author_Error.new("Missing ending char: #{b.first.inspect} for #{starting_position.summary}")
+      else
+        raise CSS_Author_Error.new("Missing ending chars: #{b.join.inspect} for #{starting_position.summary}")
+      end
+    end # === def consume_between
+
     def consume_through(*args)
       new_token = consume_upto(*args)
       new_token << self.current
