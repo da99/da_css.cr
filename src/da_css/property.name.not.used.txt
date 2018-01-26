@@ -9,6 +9,11 @@ cue-after         # For later.
 cue-before        # For later.
 quotes            # For later.
 cursor            # potential for mis-use
+text-decoration   # potential for mis-use
+text-decoration-color # potential for mis-use
+text-decoration-line  # potential for mis-use
+text-decoration-style # potential for mis-use
+
 
 -webkit-border-radius
 -moz-border-radius

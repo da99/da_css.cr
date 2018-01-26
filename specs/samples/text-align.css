@@ -9,9 +9,6 @@ div {
   text-align: start;
   text-align: end;
   text-align: match-parent;
-  /* Block alignment values (Non-standard syntax) */
-  text-align: -moz-center;
-  text-align: -webkit-center;
   /* Global values */
   text-align: inherit;
   text-align: initial;
