@@ -1,4 +1,5 @@
 
+require "inspect_bang"
 require "da_spec"
 require "../src/da_css"
 

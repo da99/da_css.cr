@@ -1,6 +1,4 @@
 
-require "inspect_bang"
-
 module DA_CSS
   SPACE         = ' '
   NEW_LINE      = '\n'

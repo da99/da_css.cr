@@ -31,7 +31,7 @@ case "$ACTION" in
     local +x CMD="da_css.cr specs run $@"
     sh_color ORANGE "=== {{Running}}: $CMD"
     ${=CMD} || :
-    process watch "-r examples -r src -r specs -r bin -r sh -r tmp/in" "$CMD"
+    process watch "-r examples -r src -r specs -r bin -r sh" "$CMD"
     ;;
 
   run)
@@ -46,7 +46,6 @@ case "$ACTION" in
         ;;
     esac
 
-    reset
     sh_color ORANGE "=== {{Running}}..."
     tmp/out/specs $(cat tmp/in/args tmp/in/arg 2>/dev/null || :)
     sh_color GREEN "=== {{DONE}} ==="
