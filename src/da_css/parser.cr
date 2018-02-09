@@ -18,7 +18,7 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    getter nodes = Deque(Blok).new
+    getter nodes = Deque(Block).new
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
@@ -65,7 +65,7 @@ module DA_CSS
 
         else
           nodes.push(
-            Blok.new(
+            Block.new(
               reader.consume_upto_then_next(OPEN_BRACKET),
               reader.consume_upto_then_next(CLOSE_BRACKET)
             )

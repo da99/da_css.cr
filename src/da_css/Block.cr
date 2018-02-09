@@ -1,7 +1,7 @@
 
 module DA_CSS
 
-  struct Blok
+  struct Block
 
     # =============================================================================
     # Instance
@@ -38,6 +38,6 @@ module DA_CSS
     # Class
     # =============================================================================
 
-  end # === struct Blok
+  end # === struct Block
 
 end # === module DA_CSS

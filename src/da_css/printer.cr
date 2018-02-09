@@ -23,7 +23,7 @@ module DA_CSS
       @io.to_s(*args)
     end # === def to_s
 
-    def to_css(nodes : Deque(Blok))
+    def to_css(nodes : Deque(Block))
       nodes.join('\n', self)
       to_s
     end # === def to_css
