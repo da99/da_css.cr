@@ -7,7 +7,7 @@ describe "Token_Reader#consume_between" do
 
   it "returns a token with the chars between the endpoints" do
     r = DA_CSS::Token_Reader.new(DA_CSS::Token.new("/* abc def */"))
-    assert r.consume_between({'/', '*'}, {'*','/'}).to_s == "abc def"
+    assert r.consume_between({'/', '*'}, {'*','/'}).strip!.to_s == "abc def"
   end # === it "returns a token with the chars between the endpoints"
 
   it "moves the reader to the char after the last endpoint" do

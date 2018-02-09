@@ -97,7 +97,7 @@ module DA_CSS
     def matches?(t : Token)
       return false if size != t.size
       @raw.each_with_index { |c, i|
-        return false if c != t.raw[i]
+        return false if c.char != t.raw[i].char
       }
       true
     end # === def matches?
@@ -116,10 +116,20 @@ module DA_CSS
       }
     end # === def any_inside?
 
+    def strip!
+      return self if empty?
+      while first? && first.char.whitespace?
+        @raw.shift
+      end
+      while last? && last.char.whitespace?
+        @raw.pop
+      end
+      self
+    end
+
     def to_s(io)
       last_i = @raw.size - 1
       @raw.each_with_index { |c, index|
-        next if last_i == index && c.whitespace?
         if c.whitespace?
           io << SPACE
         else

@@ -27,8 +27,8 @@ module DA_CSS
           end
         end
       }
-      @key = self.class.validate_key!(raw_key)
-      @values = Property_Value_Splitter.new(raw_val).values
+      @key = self.class.validate_key!(raw_key.strip!)
+      @values = Property_Value_Splitter.new(raw_val.strip!).values
     end # === def initialize
 
     def to_s(io)
@@ -43,19 +43,15 @@ module DA_CSS
     # =============================================================================
 
     def self.validate_key!(t : Token)
-      word = t.to_s
-      {% begin %}
-        case word
-          {% for x in system("cat #{__DIR__}/config/propertys.txt").split %}
-            {% if !x.empty? %}
-            when "{{x.id}}"
-              :accepted
-            {% end %}
-          {% end %}
+      t.reader { |r|
+        c = current.char
+        case c
+        when LOWER_CASE_LETTERS, '_', '-', NUMBERS
+          true
         else
-          raise CSS_Author_Error.new("Invalid property key: #{t.summary}")
+          raise CSS_Author_Error.new("Invalid character in property name #{t.to_s.inspect}: #{current.summary}")
         end
-      {% end %}
+      }
       t
     end # === def self.validate_key!
 

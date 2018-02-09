@@ -18,4 +18,11 @@ describe "Token#matches" do
     assert a.matches?(b) == false
   end # === it "returns false if tokens have different sizes"
 
+  it "returns true if one Token has been :strip!" do
+    a = DA_CSS::Token.new(" abc ")
+    a.strip!
+    b = DA_CSS::Token.new("abc")
+    assert a.matches?(b) == true
+  end # === it "returns true if one Token has been :strip!"
+
 end # === desc "Token#matches"

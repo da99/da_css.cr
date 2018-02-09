@@ -77,7 +77,7 @@ module DA_SPEC
         puts "#{key}: (#{val.class})"
       end
       puts "================================================"
-      puts val
+      puts val.inspect
     }
     puts "================================================"
   end # === def examine
