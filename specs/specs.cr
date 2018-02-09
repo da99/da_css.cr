@@ -31,6 +31,15 @@ module SPEC_PARSER
 
 end # === module SPEC_PARSER
 
+macro strip(x)
+  %x = {{x}}
+  if (%x).is_a?(String)
+    %x.strip.split("\n").map(&.strip).join("\n")
+  else
+    %x
+  end
+end
+
 macro expected!
   File.read("#{__DIR__}/expected.css").strip.split("\n").map(&.strip).join("\n")
 end # === macro expected!
@@ -76,8 +85,9 @@ module DA_SPEC
 end # === module DA_SPEC
 
 require "../examples/*"
-{% for x in system(%[bash -c "cd \"#{__DIR__}\" && find ./specs -maxdepth 2 -mindepth 2 -type f -name specs.cr | sort --version-sort"]).strip.split("\n") %}
-  require {{x.gsub(/.cr$/, "")}}
-{% end %}
+require "./specs/*"
+# % for x in system(%[bash -c "cd \"#{__DIR__}\" && find ./specs -maxdepth 2 -mindepth 2 -type f -name specs.cr | sort --version-sort"]).strip.split("\n") %}
+#   require {{x.gsub(/.cr$/, "")}}
+# % end %}
 
 
