@@ -75,18 +75,9 @@ module DA_SPEC
 
 end # === module DA_SPEC
 
-require "./specs/00.token.reader.matches/specs"
-require "./specs/00.token.reader.consume_between/specs"
-require "./specs/00.token.matches/specs"
-require "./specs/02.selectors/specs"
-require "./specs/01.it.works/specs"
-require "./specs/01.it.runs.samples/specs"
-require "../../examples/*"
-require "./specs/04.url/specs"
-require "./specs/05.comments/specs"
-require "./specs/07.invalid.property_names/specs"
-require "./specs/07.invalid.property_values/specs"
-require "./specs/07.invalid.selectors/specs"
-require "./specs/08.css_functions/specs"
+require "../examples/*"
+{% for x in system(%[bash -c "cd \"#{__DIR__}\" && find ./specs -maxdepth 2 -mindepth 2 -type f -name specs.cr | sort --version-sort"]).strip.split("\n") %}
+  require {{x.gsub(/.cr$/, "")}}
+{% end %}
 
 
