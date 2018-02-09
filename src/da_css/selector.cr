@@ -4,13 +4,19 @@ module DA_CSS
   struct Selector
 
     def initialize(t : Token)
-      t.each { |position|
-        c = position.char
+      t.reader { |reader|
+        c = current.char
         case c
-        when LOWER_CASE_LETTERS, '#', '.', ':', ' ', '_'
+        when '\'', '"'
+          reader.next
+          consume_through(c)
+
+        when LOWER_CASE_LETTERS, NUMBERS,
+          '!', '#', '.', ':', ' ', '_',
+          '[', ']', '=', '^'
           true
         else
-          raise CSS_Author_Error.new("Invalid character for selector #{t.to_s.inspect}: #{position.summary}")
+          raise CSS_Author_Error.new("Invalid character for selector #{t.to_s.inspect}: #{current.summary}")
         end # === case c
       }
       @raw = t

@@ -31,7 +31,7 @@ case "$ACTION" in
     local +x CMD="da_css.cr specs run $@"
     sh_color ORANGE "=== {{Running}}: $CMD"
     ${=CMD} || :
-    process watch "-r examples -r src -r specs -r bin -r sh" "$CMD"
+    process watch "-r tmp/in -r examples -r src -r specs -r bin -r sh" "$CMD"
     ;;
 
   run)
