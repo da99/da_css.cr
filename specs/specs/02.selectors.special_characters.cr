@@ -13,8 +13,6 @@ describe "Parser special characters" do
   end # === it "allows strings with '{' "
 
   it "allows '[' or ']' in the selector" do
-    # Security vulnerability:
-    #  https://www.curesec.com/blog/article/blog/Reading-Data-via-CSS-Injection-180.html
     input = %[
        #form2 input[value^='a'] {
          border: 1px;

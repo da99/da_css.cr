@@ -1,41 +1,20 @@
 
-describe DA_CSS::Printer do
-
-  it "prints css" do
+describe "Parser" do
+  it "returns a Deque(DA_CSS::Block)" do
     input = %[
-      div { background-color: #fff; }
-
-      .empty {
-        background-color: #000;
-        font-size: 2em;
-      }
-
       body {
-        padding: 20px 0 0 10em;
-        background-color: #000;
-        background-repeat: no-repeat;
-        background-color: #f0f;
-        background-image: url("/sample/image-01.png");
+        border: none;
       }
     ]
 
-    expected = %[
-      div {
-        background-color: #fff;
-      }
-      .empty {
-        background-color: #000;
-        font-size: 2em;
-      }
-      body {
-        padding: 20px 0 0 10em;
-        background-color: #000;
-        background-repeat: no-repeat;
-        background-color: #f0f;
-        background-image: url('/sample/image-01.png');
-      }
-    ]
-    assert SPEC_PARSER.to_css(input) == strip(expected)
-  end # === it "works"
+    actual = DA_CSS.parse(input)
 
-end # === desc "DA_CSS::Printer"
+    blok = actual.first
+    assert blok.selectors.first.to_s == "body"
+
+    p = blok.propertys.first
+    assert p.key.to_s == "border"
+    assert p.values.first.to_s == "none"
+    assert p.values.first.is_a?(DA_CSS::Keyword) == true
+  end # === it "returns a Deque(DA_CSS::Block)"
+end # === desc "Parser"

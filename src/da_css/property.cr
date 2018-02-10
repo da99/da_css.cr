@@ -7,8 +7,8 @@ module DA_CSS
     # Instance Methods
     # =============================================================================
 
-    @key : Token
-    @values : PROPERTY_VALUE
+    getter key : Token
+    getter values : PROPERTY_VALUE
 
     def initialize(raw : Token)
       raw_key = Token.new

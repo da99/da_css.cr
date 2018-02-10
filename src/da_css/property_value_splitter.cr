@@ -1,9 +1,6 @@
 
 module DA_CSS
 
-  alias PROPERTY_VALUE_TYPES = A_Number | Number_Unit | Number_Units_Slashed | Color | Function_Call | Keyword
-  alias PROPERTY_VALUE = Deque(PROPERTY_VALUE_TYPES)
-
   struct Property_Value_Splitter
 
     # =============================================================================

@@ -1,22 +1,26 @@
 
 module DA_CSS
-  SPACE         = ' '
-  NEW_LINE      = '\n'
-  COMMA         = ','
-  OPEN_PAREN    = '('
-  CLOSE_PAREN   = ')'
-  OPEN_BRACKET  = '{'
-  CLOSE_BRACKET = '}'
-  HASH          = '#'
-  SINGLE_QUOTE  = '\''
-  DOUBLE_QUOTE  = '"'
   UPPER_CASE_LETTERS = 'A'..'Z'
   LOWER_CASE_LETTERS = 'a'..'z'
-  NUMBERS       = '0'..'9'
-  SLASH         = '/'
-  COLON         = ':'
+  NUMBERS            = '0'..'9'
 
-  alias FUNCTION_ARGS = Deque(A_String | Percentage | A_Number | Number_Unit)
+  SPACE              = ' '
+  NEW_LINE           = '\n'
+  COMMA              = ','
+  OPEN_PAREN         = '('
+  CLOSE_PAREN        = ')'
+  OPEN_BRACKET       = '{'
+  CLOSE_BRACKET      = '}'
+  HASH               = '#'
+  SINGLE_QUOTE       = '\''
+  DOUBLE_QUOTE       = '"'
+  SLASH              = '/'
+  COLON              = ':'
+
+  alias FUNCTION_ARGS        = Deque(A_String | Percentage | A_Number | Number_Unit)
+  alias PROPERTY_VALUE_TYPES = A_Number | Number_Unit | Number_Units_Slashed | Color | Function_Call | Keyword
+  alias PROPERTY_VALUE       = Deque(PROPERTY_VALUE_TYPES)
+
 end # === module DA_CSS
 
 require "./da_css/line"
@@ -58,10 +62,16 @@ require "./da_css/printer"
 
 module DA_CSS
 
+  def self.parse(str : String)
+    Parser.parse(str)
+  end
+
+  def self.to_css(x : Deque(Block))
+    Printer.to_css( x ) 
+  end
+
   def self.to_css(str : String)
-    Printer.to_css(
-      Parser.parse(str)
-    )
+    to_css( parse(str) )
   end # === def to_css
 
 end # === module DA_CSS
