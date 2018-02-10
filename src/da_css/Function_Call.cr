@@ -9,7 +9,6 @@ module DA_CSS
 
     getter name : String
     getter args = FUNCTION_ARGS.new
-    getter func : Function_Call_URL | Function_Call_HSLA | Function_Call_RGBA | Function_Call_RGB
 
     def initialize(raw : Token)
       name_token = Token.new
@@ -28,18 +27,6 @@ module DA_CSS
 
       @args = Function_Arg_Splitter.new(raw_args).args
       @name = name_token.to_s.downcase
-      @func = case @name
-              when "url"
-                Function_Call_URL.new(name_token, @args)
-              when "hsla"
-                Function_Call_HSLA.new(name_token, @args)
-              when "rgb"
-                Function_Call_RGB.new(name_token, @args)
-              when "rgba"
-                Function_Call_RGBA.new(name_token, @args)
-              else
-                raise CSS_Author_Error.new("Invalid function name: #{raw.summary}")
-              end
     end # === def initialize
 
     def inspect(io)
@@ -56,7 +43,9 @@ module DA_CSS
     end # === def inspect
 
     def to_s(io)
-      @func.to_s(io)
+      io << @name << OPEN_PAREN
+      @args.join(", ", io)
+      io << CLOSE_PAREN
     end # === def to_s
 
     # =============================================================================
