@@ -14,16 +14,16 @@ module DA_CSS
       raw_key = Token.new
       raw_val = Token.new
       fill_key = true
-      raw.reader {
-        c = current.char
+      raw.each_with_reader { |position, r|
+        c = position.char
         case
         when c == ':' && fill_key
           fill_key = false
         else
           if fill_key
-            raw_key.push current
+            raw_key.push position
           else
-            raw_val.push current
+            raw_val.push position
           end
         end
       }
@@ -43,7 +43,7 @@ module DA_CSS
     # =============================================================================
 
     def self.validate_key!(t : Token)
-      t.reader { |r|
+      t.each_with_reader { |current, r|
         c = current.char
         case c
         when LOWER_CASE_LETTERS, '_', '-', NUMBERS

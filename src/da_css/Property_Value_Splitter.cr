@@ -12,10 +12,9 @@ module DA_CSS
 
     def initialize(@raw)
       t = Token.new
-      @raw.reader {
-        position = current
+      @raw.each_with_reader { |position, r|
         c = position.char
-        n = peek unless last?
+        n = r.peek unless r.last?
         case
 
         when c == '/' && n && n.char.whitespace?
@@ -42,8 +41,8 @@ module DA_CSS
             t = Token.new
           end
 
-        when last?
-          t.push(position) 
+        when r.last?
+          t.push(position)
           @values.push self.class.to_value(t)
           t = Token.new
 
@@ -51,7 +50,7 @@ module DA_CSS
           if t.empty?
             raise CSS_Author_Error.new("Missing function call name at #{position.summary}")
           end
-          @values.push Function_Call.new(consume_through(CLOSE_PAREN, t))
+          @values.push Function_Call.new(r.consume_through(CLOSE_PAREN, t))
           t = Token.new
 
         else

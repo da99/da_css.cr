@@ -9,10 +9,10 @@ module DA_CSS
     def initialize(@raw)
       args_as_tokens = Deque(Token).new
       token = Token.new
-      @raw.reader {
+      @raw.each_with_reader { |current, reader|
         c = current.char
         case
-        when (c == OPEN_PAREN && first?) || (c == CLOSE_PAREN && last?)
+        when (c == OPEN_PAREN && reader.first?) || (c == CLOSE_PAREN && reader.last?)
           :ignore
         when c == ','
           if !token.empty?

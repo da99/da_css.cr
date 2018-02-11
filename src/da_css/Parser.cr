@@ -30,8 +30,7 @@ module DA_CSS
     end # === def initialize
 
     def parse
-      @raw.reader { |reader|
-        p = current
+      @raw.each_with_reader { |p, reader|
         c = p.char
 
         case
@@ -39,7 +38,7 @@ module DA_CSS
         when p.whitespace? # PARSE: comment
           next
 
-        when c == '/' && peek?('*')
+        when c == '/' && reader.peek?('*')
           reader.next # == skip asterisk
           was_closed = false
           while !reader.done?

@@ -5,12 +5,12 @@ module DA_CSS
 
     @raw : Token
     def initialize(t : Token)
-      t.reader { |reader|
+      t.each_with_reader { |current, reader|
         c = current.char
         case c
         when '\'', '"'
           reader.next
-          consume_through(c)
+          reader.consume_through(c)
 
         when LOWER_CASE_LETTERS, NUMBERS,
           '!', '#', '.', ':', ' ', '_',

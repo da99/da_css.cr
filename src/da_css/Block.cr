@@ -15,14 +15,14 @@ module DA_CSS
         @selectors.push Selector.new(t)
       }
 
-      raw_body.reader {
+      raw_body.each_with_reader { |current, reader|
         next if current.whitespace?
         c = current.char
         case
-        when c == '/' && comment_starting?
-          consume_between({'/', '*'}, {'*', '/'})
+        when c == '/' && reader.comment_starting?
+          reader.consume_between({'/', '*'}, {'*', '/'})
         else
-          @propertys.push Property.new(consume_upto_then_next ';')
+          @propertys.push Property.new(reader.consume_upto_then_next ';')
         end
       }
     end # === def initialize

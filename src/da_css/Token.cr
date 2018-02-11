@@ -25,15 +25,6 @@ module DA_CSS
       }
     end # === def initialize
 
-    def reader
-      reader = Token_Reader.new(self)
-      while !reader.done?
-        starting_position = reader.current
-        with reader yield reader
-        reader.next if !reader.done? && starting_position == reader.current
-      end
-    end # === def each
-
     def split(char : Char | Nil = nil)
       tokens = Tokens.new
       current = Token.new
@@ -81,7 +72,7 @@ module DA_CSS
       r = each
       while !r.done?
         yield r.current, r
-        r.next
+        r.next unless r.done?
       end
     end # === def each_with_reader
 
