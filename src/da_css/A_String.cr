@@ -68,11 +68,9 @@ module DA_CSS
           next
         end
 
-        case c
-        when 'a'..'z', '0'..'9', '_', '-', '/', '.', '?'
-          true
-        else
-          raise CSS_Author_Error.new("String can't contain this character: #{c.inspect} #{p.summary}")
+        case
+        when DA_CSS.unsafe_ascii?(c)
+          raise CSS_Author_Error.new("String can't contain this character: #{p.summary}")
         end
       }
     end # === def valid!

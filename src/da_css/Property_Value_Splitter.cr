@@ -27,19 +27,25 @@ module DA_CSS
           st.push position
           @values.push Slash.new(st)
 
-        when c == ',' || c.whitespace? || last?
+        when c == ','
           if !t.empty?
-            if c != ',' && !c.whitespace?
-              t.push(position) 
-            end
             @values.push self.class.to_value(t)
-            if c == ','
-              ct = Token.new()
-              ct.push position
-              @values.push self.class.to_value(ct)
-            end
             t = Token.new
           end
+          ct = Token.new()
+          ct.push position
+          @values.push self.class.to_value(ct)
+
+        when c.whitespace?
+          if !t.empty?
+            @values.push self.class.to_value(t)
+            t = Token.new
+          end
+
+        when last?
+          t.push(position) 
+          @values.push self.class.to_value(t)
+          t = Token.new
 
         when c == OPEN_PAREN
           if t.empty?
@@ -62,6 +68,9 @@ module DA_CSS
       case
       when Number_Units_Slashed.looks_like?(t)
         Number_Units_Slashed.new(t)
+
+      when A_String.looks_like?(t)
+        A_String.new(t)
 
       when A_Number.looks_like?(t)
         A_Number.new(t)

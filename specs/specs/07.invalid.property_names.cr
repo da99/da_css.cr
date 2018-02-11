@@ -8,7 +8,7 @@ describe "Parser invalid property names" do
       ]
 
       assert_raises(DA_CSS::CSS_Author_Error) {
-        SPEC_PARSER.to_css(input)
+        DA_CSS.parse(input)
       }
     end # === it "does not allow: behaviour"
   {% end %}

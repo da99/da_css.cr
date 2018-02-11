@@ -18,8 +18,12 @@ module DA_CSS
   COLON              = ':'
 
   alias FUNCTION_ARGS        = Deque(A_String | Percentage | A_Number | Number_Unit)
-  alias PROPERTY_VALUE_TYPES = Comma | Slash | Percentage | A_Number | Number_Unit | Number_Units_Slashed | Color | Color_Keyword | Function_Call | Keyword
+  alias PROPERTY_VALUE_TYPES = Comma | Slash | A_String | Percentage | A_Number | Number_Unit | Number_Units_Slashed | Color | Color_Keyword | Function_Call | Keyword
   alias PROPERTY_VALUE       = Deque(PROPERTY_VALUE_TYPES)
+
+  def self.unsafe_ascii?(c : Char)
+    c == '<' || c == '>' || c == '\n' || c.ord < 32 || c.ord > 126
+  end
 
 end # === module DA_CSS
 

@@ -3,7 +3,12 @@ always
 auto
 available
 avoid
+progress
 baseline
+underline
+overline
+line-through
+blink
 bidi-override
 block
 bold
@@ -91,6 +96,7 @@ outside
 padding-box
 plaintext
 pointer
+pre
 pre-line
 pre-wrap
 recto

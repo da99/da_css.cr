@@ -33,10 +33,7 @@ div {
   list-style-type: unset;
 
   /* Identifier matching an @counter-style rule */
-  list-style-type: custom-counter-style;
   list-style-type: '||';
-  list-style-type: '>';
-  list-style-type: '<';
   list-style-type: '@@';
 
 }

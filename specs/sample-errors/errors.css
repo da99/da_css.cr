@@ -1,0 +1,28 @@
+border-width: 1px /;
+text-decoration-color: currentClor;
+
+color: rgb(34 12 64 /0.6);
+color: rgba(34 12 64/ 0.3);
+color: hsl(30 100% 50%/ 0.6);
+color: hsla(30 100% 50%/ 0.6);
+
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: Gill Sans Extrabold, sans-serif;
+font-family: "Goudy Bookletter 1911", sans-serif;
+font-family: Goudy Bookletter 1911, sans-serif;
+font-family: Red/Black, sans-serif;
+font-family: "Lucida" Grande, sans-serif;
+font-family: Ahem!, sans-serif;
+font-family: test@foo, sans-serif;
+font-family: #POUND, sans-serif;
+font-family: Hawaii 5-0, sans-serif;
+
+list-style-type: custom-counter-style;
+list-style-type: '>';
+list-style-type: '<';
+
+text-align: -moz-center;
+text-align: -webkit-center;
+
