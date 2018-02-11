@@ -3,13 +3,13 @@ module DA_CSS
 
   struct Comma
 
-    @raw : Token
+    getter token : Token
 
     def initialize(t : Token)
       if !self.class.looks_like?(t)
         raise CSS_Author_Error.new("Expecting a comma at: #{t.summary}")
       end
-      @raw = t
+      @token = t
     end # === def initialize
 
     def to_s(io)
@@ -17,7 +17,7 @@ module DA_CSS
     end
 
     def inspect(io)
-      io << "Comma[#{@raw.first.summary}]"
+      io << "Comma[#{@token.first.summary}]"
     end
 
     def self.looks_like?(t : Token)

@@ -9,11 +9,11 @@ module DA_CSS
     SPACE    = ' '
     NEW_LINE = '\n'
 
-    getter raw      = Deque(Position).new
-    getter pos_line = 0
-    @frozen         = false
+    getter positions = Deque(Position).new
+    getter pos_line  = 0
+    @frozen          = false
 
-    delegate first, first?, last, last?, to: @raw
+    delegate first, first?, last, last?, to: @positions
 
     def initialize
     end # === def initialize
@@ -21,7 +21,7 @@ module DA_CSS
     def initialize(origin : String)
       r = Char::Reader.new(origin)
       r.each { |raw_char|
-        @raw.push Position.new(origin, r.pos, r.current_char)
+        @positions.push Position.new(origin, r.pos, r.current_char)
       }
     end # === def initialize
 
@@ -44,7 +44,7 @@ module DA_CSS
     end # === def split
 
     def line
-      a_char = @raw.first?
+      a_char = @positions.first?
       if a_char
         a_char.line.content
       else
@@ -53,7 +53,7 @@ module DA_CSS
     end # === def line
 
     def join(*args)
-      @raw.join(*args)
+      @positions.join(*args)
     end
 
     def select : Token
@@ -78,7 +78,7 @@ module DA_CSS
 
     def each
       prev = nil
-      @raw.each { |c|
+      @positions.each { |c|
         next if prev && prev.whitespace? && c.whitespace?
         yield c
         prev = c
@@ -87,21 +87,21 @@ module DA_CSS
 
     def matches?(t : Token)
       return false if size != t.size
-      @raw.each_with_index { |c, i|
-        return false if c.char != t.raw[i].char
+      @positions.each_with_index { |c, i|
+        return false if c.char != t.positions[i].char
       }
       true
     end # === def matches?
 
     def any?(*chars)
-      @raw.any? { |p|
+      @positions.any? { |p|
         chars.includes?(p.char)
       }
     end # === def contains?
 
     def any_inside?(*chars)
-      last = @raw.size - 1
-      @raw.each_with_index { |p, i|
+      last = @positions.size - 1
+      @positions.each_with_index { |p, i|
         next if i == 0 || i == last
         return true if chars.includes?(p.char)
       }
@@ -110,17 +110,17 @@ module DA_CSS
     def strip!
       return self if empty?
       while first? && first.char.whitespace?
-        @raw.shift
+        @positions.shift
       end
       while last? && last.char.whitespace?
-        @raw.pop
+        @positions.pop
       end
       self
     end
 
     def to_s(io)
-      last_i = @raw.size - 1
-      @raw.each_with_index { |c, index|
+      last_i = @positions.size - 1
+      @positions.each_with_index { |c, index|
         if c.whitespace?
           io << SPACE
         else
@@ -133,7 +133,7 @@ module DA_CSS
 
     def inspect(io)
       io << "#{self.class}["
-      @raw.each_with_index { |position, index|
+      @positions.each_with_index { |position, index|
         io << ", " unless index == 0
         io << position.summary
       }
@@ -160,11 +160,11 @@ module DA_CSS
         return self
       end
 
-      @raw.push(c)
+      @positions.push(c)
     end # === def push
 
     def size
-      @raw.size
+      @positions.size
     end # === def size
 
     def empty?
@@ -172,11 +172,11 @@ module DA_CSS
     end # === def empty?
 
     def prev(i : Int32 = 1)
-      @raw[@raw.size - i]
+      @positions[@positions.size - i]
     end # === def prev(i : Int32 = 1)
 
     def [](i : Int32)
-      @raw[i]
+      @positions[i]
     end
 
     def valid!(p : Position)
@@ -194,19 +194,19 @@ module DA_CSS
 
     def pop(i : Int32 = 1)
       raise_if_frozen!
-      i.times { |x| @raw.pop }
+      i.times { |x| @positions.pop }
     end # === def pop
 
     def all?(r : Range)
-      @raw.all? { |c|
+      @positions.all? { |c|
         r.includes?(c.ord)
       }
     end # === def all?
 
     def first_line_summary
-      raise Programmer_Error.new("Empty token.") if @raw.empty?
-      first = @raw.first
-      last = @raw.last
+      raise Programmer_Error.new("Empty token.") if @positions.empty?
+      first = @positions.first
+      last = @positions.last
 
       case
       when first == last
@@ -217,9 +217,9 @@ module DA_CSS
     end # === def first_line_summary
 
     def summary(all_lines : Bool = false)
-      raise Programmer_Error.new("Empty token.") if @raw.empty?
-      first = @raw.first
-      last = @raw.last
+      raise Programmer_Error.new("Empty token.") if @positions.empty?
+      first = @positions.first
+      last = @positions.last
 
       case
       when first && first == last

@@ -22,15 +22,15 @@ module DA_CSS
 
     # A Char::Reader is used because it adds
     # protection against invalid codepoints.
-    getter raw : Token
+    getter token : Token
     delegate done?, to: @reader
 
     def initialize(origin : String)
-      @raw = Token.new(origin)
+      @token = Token.new(origin)
     end # === def initialize
 
     def parse
-      @raw.each_with_reader { |p, reader|
+      @token.each_with_reader { |p, reader|
         c = p.char
 
         case

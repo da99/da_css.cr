@@ -7,26 +7,26 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @raw : Token
+    getter token : Token
 
-    def initialize(@raw)
-      self.class.valid!(@raw)
+    def initialize(@token)
+      self.class.valid!(@token)
     end # === def initialize
 
     def to_token
-      @raw
+      @token
     end
 
     def inspect(io)
       io << self.class.name
       io << "["
-      @raw.inspect(io)
+      @token.inspect(io)
       io << "]"
     end # === def inspect
 
     def to_s(io)
-      last_i = @raw.size - 1
-      @raw.each_with_index { |p, i|
+      last_i = @token.size - 1
+      @token.each_with_index { |p, i|
         if i.zero? || i == last_i
           io << '\''
           next
@@ -38,7 +38,7 @@ module DA_CSS
 
     def print(printer : Printer)
       printer.raw! "'"
-      @raw.print printer
+      @token.print printer
       printer.raw! "'"
       self
     end # === def print

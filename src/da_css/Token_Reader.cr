@@ -42,7 +42,7 @@ module DA_CSS
     def next!
       @index += 1
       return nil if done?
-      @token.raw[@index]
+      @token.positions[@index]
     end
 
     def next

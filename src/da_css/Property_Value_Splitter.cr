@@ -7,12 +7,12 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    getter raw : Token
+    getter token : Token
     getter values = PROPERTY_VALUE.new
 
-    def initialize(@raw)
+    def initialize(@token)
       t = Token.new
-      @raw.each_with_reader { |position, r|
+      @token.each_with_reader { |position, r|
         c = position.char
         n = r.peek unless r.last?
         case

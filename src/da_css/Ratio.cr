@@ -3,14 +3,14 @@ module DA_CSS
 
   struct Ratio
 
-    @raw : Token
+    getter token : Token
 
-    def initialize(@raw)
+    def initialize(@token)
       top = false
       bottom = false
       fill_top = true
       is_invalid = false
-      @raw.each { |p|
+      @token.each { |p|
         c = p.char
         case c
         when '0'..'9'
@@ -27,12 +27,12 @@ module DA_CSS
       }
 
       if !top || !bottom || is_invalid
-        raise CSS_Author_Error.new("Invalid ratio: #{@raw.summary}")
+        raise CSS_Author_Error.new("Invalid ratio: #{@token.summary}")
       end
     end # === def initialize
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
     # =============================================================================

@@ -3,13 +3,13 @@ module DA_CSS
 
   struct Function_Arg_Splitter
 
-    getter raw : Token
+    getter token : Token
     getter args = FUNCTION_ARGS.new
 
-    def initialize(@raw)
+    def initialize(@token)
       args_as_tokens = Deque(Token).new
       token = Token.new
-      @raw.each_with_reader { |current, reader|
+      @token.each_with_reader { |current, reader|
         c = current.char
         case
         when (c == OPEN_PAREN && reader.first?) || (c == CLOSE_PAREN && reader.last?)

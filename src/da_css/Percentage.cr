@@ -3,13 +3,13 @@ module DA_CSS
 
   struct Percentage
 
-    @raw : Token
+    getter token : Token
 
-    def initialize(@raw)
+    def initialize(@token)
     end # === def initialize
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
     def self.looks_like?(t : Token)

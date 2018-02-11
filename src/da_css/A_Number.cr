@@ -3,16 +3,16 @@ module DA_CSS
 
   struct A_Number
 
-    @raw : Token
+    getter token : Token
 
-    def initialize(@raw)
-      if @raw.size > 7
-        raise raise CSS_Author_Error.new("Invalid number: #{@raw.summary}")
+    def initialize(@token)
+      if @token.size > 7
+        raise raise CSS_Author_Error.new("Invalid number: #{@token.summary}")
       end
-      last_i = @raw.size - 1
+      last_i = @token.size - 1
       minus_signs = 0
       periods = 0
-      @raw.each_with_index { |p, index|
+      @token.each_with_index { |p, index|
         c = p.char
         (minus_signs += 1) if c == '-'
         (periods += 1) if c == '.'
@@ -26,19 +26,19 @@ module DA_CSS
         when NUMBERS.includes?(c)
           true
         else
-          raise CSS_Author_Error.new("Invalid number: #{@raw.summary}")
+          raise CSS_Author_Error.new("Invalid number: #{@token.summary}")
         end
       }
     end # === def initialize
 
     def inspect(io)
       io << self.class.name << "["
-      @raw.inspect(io)
+      @token.inspect(io)
       io << "]"
     end # === def inspect
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
     # =============================================================================

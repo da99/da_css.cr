@@ -3,7 +3,7 @@ module DA_CSS
 
   struct Selector
 
-    @raw : Token
+    getter token : Token
     def initialize(t : Token)
       t.each_with_reader { |current, reader|
         c = current.char
@@ -20,11 +20,11 @@ module DA_CSS
           raise CSS_Author_Error.new("Invalid character for selector #{t.to_s.inspect}: #{current.summary}")
         end # === case c
       }
-      @raw = t.strip!
+      @token = t.strip!
     end # === def initialize
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
   end # === struct Selector

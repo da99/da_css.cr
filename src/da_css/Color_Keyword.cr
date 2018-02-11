@@ -7,11 +7,11 @@ module DA_CSS
     # Instance
     # =============================================================================
 
-    @raw  : Token
+    getter token  : Token
     @name : String
 
-    def initialize(@raw)
-      @name = @raw.to_s
+    def initialize(@token)
+      @name = @token.to_s
       {% begin %}
         case @name
         when "currentcolor"
@@ -19,7 +19,7 @@ module DA_CSS
         when {{ system("cat #{__DIR__}/config/color_keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
           :ok
         else
-          raise CSS_Author_Error.new("Invalid Color_Keyword: #{@raw.summary} ")
+          raise CSS_Author_Error.new("Invalid Color_Keyword: #{@token.summary} ")
         end
       {% end %}
     end # === def initialize

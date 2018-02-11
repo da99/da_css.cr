@@ -6,23 +6,23 @@ module DA_CSS
     RANGE = 1..3
     LETTERS = 'a'..'z'
 
-    @raw    : Token
+    getter token : Token
 
-    def initialize(@raw : Token)
+    def initialize(@token : Token)
     end # === def initialize
 
     def inspect(io)
       io << "Unit["
-      @raw.inspect(io)
+      @token.inspect(io)
       io << "]"
     end # === def inspect
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
     def push(p : Position)
-      @raw.push p
+      @token.push p
     end # === def push
 
     def self.looks_like?(chars : Token)

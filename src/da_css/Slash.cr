@@ -3,13 +3,13 @@ module DA_CSS
 
   struct Slash
 
-    @raw : Token
+    getter token : Token
 
     def initialize(t : Token)
       if !self.class.looks_like?(t)
         raise CSS_Author_Error.new("Expecting a slash at: #{t.summary}")
       end
-      @raw = t
+      @token = t
     end # === def initialize
 
     def to_s(io)
@@ -17,7 +17,7 @@ module DA_CSS
     end
 
     def inspect(io)
-      io << "Slash[#{@raw.first.summary}]"
+      io << "Slash[#{@token.first.summary}]"
     end
 
     def self.looks_like?(t : Token)

@@ -3,11 +3,11 @@ module DA_CSS
 
   struct Color
 
-    @raw : Token
-    delegate parent, to: @raw
+    getter token : Token
+    delegate parent, to: @token
 
-    def initialize(@raw)
-      @raw.each_with_index { |position, index|
+    def initialize(@token)
+      @token.each_with_index { |position, index|
         c = position.char
         case
         when index == 0 && c == HASH
@@ -17,12 +17,12 @@ module DA_CSS
         )
           next
         end
-        raise CSS_Author_Error.new("Invalid color", @raw)
+        raise CSS_Author_Error.new("Invalid color", @token)
       }
     end # === def initialize
 
     def to_s(io)
-      @raw.to_s(io)
+      @token.to_s(io)
     end # === def to_s
 
     def self.looks_like?(t : Token)
