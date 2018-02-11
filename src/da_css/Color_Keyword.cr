@@ -14,6 +14,8 @@ module DA_CSS
       @name = @raw.to_s
       {% begin %}
         case @name
+        when "currentcolor"
+          @name = "currentColor"
         when {{ system("cat #{__DIR__}/config/color_keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
           :ok
         else

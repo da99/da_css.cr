@@ -15,7 +15,17 @@ module DA_CSS
       @raw.reader {
         position = current
         c = position.char
+        n = peek unless last?
         case
+
+        when c == '/' && n && n.char.whitespace?
+          if !t.empty?
+            @values.push self.class.to_value(t)
+            t = Token.new
+          end
+          st = Token.new
+          st.push position
+          @values.push Slash.new(st)
 
         when c == ',' || c.whitespace? || last?
           if !t.empty?

@@ -18,7 +18,7 @@ module DA_CSS
   COLON              = ':'
 
   alias FUNCTION_ARGS        = Deque(A_String | Percentage | A_Number | Number_Unit)
-  alias PROPERTY_VALUE_TYPES = Comma | Percentage | A_Number | Number_Unit | Number_Units_Slashed | Color | Color_Keyword | Function_Call | Keyword
+  alias PROPERTY_VALUE_TYPES = Comma | Slash | Percentage | A_Number | Number_Unit | Number_Units_Slashed | Color | Color_Keyword | Function_Call | Keyword
   alias PROPERTY_VALUE       = Deque(PROPERTY_VALUE_TYPES)
 
 end # === module DA_CSS
@@ -37,6 +37,7 @@ require "./da_css/Color"
 require "./da_css/Color_Keyword"
 
 require "./da_css/A_String"
+require "./da_css/Slash"
 require "./da_css/Comma"
 
 require "./da_css/A_Number"
