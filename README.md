@@ -15,50 +15,23 @@ Security links:
   * Don't allow resources to outside the site: url('http://...my.image.png')
     * Can be used to track people and spread harmful code.
 
-
-
 Example:
 =======
 
-File `input.css`:
+Let's have a String filled with this content:
 
-```css
-  /* Setup vars: */
-  div { background-color: #fff; }
+```Crystal
+blocks = DA_CSS.parse(%[ div { border: 1px solid red; } ])
 
-  .empty {
-    border-radius(10px, 20px);
-    background { color: #000; }
-    font { size: 1em; }
-    font-size: 2em;
-  }
+blocks.each { |blok|
+  blok.selectors # Deque(DA_CSS::Selectors
+  blok.propertys # Deque(Color_Keyword | Color | A_String | A_Number | ...)
 
-  body {
-    padding: 20px 0 0 10em;
-    background {
-      color: #fcf;
-      repeat: no-repeat;
-    }
-  }
-```
-
-Output:
-
-```css
-  div {
-    background-color: #FFF;
-  }
-  .empty {
-    -webkit-border-radius: 10px;
-    border-radius: 20px;
-    background-color: #000;
-    font-size: 1em;
-    font-size: 2em;
-  }
-  body {
-    padding: 20px 0 0 10em;
-    background-color: #000;
-    background-repeat: no-repeat;
-    background-color: #0000011;
-  }
+  width = blok.propertys.first.values.first
+  case width
+  when DA_CSS::Number_Unit
+    width.a_number.to_number == 1
+    width.unit.token.to_s == "px"
+  end
+}
 ```
