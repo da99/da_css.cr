@@ -6,7 +6,7 @@ module DA_CSS
     @raw : Token
 
     def initialize(@raw)
-      if @raw.size > 8
+      if @raw.size > 7
         raise raise CSS_Author_Error.new("Invalid number: #{@raw.summary}")
       end
       last_i = @raw.size - 1

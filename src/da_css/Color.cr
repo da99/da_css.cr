@@ -29,8 +29,8 @@ module DA_CSS
       self
     end # === def print
 
-    def self.looks_like?(chars : Token)
-      chars.first == HASH
+    def self.looks_like?(t : Token)
+      t.first.char == HASH
     end # === def self.looks_like?
   end # === struct Color
 

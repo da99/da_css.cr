@@ -1,7 +1,7 @@
 
 module DA_CSS
 
-  struct Keyword
+  struct Color_Keyword
 
     # =============================================================================
     # Instance
@@ -14,16 +14,16 @@ module DA_CSS
       @name = @raw.to_s
       {% begin %}
         case @name
-        when {{ system("cat #{__DIR__}/config/keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
+        when {{ system("cat #{__DIR__}/config/color_keywords.txt").split.map(&.strip).reject(&.empty?).map(&.stringify).join(", ").id }}
           :ok
         else
-          raise CSS_Author_Error.new("Invalid keyword: #{@raw.summary} ")
+          raise CSS_Author_Error.new("Invalid Color_Keyword: #{@raw.summary} ")
         end
       {% end %}
     end # === def initialize
 
     def inspect(io)
-      io << "Keyword["
+      io << "Color_Keyword["
       io << @name
       io << "]"
     end # === def inspect
@@ -40,7 +40,7 @@ module DA_CSS
       t.all? { |p|
         c = p.char
         case c
-        when LOWER_CASE_LETTERS, '-'
+        when LOWER_CASE_LETTERS, 'C' # C for the special currentColor keyword
           true
         else
           false
@@ -48,6 +48,6 @@ module DA_CSS
       }
     end # === def self.looks_like?
 
-  end # === struct Keyword
+  end # === struct Color_Keyword
 
 end # === module DA_CSS

@@ -7,18 +7,8 @@ module DA_CSS
     LETTERS = 'a'..'z'
 
     @raw    : Token
-    @string : String
 
     def initialize(@raw : Token)
-      string = @string = @raw.to_s
-      case string
-      when "px", "em", "mm", "cm", "in",
-        "pt", "pc", "ex", "ch", "rem",
-        "vw", "vh", "deg", "s"
-        true
-      else
-        raise CSS_Author_Error.new("Invalid unit: #{@raw.summary}")
-      end
     end # === def initialize
 
     def inspect(io)
@@ -28,17 +18,12 @@ module DA_CSS
     end # === def inspect
 
     def to_s(io)
-      io << @string
+      @raw.to_s(io)
     end # === def to_s
 
     def push(p : Position)
       @raw.push p
     end # === def push
-
-    def print(printer : Printer)
-      printer.raw! @string
-      self
-    end # === def print
 
     def self.looks_like?(chars : Token)
       RANGE.includes?(chars.size) && chars.all?(LETTERS)

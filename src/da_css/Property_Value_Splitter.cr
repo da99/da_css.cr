@@ -16,10 +16,18 @@ module DA_CSS
         position = current
         c = position.char
         case
-        when c.whitespace? || last?
+
+        when c == ',' || c.whitespace? || last?
           if !t.empty?
-            t.push(position) unless c.whitespace?
+            if c != ',' && !c.whitespace?
+              t.push(position) 
+            end
             @values.push self.class.to_value(t)
+            if c == ','
+              ct = Token.new()
+              ct.push position
+              @values.push self.class.to_value(ct)
+            end
             t = Token.new
           end
 
@@ -44,17 +52,36 @@ module DA_CSS
       case
       when Number_Units_Slashed.looks_like?(t)
         Number_Units_Slashed.new(t)
+
       when A_Number.looks_like?(t)
         A_Number.new(t)
+
       when Number_Unit.looks_like?(t)
         Number_Unit.new(t)
+
+      when Percentage.looks_like?(t)
+        Percentage.new(t)
+
       when Color.looks_like?(t)
         Color.new(t)
+
       when Function_Call.looks_like?(t)
         Function_Call.new(t)
-      when Keyword.looks_like?(t)
-        Keyword.new(t)
+
+      when Comma.looks_like?(t)
+        Comma.new(t)
+
       else
+        begin
+          return Keyword.new(t)
+        rescue e : CSS_Author_Error
+          begin
+            return Color_Keyword.new(t)
+          rescue e2 : CSS_Author_Error
+            :continue
+          end
+        end
+
         raise CSS_Author_Error.new("Invalid string: #{t.summary}")
       end
     end # === def self.to_value

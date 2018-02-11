@@ -11,7 +11,7 @@ div {
   /* HSLA value */
   background-color: hsla(50, 33%, 25%, 0.75);
   /* Special keyword values */
-  background-color: currentcolor;
+  background-color: currentColor;
   background-color: transparent;
   /* Global values */
   background-color: inherit;

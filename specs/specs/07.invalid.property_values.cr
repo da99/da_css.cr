@@ -1,13 +1,13 @@
 
 describe "Parser invalid property values" do
 
-  it "raises DA_CSS::CSS_Author_Error for: 10vpi" do
+  it "raises DA_CSS::CSS_Author_Error for unknown values" do
     input = %[
-      body { border: 10vpi; }
+      body { border: xy1; }
     ]
 
     assert_raises(DA_CSS::CSS_Author_Error) {
-      SPEC_PARSER.to_css(input)
+      DA_CSS.parse(input)
     }
   end # === it "raises Node::Property::Invalid_Value for invalid input: "
 
