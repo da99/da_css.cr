@@ -56,6 +56,16 @@ module DA_CSS
       @positions.join(*args)
     end
 
+    def includes?(c : Char)
+      @positions.any? { |p| p.char == c }
+    end
+
+    def includes?(s : T) forall T
+      {% begin %}
+        {% raise "Invalid class for argument: #{@type}#includes?(#{T})" %}
+      {% end %}
+    end
+
     def select : Token
       t = Token.new
       each { |p|

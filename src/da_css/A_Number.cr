@@ -31,6 +31,14 @@ module DA_CSS
       }
     end # === def initialize
 
+    def to_number
+      if @token.includes?('.')
+        return @token.to_s.to_f
+      else
+        return @token.to_s.to_i
+      end
+    end
+
     def inspect(io)
       io << self.class.name << "["
       @token.inspect(io)
