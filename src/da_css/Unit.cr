@@ -4,7 +4,6 @@ module DA_CSS
   struct Unit
 
     RANGE = 1..3
-    LETTERS = 'a'..'z'
 
     getter token : Token
 
@@ -26,7 +25,7 @@ module DA_CSS
     end # === def push
 
     def self.looks_like?(chars : Token)
-      RANGE.includes?(chars.size) && chars.all?(LETTERS)
+      RANGE.includes?(chars.size) && chars.all?(LOWER_CASE_LETTERS)
     end # === def self.looks_like?
 
   end # === struct Unit
